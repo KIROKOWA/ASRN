@@ -3,7 +3,7 @@
 [![pruebas](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![Licencia: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Versión 1.0.0](https://img.shields.io/badge/version-1.0.0-informational.svg)](docs/RELEASE_NOTES_es.md)
-[![DOI: pendiente (Zenodo)](https://img.shields.io/badge/DOI-pending%20(Zenodo)-lightgrey.svg)](#cómo-citar)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23607506.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Copia exacta de largo alcance para modelos de lenguaje, con trabajo acotado por pieza: tablas de hash aprendidas
 encuentran dónde apareció antes el contexto actual, y una capa con puerta copia lo que vino después.**
@@ -706,13 +706,22 @@ Si usas ASRN, cita el software ([`CITATION.cff`](CITATION.cff) tiene los mismos 
 }
 ```
 
-El preprint que lo acompaña, *ASRN: Adaptive Sparse Recurrence Networks — Linear-memory long-range copying with a
-learned proper-time clock and a Hawkes-gated copy gate* (Alexis Calvario, 2026), está preparado para Zenodo en
-[`paper/`](paper/README.md), con sus metadatos en `paper/zenodo.json`. Cuando el preprint se publique, cita
-también su DOI.
+y el preprint que lo acompaña, *ASRN: Adaptive Sparse Recurrence Networks — Linear-memory long-range copying with a
+learned proper-time clock and a Hawkes-gated copy gate* (Alexis Calvario, 2026), publicado en Zenodo con el DOI
+[10.5281/zenodo.23607506](https://doi.org/10.5281/zenodo.23607506); sus fuentes LaTeX están en [`paper/`](paper/README.md):
 
-**DOI.** La insignia del DOI de arriba es provisional. El DOI se completará aquí con el registro de Zenodo de
-`paper/zenodo.json` cuando quede registrado.
+```bibtex
+@misc{calvario2026asrnpreprint,
+  author    = {Calvario, Alexis},
+  title     = {{ASRN}: Adaptive Sparse Recurrence Networks --- Linear-memory long-range copying with a learned
+               proper-time clock and a {Hawkes}-gated copy gate},
+  year      = {2026},
+  publisher = {Zenodo},
+  note      = {Preprint},
+  doi       = {10.5281/zenodo.23607506},
+  url       = {https://doi.org/10.5281/zenodo.23607506}
+}
+```
 
 ## Licencia
 

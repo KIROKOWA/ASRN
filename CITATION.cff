@@ -15,6 +15,19 @@ version: 1.0.0
 date-released: "2026-10-24"
 license: Apache-2.0
 repository-code: "https://github.com/KIROKOWA/ASRN"
+preferred-citation:
+  type: article
+  title: "ASRN: Adaptive Sparse Recurrence Networks — Linear-memory long-range copying with a learned proper-time clock and a Hawkes-gated copy gate"
+  authors:
+    - family-names: Calvario
+      given-names: Alexis
+      affiliation: Independent researcher
+      orcid: "https://orcid.org/0009-0004-0854-6398"
+  year: 2026
+  publisher:
+    name: Zenodo
+  doi: "10.5281/zenodo.23607506"
+  url: "https://doi.org/10.5281/zenodo.23607506"
 keywords:
   - language models
   - sparse attention

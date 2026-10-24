@@ -1,0 +1,34 @@
+{
+  "title": "ASRN: Adaptive Sparse Recurrence Network",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "description": "<p>ASRN (Adaptive Sparse Recurrence Network) is a sequence-mixing layer for language models, shipped as a PyTorch package: learned-hash sparse retrieval of earlier occurrences with bounded work per token, a learned proper-time clock, Hawkes repetition signals and a gated copy, with numerically protected Triton kernels and O(1) generation per new token. This archive contains the package, its tests, the benchmark notebook and scripts, the raw results and the LaTeX sources of the accompanying preprint.</p>",
+  "creators": [
+    {
+      "name": "Calvario, Alexis",
+      "affiliation": "Independent researcher",
+      "orcid": "0009-0004-0854-6398"
+    }
+  ],
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "keywords": [
+    "language models",
+    "sparse attention",
+    "long context",
+    "copying",
+    "Hawkes process",
+    "proper time",
+    "associative scan",
+    "PyTorch",
+    "Triton"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.23607506",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ]
+}
