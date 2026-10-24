@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="862" viewBox="0 0 1320 862" role="img" aria-label="ASRN architecture. Left: the language model, causal local convolution blocks with an ASRN layer after every second block. Right: inside an ASRN layer. Where to copy: learned sign hashes put each position in a bucket of each of 8 tables; each token scores its 32 most recent bucket mates and copies the vector of the token that followed each match. A learned proper-time clock sets the time kernel. Whether to copy: seen flags of 1- to 4-token n-grams, Hawkes intensities and a repetition streak feed a gate. Output h' = h + g W_o c. Training costs O(N log N); writing costs O(1) per new token.">
+<title>ASRN 1.0 — architecture</title>
+<defs><style>
+  .fondo{fill:#ffffff;stroke:#d9dee3;stroke-width:1}
+  .panel{fill:#f7f8fa;stroke:#d9dee3;stroke-width:1}
+  .t1{font:700 22px Inter,"Segoe UI",Helvetica,Arial,sans-serif;fill:#14181c}
+  .t2{font:400 13.5px Inter,"Segoe UI",Helvetica,Arial,sans-serif;fill:#57606a}
+  .h{font:700 13px Inter,"Segoe UI",Helvetica,Arial,sans-serif;letter-spacing:.06em}
+  .b{font:600 13.5px Inter,"Segoe UI",Helvetica,Arial,sans-serif;fill:#14181c}
+  .d{font:400 12px Inter,"Segoe UI",Helvetica,Arial,sans-serif;fill:#57606a}
+  .m{font:400 12px "JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;fill:#30363d}
+  .n{fill:#ffffff;stroke:#adb5bd;stroke-width:1.2}
+  .ra{fill:#e6f4f1;stroke:#0f7b6c;stroke-width:1.4} .ca{fill:#0f7b6c}
+  .rr{fill:#eef1fb;stroke:#3b5bdb;stroke-width:1.4} .cr{fill:#3b5bdb}
+  .rg{fill:#fcefe8;stroke:#c2541f;stroke-width:1.4} .cg{fill:#c2541f}
+  .ro{fill:#14181c} .rot{font:700 13px "JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;fill:#ffffff}
+  .l{stroke:#6e7781;stroke-width:1.4;fill:none}
+  .la{stroke:#0f7b6c;stroke-width:1.8;fill:none} .lr{stroke:#3b5bdb;stroke-width:1.6;fill:none;stroke-dasharray:5 4}
+  .lg{stroke:#c2541f;stroke-width:1.8;fill:none} .lk{stroke:#14181c;stroke-width:1.8;fill:none}
+  .dash{stroke:#adb5bd;stroke-width:1.2;fill:none;stroke-dasharray:4 4}
+</style>
+<marker id="pl" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6e7781"/></marker>
+<marker id="pa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0f7b6c"/></marker>
+<marker id="pr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b5bdb"/></marker>
+<marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c2541f"/></marker>
+<marker id="pk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#14181c"/></marker>
+</defs>
+<rect x="0.5" y="0.5" width="1319" height="861" rx="14" class="fondo"/>
+<text x="28" y="42" text-anchor="start" class="t1">ASRN 1.0 — architecture</text>
+<text x="28" y="66" text-anchor="start" class="t2">Adaptive Sparse Recurrence Network: exact retrieval of earlier occurrences with bounded work per token</text>
+<rect x="20" y="86" width="268" height="612" rx="12" class="panel"/>
+<text x="38" y="112" text-anchor="start" class="h" fill="#57606a">LANGUAGE MODEL</text>
+<rect x="44" y="130" width="220" height="40" rx="8" class="n"/>
+<text x="154.0" y="154.5" text-anchor="middle" class="b">tokens x<tspan dy="3.5" font-size="78%">1</tspan><tspan dy="-3.5">​</tspan> … x<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan></text>
+<rect x="44" y="194" width="220" height="40" rx="8" class="n"/>
+<text x="154.0" y="218.5" text-anchor="middle" class="b">embedding E</text>
+<rect x="44" y="258" width="220" height="58" rx="8" class="n"/>
+<text x="154.0" y="283.0" text-anchor="middle" class="b">local block</text>
+<text x="154.0" y="300.0" text-anchor="middle" class="m">h += GELU(conv<tspan dy="3.5" font-size="78%">4</tspan><tspan dy="-3.5">​</tspan>(LN h))</text>
+<rect x="44" y="334" width="220" height="58" rx="8" class="n"/>
+<text x="154.0" y="359.0" text-anchor="middle" class="b">local block</text>
+<text x="154.0" y="376.0" text-anchor="middle" class="m">h += MLP(LN h)</text>
+<rect x="44" y="410" width="220" height="46" rx="8" class="ra"/>
+<text x="154.0" y="437.5" text-anchor="middle" class="b">ASRN layer</text>
+<text x="154.0" y="484" text-anchor="middle" class="b">× N/2</text>
+<text x="154.0" y="503" text-anchor="middle" class="d">an ASRN layer after every second</text>
+<text x="154.0" y="519" text-anchor="middle" class="d">local block, not after the last</text>
+<rect x="44" y="538" width="220" height="40" rx="8" class="n"/>
+<text x="154.0" y="562.5" text-anchor="middle" class="b">LayerNorm</text>
+<rect x="44" y="598" width="220" height="40" rx="8" class="n"/>
+<text x="154.0" y="622.5" text-anchor="middle" class="b">output head = Embᵀ (tied)</text>
+<text x="154.0" y="668" text-anchor="middle" class="m">p(x<tspan dy="3.5" font-size="78%">t+1</tspan><tspan dy="-3.5">​</tspan> | x<tspan dy="3.5" font-size="78%">≤t</tspan><tspan dy="-3.5">​</tspan>)</text>
+<path d="M154.0,170 L154.0,193" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,234 L154.0,257" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,316 L154.0,333" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,392 L154.0,409" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,456 L154.0,469" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,526 L154.0,537" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,578 L154.0,597" class="l" marker-end="url(#pl)"/>
+<path d="M154.0,638 L154.0,651" class="l" marker-end="url(#pl)"/>
+<path d="M38,258 C30,258 30,262 30,268 L30,450 C30,454 30,456 38,456" class="dash"/>
+<path d="M264,433 L304,433" class="la" marker-end="url(#pa)"/>
+<rect x="306" y="86" width="994" height="612" rx="12" class="panel" style="stroke:#0f7b6c;stroke-width:1.4"/>
+<text x="326" y="112" text-anchor="start" class="h" fill="#0f7b6c">INSIDE AN ASRN LAYER</text>
+<rect x="322" y="186" width="118" height="36" rx="8" class="n"/>
+<text x="381.0" y="208.5" text-anchor="middle" class="m">E  vectors</text>
+<rect x="322" y="371" width="118" height="36" rx="8" class="n"/>
+<text x="381.0" y="393.5" text-anchor="middle" class="m">h  state</text>
+<rect x="322" y="496" width="118" height="36" rx="8" class="n"/>
+<text x="381.0" y="518.5" text-anchor="middle" class="m">x  token ids</text>
+<rect x="456" y="124" width="828" height="196" rx="10" fill="none" stroke="#0f7b6c" stroke-opacity=".35"/>
+<text x="470" y="144" text-anchor="start" class="h" fill="#0f7b6c">WHERE TO COPY — sparse retrieval</text>
+<rect x="470" y="158" width="180" height="96" rx="8" class="ra"/>
+<text x="560.0" y="185.0" text-anchor="middle" class="b">learned sign hash</text>
+<text x="560.0" y="202.0" text-anchor="middle" class="d">8 tables × 14 bits:</text>
+<text x="560.0" y="219.0" text-anchor="middle" class="d">4 read the token,</text>
+<text x="560.0" y="236.0" text-anchor="middle" class="d">4 the token + the previous</text>
+<rect x="666" y="158" width="168" height="96" rx="8" class="ra"/>
+<text x="750.0" y="185.0" text-anchor="middle" class="b">bucket mates</text>
+<text x="750.0" y="202.0" text-anchor="middle" class="d">in each table, the token</text>
+<text x="750.0" y="219.0" text-anchor="middle" class="d">sees the C = 32 latest</text>
+<text x="750.0" y="236.0" text-anchor="middle" class="d">positions in its bucket</text>
+<rect x="850" y="150" width="240" height="112" rx="8" class="ra"/>
+<text x="970.0" y="176.5" text-anchor="middle" class="b">score of each mate s</text>
+<text x="970.0" y="193.5" text-anchor="middle" class="d">hash similarity φ<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> · φ<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="970.0" y="210.5" text-anchor="middle" class="d">+ confirmation Qĥ<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> · Kĥ<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="970.0" y="227.5" text-anchor="middle" class="d">+ exact suffix (≤ 4 tokens of x)</text>
+<text x="970.0" y="244.5" text-anchor="middle" class="d">+ log α<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan> − γ<tspan dy="3.5" font-size="78%">τ</tspan><tspan dy="-3.5">​</tspan> (B<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> − B<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan>) / C</text>
+<rect x="1106" y="158" width="166" height="96" rx="8" class="ra"/>
+<text x="1189.0" y="185.0" text-anchor="middle" class="b">copy the NEXT token</text>
+<text x="1189.0" y="202.0" text-anchor="middle" class="d">softmax per table over</text>
+<text x="1189.0" y="219.0" text-anchor="middle" class="d">v(E<tspan dy="3.5" font-size="78%">s+1</tspan><tspan dy="-3.5">​</tspan>); mean of the</text>
+<text x="1189.0" y="236.0" text-anchor="middle" class="d">tables → c<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan></text>
+<path d="M440,204 L469,206" class="la" marker-end="url(#pa)"/>
+<path d="M650,206 L665,206" class="la" marker-end="url(#pa)"/>
+<path d="M834,206 L849,206" class="la" marker-end="url(#pa)"/>
+<path d="M1090,206 L1105,206" class="la" marker-end="url(#pa)"/>
+<rect x="1106" y="272" width="166" height="36" rx="18" class="ro"/>
+<text x="1189" y="295" text-anchor="middle" class="rot">h′ = h + g·W<tspan dy="3.5" font-size="78%">o</tspan><tspan dy="-3.5">​</tspan> c</text>
+<path d="M1189,254 L1189,271" class="la" marker-end="url(#pa)"/>
+<rect x="456" y="334" width="828" height="98" rx="10" fill="none" stroke="#3b5bdb" stroke-opacity=".35"/>
+<text x="1270" y="354" text-anchor="end" class="h" fill="#3b5bdb">PROPER-TIME CLOCK</text>
+<rect x="470" y="364" width="130" height="50" rx="8" class="rr"/>
+<text x="535.0" y="393.5" text-anchor="middle" class="m">ĥ = LN(h)</text>
+<rect x="620" y="364" width="210" height="50" rx="8" class="rr"/>
+<text x="725.0" y="385.0" text-anchor="middle" class="m">β<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> = softplus(·) ≥ 0</text>
+<text x="725.0" y="402.0" text-anchor="middle" class="m">α<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> = 2σ(·) ∈ (0, 2)</text>
+<rect x="850" y="364" width="190" height="50" rx="8" class="rr"/>
+<text x="945.0" y="393.5" text-anchor="middle" class="m">B<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> = Σ β  (64-bit)</text>
+<text x="1112" y="394" text-anchor="start" class="d" fill="#3b5bdb">→ kernel α<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan> e<tspan dy="-5" font-size="78%">−κ(B<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> − B<tspan dy="3.5" font-size="78%">s</tspan><tspan dy="-3.5">​</tspan>)</tspan><tspan dy="5">​</tspan></text>
+<path d="M440,389 L469,389" class="l" marker-end="url(#pl)"/>
+<path d="M600,389 L619,389" class="l" marker-end="url(#pl)"/>
+<path d="M830,389 L849,389" class="l" marker-end="url(#pl)"/>
+<path d="M535,364 C535,300 880,330 900,263" class="lr" marker-end="url(#pr)"/>
+<path d="M985,364 L985,263" class="lr" marker-end="url(#pr)"/>
+<path d="M880,414 C880,450 800,452 790,481" class="lr" marker-end="url(#pr)"/>
+<rect x="456" y="446" width="828" height="236" rx="10" fill="none" stroke="#c2541f" stroke-opacity=".35"/>
+<text x="470" y="466" text-anchor="start" class="h" fill="#c2541f">WHETHER TO COPY — regulation</text>
+<rect x="470" y="482" width="160" height="64" rx="8" class="rg"/>
+<text x="550.0" y="510.0" text-anchor="middle" class="b">n-grams of 1–4</text>
+<text x="550.0" y="527.0" text-anchor="middle" class="d">seen flags v<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan></text>
+<rect x="648" y="482" width="200" height="64" rx="8" class="rg"/>
+<text x="748.0" y="501.5" text-anchor="middle" class="b">Hawkes intensity λ<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="748.0" y="518.5" text-anchor="middle" class="d">sum over earlier occurrences</text>
+<text x="748.0" y="535.5" text-anchor="middle" class="d">of the same n-gram</text>
+<rect x="866" y="482" width="230" height="64" rx="8" class="rg"/>
+<text x="981.0" y="510.0" text-anchor="middle" class="b">repetition streak ρ<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="981.0" y="527.0" text-anchor="middle" class="d">ρ<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan> = v<tspan dy="3.5" font-size="78%">4</tspan><tspan dy="-3.5">​</tspan> (e<tspan dy="-5" font-size="78%">−κ β<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan></tspan><tspan dy="5">​</tspan> ρ<tspan dy="3.5" font-size="78%">t−1</tspan><tspan dy="-3.5">​</tspan> + 1)</text>
+<rect x="648" y="592" width="448" height="76" rx="8" class="rg"/>
+<text x="872.0" y="617.5" text-anchor="middle" class="b">gate g ∈ (0, 1)</text>
+<text x="872.0" y="634.5" text-anchor="middle" class="d">σ( w·h + w·conf + Σ w<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan> v<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan></text>
+<text x="872.0" y="651.5" text-anchor="middle" class="d">+ Σ u<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan> log(1 + λ<tspan dy="3.5" font-size="78%">n</tspan><tspan dy="-3.5">​</tspan>) + f(ρ<tspan dy="3.5" font-size="78%">t</tspan><tspan dy="-3.5">​</tspan>) )</text>
+<path d="M440,514 L469,514" class="lg" marker-end="url(#pg)"/>
+<path d="M630,514 L647,514" class="lg" marker-end="url(#pg)"/>
+<path d="M600,546 C600,568 940,566 960,547" class="lg" marker-end="url(#pg)"/>
+<path d="M560,546 C560,580 650,578 672,591" class="lg" marker-end="url(#pg)"/>
+<path d="M748,546 L748,591" class="lg" marker-end="url(#pg)"/>
+<path d="M1010,546 L1010,591" class="lg" marker-end="url(#pg)"/>
+<rect x="576" y="616" width="44" height="28" rx="6" class="n"/><text x="598" y="635" text-anchor="middle" class="m">h</text>
+<path d="M620,630 L647,630" class="l" marker-end="url(#pl)"/>
+<g transform="translate(1112,592)"><rect width="160" height="76" rx="8" class="n"/><path d="M14,50 L146,50" class="l" style="stroke-width:1"/><path d="M16,40 C30,20 42,14 56,22 C66,30 70,44 78,58 L146,58" stroke="#c2541f" stroke-width="2" fill="none"/><text x="80" y="70" text-anchor="middle" class="d">learned, non-monotone</text><text x="10" y="16" text-anchor="start" class="m">f(ρ)</text></g>
+<path d="M1112,630 L1097,630" class="lg" marker-end="url(#pg)"/>
+<text x="1112" y="494" text-anchor="start" class="d" fill="#0f7b6c">confidence of the search:</text>
+<text x="1112" y="510" text-anchor="start" class="d" fill="#0f7b6c">tables with candidates,</text>
+<text x="1112" y="526" text-anchor="start" class="d" fill="#0f7b6c">best score, peak attention</text>
+<path d="M1084,262 C1104,300 1104,560 1084,591" class="la" marker-end="url(#pa)" stroke-dasharray="6 4"/>
+<path d="M1000,668 C1000,692 1290,694 1290,640 L1290,320 C1290,300 1286,291 1273,291" class="lg" marker-end="url(#pg)"/>
+<text x="1282" y="470" text-anchor="end" class="b" fill="#c2541f">g</text>
+<rect x="20.0" y="714" width="414.7" height="100" rx="10" class="panel"/>
+<text x="36.0" y="738" text-anchor="start" class="b">Training: the whole text at once</text>
+<text x="36.0" y="760" text-anchor="start" class="d">sort by bucket O(N log N), fixed windows of C keys;</text>
+<text x="36.0" y="777" text-anchor="start" class="d">all recurrences in one segmented associative scan</text>
+<text x="36.0" y="794" text-anchor="start" class="d">(O(N) work, O(log N) depth); saved memory O(N)</text>
+<rect x="446.7" y="714" width="414.7" height="100" rx="10" class="panel"/>
+<text x="462.7" y="738" text-anchor="start" class="b">Writing: O(1) per new token</text>
+<text x="462.7" y="760" text-anchor="start" class="d">a ring of the C most recent positions per bucket and</text>
+<text x="462.7" y="777" text-anchor="start" class="d">table, the Hawkes state of each n-gram's last</text>
+<text x="462.7" y="794" text-anchor="start" class="d">occurrence, and the streak (one number)</text>
+<rect x="873.3" y="714" width="414.7" height="100" rx="10" class="panel"/>
+<text x="889.3" y="738" text-anchor="start" class="b">Numerical protections (stable layer)</text>
+<text x="889.3" y="760" text-anchor="start" class="d">exact mask; 64-bit clock passed to the kernel in</text>
+<text x="889.3" y="777" text-anchor="start" class="d">two 32-bit parts; bounds on β, α, κ and the best</text>
+<text x="889.3" y="794" text-anchor="start" class="d">score; clock projection without TF32</text>
+<text x="660.0" y="844" text-anchor="middle" class="d">Every new parameter starts neutral: a freshly initialized layer computes the simpler base layer.</text>
+</svg>

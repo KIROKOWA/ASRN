@@ -1,0 +1,7605 @@
+{
+ "entorno": {
+  "fecha": "2026-10-04 05:08 UTC",
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "memoria_gpu_gb": 85.1,
+  "torch": "2.11.0+cu130",
+  "cuda": "13.0",
+  "python": "3.13.15",
+  "codigo": "asrn_v89.py sha256 b7529340f6f9",
+  "precision": "bf16",
+  "rapido": false,
+  "minimo": false
+ },
+ "pruebas": {
+  "ok": 56,
+  "saltadas": 1,
+  "fallas": 0,
+  "saltadas_detalle": [
+   "salta  test_torch_compile_un_solo_grafo_y_mismas_cuentas: torch.compile en CPU falla con PyTorch 2.11.0+cu130; comprobado desde 2.14"
+  ]
+ },
+ "verificacion_gpu": [
+  {
+   "prueba": "1. bf16 en GPU, talla 30m",
+   "resultado": "PASA",
+   "detalle": "31,069,686 parametros | perdida 9.704 -> 0.201 | 22,115 piezas/s"
+  },
+  {
+   "prueba": "2. checkpoint por niveles: misma perdida, menos memoria",
+   "resultado": "PASA",
+   "detalle": "no: 3,184 MB | asrn: 1,756 MB | todo: 1,147 MB (largo 2048, lote 4, bf16)"
+  },
+  {
+   "prueba": "3. FSDP con NCCL en 1 proceso",
+   "resultado": "PASA",
+   "detalle": "repartido = sin repartir (dif 0.0e+00); entrena, guarda y carga (dif 0.0e+00)"
+  },
+  {
+   "prueba": "4. torch.compile en GPU: mismas cuentas",
+   "resultado": "SALTADA",
+   "detalle": "PyTorch 2.11.0+cu130: el compilador de PyTorch (Inductor/Triton) falla con este modelo antes de 2.14 (en CPU, y en una A100 con 2.11 y Triton). Es un error del compilador, no de ASRN: sin compilar las cuentas son las mismas (pruebas 5 a 7)"
+  },
+  {
+   "prueba": "5. GPU = CPU: misma salida y mismo gradiente (32 bits)",
+   "resultado": "PASA",
+   "detalle": "100.0% de las posiciones iguales (dif max 6.0e-07); gradiente: dif relativa 4.5e-07"
+  },
+  {
+   "prueba": "6. Causalidad en GPU: el futuro no cambia el pasado",
+   "resultado": "PASA",
+   "detalle": "dif max en el pasado 1.8e-07 (5 cortes, largo 513)"
+  },
+  {
+   "prueba": "7. Escribir paso a paso = texto entero en GPU",
+   "resultado": "PASA",
+   "detalle": "100.0% de los 80 pasos iguales (dif max 2.4e-07)"
+  }
+ ],
+ "capa": {
+  "d": 512,
+  "cabezas": 8,
+  "filas": [
+   {
+    "contendiente": "ASRN",
+    "largo": 1024,
+    "segundos": 0.014962917000048037,
+    "memoria_gb": 0.057920512
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 1024,
+    "segundos": 0.0014836850000392587,
+    "memoria_gb": 0.018425856
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 1024,
+    "segundos": 0.002135843000132809,
+    "memoria_gb": 0.147334144
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 2048,
+    "segundos": 0.014349763999916831,
+    "memoria_gb": 0.113089536
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 2048,
+    "segundos": 0.001408819000062067,
+    "memoria_gb": 0.035448832
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 2048,
+    "segundos": 0.0032262180000088847,
+    "memoria_gb": 0.562750464
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 4096,
+    "segundos": 0.015296864999982063,
+    "memoria_gb": 0.222835712
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 4096,
+    "segundos": 0.0018058760001622431,
+    "memoria_gb": 0.06583296
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 4096,
+    "segundos": 0.010333737999872028,
+    "memoria_gb": 2.204664832
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 8192,
+    "segundos": 0.015546724999921935,
+    "memoria_gb": 0.438160384
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 8192,
+    "segundos": 0.0033471729998382216,
+    "memoria_gb": 0.129042432
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 8192,
+    "segundos": 0.03877330399996026,
+    "memoria_gb": 8.735228928
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 16384,
+    "segundos": 0.018968274000144447,
+    "memoria_gb": 0.874136576
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 16384,
+    "segundos": 0.007908047000000806,
+    "memoria_gb": 0.255461376
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 16384,
+    "segundos": 0.14259487999993326,
+    "memoria_gb": 34.781922304
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 32768,
+    "segundos": 0.026944158000105745,
+    "memoria_gb": 1.744259072
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 32768,
+    "segundos": 0.02615377899996929,
+    "memoria_gb": 0.508299264
+   },
+   {
+    "contendiente": "Atención ingenua (matriz N×N)",
+    "largo": 32768,
+    "sin_memoria": true
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 65536,
+    "segundos": 0.04871918100002404,
+    "memoria_gb": 3.484674048
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 65536,
+    "segundos": 0.09604857499994068,
+    "memoria_gb": 1.015023616
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 131072,
+    "segundos": 0.09432889499998964,
+    "memoria_gb": 6.966823424
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 131072,
+    "segundos": 0.36998375999996824,
+    "memoria_gb": 2.025326592
+   },
+   {
+    "contendiente": "ASRN",
+    "largo": 262144,
+    "segundos": 0.18206222000003436,
+    "memoria_gb": 13.929106432
+   },
+   {
+    "contendiente": "Atención (FlashAttention)",
+    "largo": 262144,
+    "segundos": 1.4700427180000588,
+    "memoria_gb": 4.048029696
+   }
+  ],
+  "pendientes": {
+   "ASRN": {
+    "tiempo": 0.8333269792925462,
+    "memoria": 0.9986087050374175
+   },
+   "Atención (FlashAttention)": {
+    "tiempo": 1.8899012459163285,
+    "memoria": 0.996649009285633
+   },
+   "Atención ingenua (matriz N×N)": {
+    "tiempo": NaN,
+    "memoria": NaN
+   }
+  }
+ },
+ "modelo": {
+  "parametros": {
+   "ASRN": 49228176,
+   "ASRN + checkpoint": 49228176,
+   "Transformer (FlashAttention)": 50767488
+  },
+  "piezas_por_paso": 32768,
+  "filas": [
+   {
+    "modelo": "ASRN",
+    "largo": 1024,
+    "lote": 32,
+    "segundos_paso": 0.5192470699998921,
+    "piezas_por_s": 63106.759562469575,
+    "memoria_total_gb": 27.70528
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 4096,
+    "lote": 8,
+    "segundos_paso": 0.3356435609998698,
+    "piezas_por_s": 97627.37560758006,
+    "memoria_total_gb": 27.58969088
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 16384,
+    "lote": 2,
+    "segundos_paso": 0.32469873600007304,
+    "piezas_por_s": 100918.16310610039,
+    "memoria_total_gb": 27.560553984
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 32768,
+    "lote": 1,
+    "segundos_paso": 0.3255390909998823,
+    "piezas_por_s": 100657.6503588377,
+    "memoria_total_gb": 27.564605952
+   },
+   {
+    "modelo": "ASRN + checkpoint",
+    "largo": 1024,
+    "lote": 32,
+    "segundos_paso": 0.6099414620000516,
+    "piezas_por_s": 53723.18827539753,
+    "memoria_total_gb": 17.0808704
+   },
+   {
+    "modelo": "ASRN + checkpoint",
+    "largo": 4096,
+    "lote": 8,
+    "segundos_paso": 0.4169624549999753,
+    "piezas_por_s": 78587.4114253331,
+    "memoria_total_gb": 17.082737664
+   },
+   {
+    "modelo": "ASRN + checkpoint",
+    "largo": 16384,
+    "lote": 2,
+    "segundos_paso": 0.40764548800007105,
+    "piezas_por_s": 80383.57093258025,
+    "memoria_total_gb": 17.081573888
+   },
+   {
+    "modelo": "ASRN + checkpoint",
+    "largo": 32768,
+    "lote": 1,
+    "segundos_paso": 0.40826066299996455,
+    "piezas_por_s": 80262.44742566062,
+    "memoria_total_gb": 17.083390976
+   },
+   {
+    "modelo": "Transformer (FlashAttention)",
+    "largo": 1024,
+    "lote": 32,
+    "segundos_paso": 0.1419101540000156,
+    "piezas_por_s": 230906.66225333244,
+    "memoria_total_gb": 22.24241664
+   },
+   {
+    "modelo": "Transformer (FlashAttention)",
+    "largo": 4096,
+    "lote": 8,
+    "segundos_paso": 0.16241152499992495,
+    "piezas_por_s": 201759.08082887062,
+    "memoria_total_gb": 22.248708096
+   },
+   {
+    "modelo": "Transformer (FlashAttention)",
+    "largo": 16384,
+    "lote": 2,
+    "segundos_paso": 0.23819679199982602,
+    "piezas_por_s": 137566.92407521565,
+    "memoria_total_gb": 22.276347904
+   },
+   {
+    "modelo": "Transformer (FlashAttention)",
+    "largo": 32768,
+    "lote": 1,
+    "segundos_paso": 0.3394175109999651,
+    "piezas_por_s": 96541.86639770442,
+    "memoria_total_gb": 22.30991872
+   }
+  ],
+  "asrn": {
+   "d": 576,
+   "n_capas": 9
+  }
+ },
+ "copia": {
+  "V": 512,
+  "largo": 1024,
+  "pasos": 2000,
+  "lote": 32,
+  "tasas": [
+   0.001,
+   0.003
+  ],
+  "semillas": [
+   0,
+   1,
+   2
+  ],
+  "corridas": [
+   {
+    "modelo": "ASRN",
+    "lr": 0.001,
+    "semilla": 0,
+    "parametros": 2828390,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.242794036865234,
+      "segundos": 5.788631144999954
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.241489887237549,
+      "segundos": 11.251580812999919
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.241912364959717,
+      "segundos": 16.725658361999876
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.239253997802734,
+      "segundos": 22.168528528000024
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.239167213439941,
+      "segundos": 27.620635399999856,
+      "exactitud": 0.002262720156555773,
+      "perdida_copia": 6.239081664561292
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.238336086273193,
+      "segundos": 33.055419335000124
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.238348960876465,
+      "segundos": 38.50358326200012
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.237964153289795,
+      "segundos": 43.961410802000046
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.238385200500488,
+      "segundos": 49.41049786999997
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.237456798553467,
+      "segundos": 54.873615954000115,
+      "exactitud": 0.0017734833659491193,
+      "perdida_copia": 6.237650234871881
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.237436294555664,
+      "segundos": 60.31591521400014
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.237711429595947,
+      "segundos": 65.78731754
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.2364935874938965,
+      "segundos": 71.22547344300006
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.237000942230225,
+      "segundos": 76.7093146090001
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.237422466278076,
+      "segundos": 82.16661332500007,
+      "exactitud": 0.0019875244618395302,
+      "perdida_copia": 6.237048901223856
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.236851692199707,
+      "segundos": 87.66174944499994
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.237383842468262,
+      "segundos": 93.131763224
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 6.236944675445557,
+      "segundos": 98.68283308700006
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 6.236688137054443,
+      "segundos": 104.27082981500007
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 6.236719131469727,
+      "segundos": 109.8683784750001,
+      "exactitud": 0.0017429060665362034,
+      "perdida_copia": 6.236913035293848
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 6.236668586730957,
+      "segundos": 115.43943019599988
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 6.236725330352783,
+      "segundos": 120.989813228
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 6.236931800842285,
+      "segundos": 126.54884079999988
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 6.23643684387207,
+      "segundos": 132.109571362
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 6.236374855041504,
+      "segundos": 137.68425941099986,
+      "exactitud": 0.0025073385518590997,
+      "perdida_copia": 6.2359591071619676
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 6.236696720123291,
+      "segundos": 143.26685925399988
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 6.236690044403076,
+      "segundos": 148.88234751100003
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 6.236518859863281,
+      "segundos": 154.48350441699995
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 6.2354912757873535,
+      "segundos": 160.11973862800005
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 6.235227584838867,
+      "segundos": 165.77591140100003,
+      "exactitud": 0.0027519569471624265,
+      "perdida_copia": 6.233350332002583
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 6.232654571533203,
+      "segundos": 171.40911070499988
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 6.201723098754883,
+      "segundos": 177.05852441399975
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 6.08884859085083,
+      "segundos": 182.6918045309999
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 6.051727771759033,
+      "segundos": 188.41305497599978
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 6.100872993469238,
+      "segundos": 194.19323897499976,
+      "exactitud": 0.004708904109589041,
+      "perdida_copia": 5.963268780195083
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 6.169189929962158,
+      "segundos": 199.9239636489997
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 6.206498622894287,
+      "segundos": 205.63475048799955
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 6.205845832824707,
+      "segundos": 211.33719505899967
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 6.203522682189941,
+      "segundos": 217.00504797799977
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 6.185670852661133,
+      "segundos": 222.68506871899967,
+      "exactitud": 0.0033635029354207435,
+      "perdida_copia": 6.131688127312408
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 6.18498420715332,
+      "segundos": 228.38077329299972
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 6.1736955642700195,
+      "segundos": 234.08704068999987
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 6.170777320861816,
+      "segundos": 239.83473546799974
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 6.176313400268555,
+      "segundos": 245.55009936499982
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 6.185078144073486,
+      "segundos": 251.26765256099975,
+      "exactitud": 0.003822162426614481,
+      "perdida_copia": 6.13243067194571
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 6.181721210479736,
+      "segundos": 256.97139642399975
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 6.168471813201904,
+      "segundos": 262.71782684699974
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 6.15651273727417,
+      "segundos": 268.4452023719998
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 6.147621154785156,
+      "segundos": 274.19405144099983
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 6.116777420043945,
+      "segundos": 279.9106982139999,
+      "exactitud": 0.009631849315068493,
+      "perdida_copia": 5.989389886128226
+     }
+    ],
+    "segundos": 279.9106982139999,
+    "piezas_por_s": 233903.17132482282,
+    "exactitud_por_largo": {
+     "1024": 0.011252446183953033,
+     "4096": 0.0038165608207132388,
+     "16384": 0.002083078989134416
+    }
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 0,
+    "parametros": 2828390,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.248420715332031,
+      "segundos": 5.468930893999868
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.241327285766602,
+      "segundos": 10.90822947599986
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.239844799041748,
+      "segundos": 16.37870438999994
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.2382378578186035,
+      "segundos": 21.825732519999974
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.238549709320068,
+      "segundos": 27.37838730699991,
+      "exactitud": 0.0016817514677103717,
+      "perdida_copia": 6.238434793431232
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.237505912780762,
+      "segundos": 32.994186378999984
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.2372612953186035,
+      "segundos": 38.7097432380001
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 5.4921770095825195,
+      "segundos": 44.463609937
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 3.3030307292938232,
+      "segundos": 50.16576856400002
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 3.1419098377227783,
+      "segundos": 55.77335966600003,
+      "exactitud": 0.9983182485322897,
+      "perdida_copia": 0.025523939594597266
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 3.134197473526001,
+      "segundos": 61.37519637199989
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 3.1304385662078857,
+      "segundos": 66.96360304500013
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 3.1289379596710205,
+      "segundos": 72.58326102000001
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 3.2023561000823975,
+      "segundos": 78.18749816899981
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 3.1282575130462646,
+      "segundos": 83.81944891900002,
+      "exactitud": 0.9996636497064579,
+      "perdida_copia": 0.01058915111649993
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 3.127729654312134,
+      "segundos": 89.445882515
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 3.1273698806762695,
+      "segundos": 95.0891230289999
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 3.1287710666656494,
+      "segundos": 100.71552247699992
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 3.127535343170166,
+      "segundos": 106.39371239000002
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 3.127462863922119,
+      "segundos": 112.08083569400014,
+      "exactitud": 0.9999388454011742,
+      "perdida_copia": 0.010168649562417644
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 3.126555919647217,
+      "segundos": 117.75338877100012
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 3.126508951187134,
+      "segundos": 123.4375838420001
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 3.127042055130005,
+      "segundos": 129.16282664499977
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 3.126305341720581,
+      "segundos": 134.90670054700013
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 3.1271824836730957,
+      "segundos": 140.69309170499992,
+      "exactitud": 0.9997859589041096,
+      "perdida_copia": 0.009021115629640345
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 3.126152753829956,
+      "segundos": 146.4607095700003
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 3.126892566680908,
+      "segundos": 152.24764080000023
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 3.125457286834717,
+      "segundos": 158.0446614350003
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 3.1257896423339844,
+      "segundos": 163.86654980100002
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 3.1253256797790527,
+      "segundos": 169.667534401,
+      "exactitud": 0.9994190313111546,
+      "perdida_copia": 0.007971141873740404
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 3.125124216079712,
+      "segundos": 175.4882940370003
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 3.1253926753997803,
+      "segundos": 181.29341518
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 3.125314474105835,
+      "segundos": 187.15358492800033
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 3.1244125366210938,
+      "segundos": 192.93503527600024
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 3.123953342437744,
+      "segundos": 198.76472374800005,
+      "exactitud": 0.9995719178082192,
+      "perdida_copia": 0.004499395372466332
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 3.124058723449707,
+      "segundos": 204.540509166
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 3.1243138313293457,
+      "segundos": 210.39933228000018
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 3.125481605529785,
+      "segundos": 216.2170291100001
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 3.1259233951568604,
+      "segundos": 222.0668999899999
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 3.124588966369629,
+      "segundos": 227.89394840700015,
+      "exactitud": 0.9994496086105675,
+      "perdida_copia": 0.003882401697556333
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 3.1242077350616455,
+      "segundos": 233.70599955199987
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 3.1239209175109863,
+      "segundos": 239.50424024799986
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 3.124051332473755,
+      "segundos": 245.34480976900022
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 3.1236214637756348,
+      "segundos": 251.1789296500001
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 3.123908519744873,
+      "segundos": 257.03378790099987,
+      "exactitud": 0.9996636497064579,
+      "perdida_copia": 0.003005857734326747
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 3.12424373626709,
+      "segundos": 262.879551513
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 3.1236941814422607,
+      "segundos": 268.7310913340002
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 3.1238667964935303,
+      "segundos": 274.56637170500017
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 3.123154401779175,
+      "segundos": 280.40404450100004
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 3.124199867248535,
+      "segundos": 286.23840110499987,
+      "exactitud": 0.9994496086105675,
+      "perdida_copia": 0.003919375203768568
+     }
+    ],
+    "segundos": 286.23840110499987,
+    "piezas_por_s": 228732.4123781111,
+    "exactitud_por_largo": {
+     "1024": 0.9993884540117417,
+     "4096": 0.865657059110894,
+     "16384": 0.3050070198998901
+    }
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 0,
+    "parametros": 2497792,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.2427077293396,
+      "segundos": 0.6729698970002573
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.240840435028076,
+      "segundos": 1.3394307210000989
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.240871429443359,
+      "segundos": 2.0046548109999094
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.239296913146973,
+      "segundos": 2.6701705610003046
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.240086555480957,
+      "segundos": 3.33544661499991,
+      "exactitud": 0.002018101761252446,
+      "perdida_copia": 6.239361936565481
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.238767147064209,
+      "segundos": 4.000985231999948
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.238978385925293,
+      "segundos": 4.666161082000144
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.238818645477295,
+      "segundos": 5.331613852999908
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.238564968109131,
+      "segundos": 5.997875918000318
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.238168716430664,
+      "segundos": 6.663742258000184,
+      "exactitud": 0.0021404109589041095,
+      "perdida_copia": 6.2385967874247035
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.238467216491699,
+      "segundos": 7.3292458120004085
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.237547874450684,
+      "segundos": 7.995490847000383
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.216132640838623,
+      "segundos": 8.662252939000155
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.186009883880615,
+      "segundos": 9.327973734000352
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.173281192779541,
+      "segundos": 9.993949152000368,
+      "exactitud": 0.007032778864970645,
+      "perdida_copia": 6.123368354692851
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.171065330505371,
+      "segundos": 10.659556815000087
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.107122898101807,
+      "segundos": 11.325645183000233
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 5.794463157653809,
+      "segundos": 11.991320376000203
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 5.451532363891602,
+      "segundos": 12.657530099000269
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 5.23032283782959,
+      "segundos": 13.3241079000004,
+      "exactitud": 0.1172945205479452,
+      "perdida_copia": 4.203093168553541
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 5.084052085876465,
+      "segundos": 13.990521340000214
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 4.98085880279541,
+      "segundos": 14.65911463500015
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 4.8596577644348145,
+      "segundos": 15.324679066000499
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 4.789971828460693,
+      "segundos": 15.990698962000351
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 4.686384201049805,
+      "segundos": 16.656540667000172,
+      "exactitud": 0.39481409001956946,
+      "perdida_copia": 3.1275924264568173
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 4.608715534210205,
+      "segundos": 17.32279857399999
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 4.531171798706055,
+      "segundos": 17.988513067999975
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 4.445927143096924,
+      "segundos": 18.65487537199988
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 4.44549560546875,
+      "segundos": 19.32084887000019
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 4.370922088623047,
+      "segundos": 19.98647715700008,
+      "exactitud": 0.5584332191780822,
+      "perdida_copia": 2.5139917571483994
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 4.2985005378723145,
+      "segundos": 20.652492171000176
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 4.224918842315674,
+      "segundos": 21.3181806890002
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 4.185134410858154,
+      "segundos": 21.984254168000007
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 4.1500468254089355,
+      "segundos": 22.650053148000097
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 4.080063819885254,
+      "segundos": 23.31589492100011,
+      "exactitud": 0.6928204500978473,
+      "perdida_copia": 1.9599210660751551
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 4.0588908195495605,
+      "segundos": 23.981919588999972
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 4.0385355949401855,
+      "segundos": 24.648142520999954
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 3.986847162246704,
+      "segundos": 25.31431692599972
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 3.9966812133789062,
+      "segundos": 25.98006603199974
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 3.9539918899536133,
+      "segundos": 26.646106486999997,
+      "exactitud": 0.7067942759295499,
+      "perdida_copia": 1.7014724746375633
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 3.9257149696350098,
+      "segundos": 27.312116501999753
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 3.878582715988159,
+      "segundos": 27.978316233999976
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 3.845773935317993,
+      "segundos": 28.644815575999928
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 3.78951096534729,
+      "segundos": 29.31029665899996
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 3.7289328575134277,
+      "segundos": 29.975867123999706,
+      "exactitud": 0.7508255870841487,
+      "perdida_copia": 1.2319874698168611
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 3.678222417831421,
+      "segundos": 30.64237116899949
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 3.6315081119537354,
+      "segundos": 31.30840750599964
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 3.5949745178222656,
+      "segundos": 31.973903787999916
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 3.562593698501587,
+      "segundos": 32.63971867199962
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 3.5451772212982178,
+      "segundos": 33.30492052499949,
+      "exactitud": 0.8546355185909981,
+      "perdida_copia": 0.8329313655188872
+     }
+    ],
+    "segundos": 33.30492052499949,
+    "piezas_por_s": 1965835.6473439147,
+    "exactitud_por_largo": {
+     "1024": 0.8554305283757339,
+     "4096": 0.0018624816805080605,
+     "16384": 0.001953363447686485
+    }
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.003,
+    "semilla": 0,
+    "parametros": 2497792,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.247893810272217,
+      "segundos": 0.6743507309997767
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.243133068084717,
+      "segundos": 1.3415624439999192
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.240024089813232,
+      "segundos": 2.0079434419999416
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.2285308837890625,
+      "segundos": 2.6731349839997165
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 5.753061294555664,
+      "segundos": 3.3387951169997905,
+      "exactitud": 0.005412181996086105,
+      "perdida_copia": 5.385156023059106
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 5.596978664398193,
+      "segundos": 4.004715832999864
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 5.669223308563232,
+      "segundos": 4.670313809000163
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 5.469181537628174,
+      "segundos": 5.3360548340001515
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 5.415436744689941,
+      "segundos": 6.001817468999889
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 5.143518447875977,
+      "segundos": 6.667880161000085,
+      "exactitud": 0.054886252446183954,
+      "perdida_copia": 4.004935083557248
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 5.1322340965271,
+      "segundos": 7.3335698240002785
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 4.970188617706299,
+      "segundos": 7.999478933999853
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 5.003835678100586,
+      "segundos": 8.665364216999933
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 4.920100688934326,
+      "segundos": 9.330938375000187
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 4.977770805358887,
+      "segundos": 9.996967046999998,
+      "exactitud": 0.036142367906066536,
+      "perdida_copia": 3.699180214838972
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 4.731034755706787,
+      "segundos": 10.663303176999761
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 4.735903739929199,
+      "segundos": 11.329243988999679
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 4.73246955871582,
+      "segundos": 11.99621924999974
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 4.654706001281738,
+      "segundos": 12.662460025999735
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 4.601486682891846,
+      "segundos": 13.329367504999937,
+      "exactitud": 0.03776296477495108,
+      "perdida_copia": 3.4091673401237235
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 4.6268157958984375,
+      "segundos": 13.995113693999883
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 4.606250762939453,
+      "segundos": 14.661418168999717
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 4.659082412719727,
+      "segundos": 15.32764376499972
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 4.506505012512207,
+      "segundos": 15.99345278499959
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 4.671497821807861,
+      "segundos": 16.658911367999735,
+      "exactitud": 0.053082191780821915,
+      "perdida_copia": 3.1948332515947975
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 4.636045932769775,
+      "segundos": 17.324490941999557
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 4.5451836585998535,
+      "segundos": 17.99075286499965
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 4.481030464172363,
+      "segundos": 18.66031088999989
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 4.625669002532959,
+      "segundos": 19.325944405999962
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 4.474363803863525,
+      "segundos": 19.991818551999586,
+      "exactitud": 0.15438478473581213,
+      "perdida_copia": 2.628633622320664
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 4.407965660095215,
+      "segundos": 20.657216257000073
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 4.389575004577637,
+      "segundos": 21.3224070870001
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 4.513478755950928,
+      "segundos": 21.987555616999998
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 4.3789167404174805,
+      "segundos": 22.652784114000042
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 4.324127674102783,
+      "segundos": 23.318738077000035,
+      "exactitud": 0.18860078277886497,
+      "perdida_copia": 2.427913135745054
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 4.343231678009033,
+      "segundos": 23.98495714099954
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 4.305095672607422,
+      "segundos": 24.651445281999713
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 4.303070545196533,
+      "segundos": 25.3170654139999
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 4.282005786895752,
+      "segundos": 25.982530346999738
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 4.310184001922607,
+      "segundos": 26.64734960299984,
+      "exactitud": 0.19086350293542073,
+      "perdida_copia": 2.3247867890300116
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 4.256852626800537,
+      "segundos": 27.312360966999677
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 4.246682643890381,
+      "segundos": 27.977551509999557
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 4.215382099151611,
+      "segundos": 28.642513455999506
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 4.208910942077637,
+      "segundos": 29.307476187999782
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 4.2129106521606445,
+      "segundos": 29.972951046999697,
+      "exactitud": 0.2667563600782779,
+      "perdida_copia": 2.172027543099659
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 4.1988844871521,
+      "segundos": 30.639096097999754
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 4.180437088012695,
+      "segundos": 31.30455779699969
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 4.173597812652588,
+      "segundos": 31.969917101999727
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 4.14978551864624,
+      "segundos": 32.63590883300003
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 4.155649662017822,
+      "segundos": 33.300971777000086,
+      "exactitud": 0.2604880136986301,
+      "perdida_copia": 2.106808552303426
+     }
+    ],
+    "segundos": 33.300971777000086,
+    "piezas_por_s": 1966068.7513395452,
+    "exactitud_por_largo": {
+     "1024": 0.26700097847358123,
+     "4096": 0.0010686370297997069,
+     "16384": 0.0018312782322060799
+    }
+   },
+   {
+    "modelo": "Solo bloques locales",
+    "lr": 0.001,
+    "semilla": 0,
+    "parametros": 2236928,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.242789268493652,
+      "segundos": 0.5238220029996228
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.2414984703063965,
+      "segundos": 1.0412019989998953
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.241906642913818,
+      "segundos": 1.5581828889999088
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.239264011383057,
+      "segundos": 2.07517535199986
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.239156723022461,
+      "segundos": 2.5917944640000314,
+      "exactitud": 0.0023544520547945204,
+      "perdida_copia": 6.239101611471456
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.238340377807617,
+      "segundos": 3.108044666999831
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.238396644592285,
+      "segundos": 3.6247989349999443
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.238004207611084,
+      "segundos": 4.141057369999999
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.238371849060059,
+      "segundos": 4.657336129000214
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.237464904785156,
+      "segundos": 5.173435655000048,
+      "exactitud": 0.0017123287671232876,
+      "perdida_copia": 6.237656893795484
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.237475872039795,
+      "segundos": 5.6897681600003125
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.237814903259277,
+      "segundos": 6.205857850000029
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.236525535583496,
+      "segundos": 6.72237889500002
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.237008571624756,
+      "segundos": 7.238672468999994
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.23731803894043,
+      "segundos": 7.754978914000276,
+      "exactitud": 0.0019569471624266144,
+      "perdida_copia": 6.237056336524202
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.236871719360352,
+      "segundos": 8.271774257999823
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.237401485443115,
+      "segundos": 8.78820173799977
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 6.2370076179504395,
+      "segundos": 9.30472005699994
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 6.236740589141846,
+      "segundos": 9.82124891400008
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 6.236782550811768,
+      "segundos": 10.338246983999852,
+      "exactitud": 0.001834637964774951,
+      "perdida_copia": 6.237080523645808
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 6.236740589141846,
+      "segundos": 10.854851358999895
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 6.236777305603027,
+      "segundos": 11.371460704999663
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 6.237060070037842,
+      "segundos": 11.888013281999974
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 6.236537933349609,
+      "segundos": 12.404907506999734
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 6.236517906188965,
+      "segundos": 12.921260832999906,
+      "exactitud": 0.0018957925636007827,
+      "perdida_copia": 6.236454166778146
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 6.236791133880615,
+      "segundos": 13.438133999999536
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 6.237078666687012,
+      "segundos": 13.95471471799965
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 6.236778259277344,
+      "segundos": 14.471503481999662
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 6.236370086669922,
+      "segundos": 14.98850044799974
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 6.236363410949707,
+      "segundos": 15.505241087999366,
+      "exactitud": 0.0016817514677103717,
+      "perdida_copia": 6.236792219128394
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 6.236631393432617,
+      "segundos": 16.02192764899928
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 6.236433982849121,
+      "segundos": 16.53839470099956
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 6.236611366271973,
+      "segundos": 17.054912446999424
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 6.23676061630249,
+      "segundos": 17.571412586999486
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 6.236499309539795,
+      "segundos": 18.08804988499969,
+      "exactitud": 0.0022932974559686887,
+      "perdida_copia": 6.236425620002523
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 6.236545562744141,
+      "segundos": 18.605017573999703
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 6.236429214477539,
+      "segundos": 19.1232122589995
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 6.2365617752075195,
+      "segundos": 19.639944403999834
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 6.236666202545166,
+      "segundos": 20.156676412999786
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 6.236581325531006,
+      "segundos": 20.6731946029995,
+      "exactitud": 0.002415606653620352,
+      "perdida_copia": 6.236307491295025
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 6.236466407775879,
+      "segundos": 21.18980686299983
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 6.236419677734375,
+      "segundos": 21.706221296999956
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 6.236474514007568,
+      "segundos": 22.222849930999928
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 6.236543655395508,
+      "segundos": 22.739510139999766
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 6.236546516418457,
+      "segundos": 23.256253004999962,
+      "exactitud": 0.0021404109589041095,
+      "perdida_copia": 6.2364071959852
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 6.236432075500488,
+      "segundos": 23.772882156999458
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 6.236496925354004,
+      "segundos": 24.28961949799941
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 6.236111164093018,
+      "segundos": 24.806696851999277
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 6.236397743225098,
+      "segundos": 25.323482806999436
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 6.2364420890808105,
+      "segundos": 25.84000601299931,
+      "exactitud": 0.0019569471624266144,
+      "perdida_copia": 6.236393848277351
+     }
+    ],
+    "segundos": 25.84000601299931,
+    "piezas_por_s": 2533745.5404253025,
+    "exactitud_por_largo": {
+     "1024": 0.0014677103718199608,
+     "4096": 0.0019235466536394723,
+     "16384": 0.0019381027957514345
+    }
+   },
+   {
+    "modelo": "Solo bloques locales",
+    "lr": 0.003,
+    "semilla": 0,
+    "parametros": 2236928,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.248417854309082,
+      "segundos": 0.5229204120000759
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.241332054138184,
+      "segundos": 1.0390293670002393
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.2398600578308105,
+      "segundos": 1.5553457260002688
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.23829984664917,
+      "segundos": 2.0714385300002505
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.238670825958252,
+      "segundos": 2.5877250950002235,
+      "exactitud": 0.00162059686888454,
+      "perdida_copia": 6.238492812662442
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.237675189971924,
+      "segundos": 3.103879870000128
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.237635135650635,
+      "segundos": 3.6200894690000496
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.23710823059082,
+      "segundos": 4.136134311000205
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.237301826477051,
+      "segundos": 4.652355515000181
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.237124919891357,
+      "segundos": 5.168395537999913,
+      "exactitud": 0.0021098336594911936,
+      "perdida_copia": 6.236928264222266
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.237156867980957,
+      "segundos": 5.68454061500006
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.236944675445557,
+      "segundos": 6.200897203000295
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.236612319946289,
+      "segundos": 6.717273096000099
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.236972808837891,
+      "segundos": 7.2334451310002805
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.236752033233643,
+      "segundos": 7.74969615200007,
+      "exactitud": 0.0018652152641878668,
+      "perdida_copia": 6.236687915899049
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.236649513244629,
+      "segundos": 8.267529479000586
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.236914157867432,
+      "segundos": 8.783868682000502
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 6.23682165145874,
+      "segundos": 9.30115668100052
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 6.236648082733154,
+      "segundos": 9.818402777000301
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 6.236569404602051,
+      "segundos": 10.335246442000425,
+      "exactitud": 0.0018040606653620351,
+      "perdida_copia": 6.236859704183739
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 6.236732006072998,
+      "segundos": 10.851932408000266
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 6.236711502075195,
+      "segundos": 11.368741045000206
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 6.236883640289307,
+      "segundos": 11.885424111000248
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 6.23661470413208,
+      "segundos": 12.402301840000291
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 6.236536026000977,
+      "segundos": 12.918765785000232,
+      "exactitud": 0.0017123287671232876,
+      "perdida_copia": 6.236479787210662
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 6.23673152923584,
+      "segundos": 13.435564322000573
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 6.236913204193115,
+      "segundos": 13.952502741000444
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 6.236658573150635,
+      "segundos": 14.469292919000509
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 6.236395835876465,
+      "segundos": 14.986922374000642
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 6.236363410949707,
+      "segundos": 15.503702486000293,
+      "exactitud": 0.0018957925636007827,
+      "perdida_copia": 6.236576087787427
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 6.236617088317871,
+      "segundos": 16.020773003000613
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 6.236410617828369,
+      "segundos": 16.537596111000312
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 6.2366461753845215,
+      "segundos": 17.05459233200054
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 6.236690521240234,
+      "segundos": 17.571417217000544
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 6.2364501953125,
+      "segundos": 18.088594257000295,
+      "exactitud": 0.0023544520547945204,
+      "perdida_copia": 6.236412660483045
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 6.236600875854492,
+      "segundos": 18.606292371000563
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 6.236464500427246,
+      "segundos": 19.123497474000487
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 6.236517429351807,
+      "segundos": 19.640793813000528
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 6.236616134643555,
+      "segundos": 20.15862771500042
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 6.2365803718566895,
+      "segundos": 20.67572427200048,
+      "exactitud": 0.0020792563600782778,
+      "perdida_copia": 6.236344787239329
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 6.236420154571533,
+      "segundos": 21.19337595700017
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 6.2364044189453125,
+      "segundos": 21.71032079700035
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 6.236512184143066,
+      "segundos": 22.22760584300022
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 6.236543655395508,
+      "segundos": 22.744751719000305
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 6.236494064331055,
+      "segundos": 23.262262056000054,
+      "exactitud": 0.002262720156555773,
+      "perdida_copia": 6.236392116360002
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 6.236454963684082,
+      "segundos": 23.779135398000108
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 6.236423969268799,
+      "segundos": 24.296556559000237
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 6.236190319061279,
+      "segundos": 24.81354235500021
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 6.236426830291748,
+      "segundos": 25.33030017900046
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 6.236429214477539,
+      "segundos": 25.846992438000143,
+      "exactitud": 0.002201565557729941,
+      "perdida_copia": 6.236407016821337
+     }
+    ],
+    "segundos": 25.846992438000143,
+    "piezas_por_s": 2533060.6706776195,
+    "exactitud_por_largo": {
+     "1024": 0.0025684931506849314,
+     "4096": 0.0021983390327308255,
+     "16384": 0.002105969967036992
+    }
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 1,
+    "parametros": 2828390,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.2471113204956055,
+      "segundos": 5.471492665999904
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.242808818817139,
+      "segundos": 10.927882634999605
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.238306045532227,
+      "segundos": 16.37991510899974
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.238487243652344,
+      "segundos": 21.881662392999715
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.237645149230957,
+      "segundos": 27.404507020999972,
+      "exactitud": 0.0021098336594911936,
+      "perdida_copia": 6.237439747192622
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.23780632019043,
+      "segundos": 32.97832808600015
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.225341320037842,
+      "segundos": 38.630868460999864
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 3.550011157989502,
+      "segundos": 44.41644680799982
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 3.1419098377227783,
+      "segundos": 50.15950594600008
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 3.13376522064209,
+      "segundos": 55.89641570799995,
+      "exactitud": 0.998929794520548,
+      "perdida_copia": 0.015511097040195055
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 3.1313834190368652,
+      "segundos": 61.59493974900033
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 3.1292922496795654,
+      "segundos": 67.28011688900006
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 3.1282174587249756,
+      "segundos": 72.92693932700013
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 3.1287834644317627,
+      "segundos": 78.60401673500019
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 3.128109931945801,
+      "segundos": 84.30939808800031,
+      "exactitud": 0.9990826810176126,
+      "perdida_copia": 0.011945466239391708
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 3.127732276916504,
+      "segundos": 89.9843324970002
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 3.127734422683716,
+      "segundos": 95.62019700400015
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 3.1276118755340576,
+      "segundos": 101.21384867800043
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 3.126896858215332,
+      "segundos": 106.79744891700057
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 3.1264967918395996,
+      "segundos": 112.40711033900016,
+      "exactitud": 0.9999388454011742,
+      "perdida_copia": 0.00606513246456471
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 3.125709295272827,
+      "segundos": 118.0283972770003
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 3.1249680519104004,
+      "segundos": 123.67753041200012
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 3.1243340969085693,
+      "segundos": 129.3359344700002
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 3.1246674060821533,
+      "segundos": 134.98142457700033
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 3.1254897117614746,
+      "segundos": 140.62260200200035,
+      "exactitud": 0.9999082681017613,
+      "perdida_copia": 0.00436626226001523
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 3.1235671043395996,
+      "segundos": 146.237304708
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 3.1252777576446533,
+      "segundos": 151.89099820299998
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 3.124037265777588,
+      "segundos": 157.56059114200025
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 3.124532461166382,
+      "segundos": 163.21745001199997
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 3.1244325637817383,
+      "segundos": 168.8462133150001,
+      "exactitud": 0.9998776908023483,
+      "perdida_copia": 0.0030211152293794074
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 3.1246752738952637,
+      "segundos": 174.44986912299964
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 3.123810052871704,
+      "segundos": 180.06243114399967
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 3.124068260192871,
+      "segundos": 185.67862712399983
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 3.1233437061309814,
+      "segundos": 191.3198518649997
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 3.1239047050476074,
+      "segundos": 196.9701592929996,
+      "exactitud": 0.9998776908023483,
+      "perdida_copia": 0.002521075716573898
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 3.123854160308838,
+      "segundos": 202.59815210099987
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 3.1240234375,
+      "segundos": 208.19689865599958
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 3.1239795684814453,
+      "segundos": 213.8229829449997
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 3.124022960662842,
+      "segundos": 219.46424761699973
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 3.1237781047821045,
+      "segundos": 225.09381912499975,
+      "exactitud": 0.9999694227005871,
+      "perdida_copia": 0.002475087824341369
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 3.123732805252075,
+      "segundos": 230.65115783699957
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 3.124058723449707,
+      "segundos": 236.2318813959996
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 3.123358964920044,
+      "segundos": 241.81716832099937
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 3.1237270832061768,
+      "segundos": 247.3956479849994
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 3.1232142448425293,
+      "segundos": 252.97053939899934,
+      "exactitud": 0.9999082681017613,
+      "perdida_copia": 0.002576443569009318
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 3.1231331825256348,
+      "segundos": 258.53728595799976
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 3.1236612796783447,
+      "segundos": 264.1170710379997
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 3.1232056617736816,
+      "segundos": 269.6714596269994
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 3.123335123062134,
+      "segundos": 275.2989062339998
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 3.123037338256836,
+      "segundos": 280.88372048799965,
+      "exactitud": 0.9999388454011742,
+      "perdida_copia": 0.0019368054436377583
+     }
+    ],
+    "segundos": 280.88372048799965,
+    "piezas_por_s": 233092.8965418528,
+    "exactitud_por_largo": {
+     "1024": 0.9997553816046967,
+     "4096": 0.9999694675134343,
+     "16384": 0.9750564644121597
+    }
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 2,
+    "parametros": 2828390,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.249560832977295,
+      "segundos": 5.667423204999977
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.242925643920898,
+      "segundos": 11.345363317999727
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.239144325256348,
+      "segundos": 17.038399339999614
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.238961219787598,
+      "segundos": 22.737927383999704
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.237642765045166,
+      "segundos": 28.45706791399971,
+      "exactitud": 0.002629647749510763,
+      "perdida_copia": 6.237222988778131
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.236881256103516,
+      "segundos": 34.21294772699957
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.232377052307129,
+      "segundos": 39.996241046999785
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 4.504658222198486,
+      "segundos": 45.82389130699994
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 3.1577937602996826,
+      "segundos": 51.59254918099987
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 3.133746862411499,
+      "segundos": 57.16862888699961,
+      "exactitud": 0.9991132583170255,
+      "perdida_copia": 0.01589004365898625
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 3.130899429321289,
+      "segundos": 62.681533887000114
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 3.128607988357544,
+      "segundos": 68.22471340799984
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 3.1288633346557617,
+      "segundos": 73.80523409699981
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 3.128774881362915,
+      "segundos": 79.39847667200002
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 3.126755714416504,
+      "segundos": 84.93254640399982,
+      "exactitud": 1.0,
+      "perdida_copia": 0.005519282532064882
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 3.1264500617980957,
+      "segundos": 90.46450713600007
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 3.1279995441436768,
+      "segundos": 96.05722046200026
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 3.1268656253814697,
+      "segundos": 101.68389549800031
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 3.1266708374023438,
+      "segundos": 107.32438734200014
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 3.1262338161468506,
+      "segundos": 112.96658772400042,
+      "exactitud": 1.0,
+      "perdida_copia": 0.00629555205076408
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 3.1255154609680176,
+      "segundos": 118.63819694200038
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 3.1263887882232666,
+      "segundos": 124.33787126800053
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 3.1254212856292725,
+      "segundos": 130.09635288900063
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 3.1263883113861084,
+      "segundos": 135.81120160300043
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 3.1272225379943848,
+      "segundos": 141.58888604600043,
+      "exactitud": 0.9989909491193738,
+      "perdida_copia": 0.01073698171664124
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 3.126779794692993,
+      "segundos": 147.3355976720004
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 3.126178026199341,
+      "segundos": 153.13435320100052
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 3.1271088123321533,
+      "segundos": 158.88734560000057
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 3.1265530586242676,
+      "segundos": 164.68328652000037
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 3.126314640045166,
+      "segundos": 170.45319362000055,
+      "exactitud": 0.9994496086105675,
+      "perdida_copia": 0.007721810308221268
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 3.126697301864624,
+      "segundos": 176.27153413800033
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 3.126441717147827,
+      "segundos": 182.03186945500056
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 3.126847267150879,
+      "segundos": 187.8428109740007
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 3.125941276550293,
+      "segundos": 193.6275014720004
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 3.1270196437835693,
+      "segundos": 199.46163360400033,
+      "exactitud": 0.9993884540117417,
+      "perdida_copia": 0.009147848430911622
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 3.1266119480133057,
+      "segundos": 205.28853855300076
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 3.1254985332489014,
+      "segundos": 211.16421463800089
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 3.12673282623291,
+      "segundos": 217.02337512300073
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 3.1268606185913086,
+      "segundos": 222.83329208000077
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 3.1253652572631836,
+      "segundos": 228.5999471980008,
+      "exactitud": 0.9999388454011742,
+      "perdida_copia": 0.004335157514901543
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 3.1257715225219727,
+      "segundos": 234.35096464700064
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 3.1250574588775635,
+      "segundos": 240.10116844700087
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 3.1254162788391113,
+      "segundos": 245.88227151600086
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 3.125609874725342,
+      "segundos": 251.65813560300057
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 3.125221014022827,
+      "segundos": 257.44127584400076,
+      "exactitud": 0.9996636497064579,
+      "perdida_copia": 0.005830807574895264
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 3.1253275871276855,
+      "segundos": 263.2350813190005
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 3.1253981590270996,
+      "segundos": 269.0031945620008
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 3.1256630420684814,
+      "segundos": 274.76305424800057
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 3.125491142272949,
+      "segundos": 280.53434366700094
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 3.1256940364837646,
+      "segundos": 286.3233242310007,
+      "exactitud": 0.999633072407045,
+      "perdida_copia": 0.006062108257861986
+     }
+    ],
+    "segundos": 286.3233242310007,
+    "piezas_por_s": 228664.57064174878,
+    "exactitud_por_largo": {
+     "1024": 0.9997553816046967,
+     "4096": 0.9982901807523205,
+     "16384": 0.6884690513978757
+    }
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 1,
+    "parametros": 2497792,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.2431416511535645,
+      "segundos": 0.6756948309998734
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.244601726531982,
+      "segundos": 1.3414114160000281
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.2396111488342285,
+      "segundos": 2.007515556999806
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.240668773651123,
+      "segundos": 2.673745686000075
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.239387512207031,
+      "segundos": 3.3392360809998536,
+      "exactitud": 0.0021709882583170253,
+      "perdida_copia": 6.239136219957803
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.240373611450195,
+      "segundos": 4.004744099999698
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.239842891693115,
+      "segundos": 4.670432910999807
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.238220691680908,
+      "segundos": 5.336428208999678
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.238027095794678,
+      "segundos": 6.002642739999828
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.239315986633301,
+      "segundos": 6.669117387999449,
+      "exactitud": 0.0018957925636007827,
+      "perdida_copia": 6.238201402638056
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.237809658050537,
+      "segundos": 7.33504432799964
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.102687835693359,
+      "segundos": 8.001056648999565
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.043910026550293,
+      "segundos": 8.667435548999492
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 5.717309951782227,
+      "segundos": 9.334112659999391
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 5.357491493225098,
+      "segundos": 10.002334744999644,
+      "exactitud": 0.03115826810176125,
+      "perdida_copia": 4.464153969124572
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 5.117738246917725,
+      "segundos": 10.66890097499936
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 4.933527946472168,
+      "segundos": 11.334909583999433
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 4.88645076751709,
+      "segundos": 12.003612651999447
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 4.7736897468566895,
+      "segundos": 12.66970564399935
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 4.759888648986816,
+      "segundos": 13.335331968999526,
+      "exactitud": 0.08503546966731898,
+      "perdida_copia": 3.289125028188448
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 4.660043239593506,
+      "segundos": 14.00110104499936
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 4.526450157165527,
+      "segundos": 14.667778939999152
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 4.396911144256592,
+      "segundos": 15.333635344999493
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 4.279954433441162,
+      "segundos": 15.999542098999427
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 4.17057466506958,
+      "segundos": 16.666235251999296,
+      "exactitud": 0.41679916829745595,
+      "perdida_copia": 2.089759408611141
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 4.041471004486084,
+      "segundos": 17.332618659998843
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 3.957961320877075,
+      "segundos": 17.998462133999055
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 3.8776602745056152,
+      "segundos": 18.665160873998957
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 3.8108396530151367,
+      "segundos": 19.332676182998966
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 3.744811773300171,
+      "segundos": 19.9991955889991,
+      "exactitud": 0.8526785714285714,
+      "perdida_copia": 1.2237792341676477
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 3.6907505989074707,
+      "segundos": 20.66625916099838
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 3.654088258743286,
+      "segundos": 21.33226035799862
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 3.618563175201416,
+      "segundos": 21.998933387998477
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 3.5841407775878906,
+      "segundos": 22.665660145998572
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 3.5470612049102783,
+      "segundos": 23.33366745899866,
+      "exactitud": 0.8901969178082192,
+      "perdida_copia": 0.9000835903936636
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 3.522366523742676,
+      "segundos": 24.00013878799882
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 3.5009212493896484,
+      "segundos": 24.66639873299846
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 3.473148822784424,
+      "segundos": 25.332557634998466
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 3.4455196857452393,
+      "segundos": 25.998523823998767
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 3.4279024600982666,
+      "segundos": 26.664672229998814,
+      "exactitud": 0.9752018101761253,
+      "perdida_copia": 0.6054608929180586
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 3.4053115844726562,
+      "segundos": 27.331258127998808
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 3.394968032836914,
+      "segundos": 27.99706826199872
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 3.379476547241211,
+      "segundos": 28.6654859819987
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 3.3619911670684814,
+      "segundos": 29.33197292499881
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 3.3526856899261475,
+      "segundos": 29.998415409998415,
+      "exactitud": 0.989083904109589,
+      "perdida_copia": 0.4508175019415391
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 3.3348965644836426,
+      "segundos": 30.664498009998624
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 3.3268001079559326,
+      "segundos": 31.330991118998554
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 3.3117263317108154,
+      "segundos": 31.99753227799829
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 3.3060719966888428,
+      "segundos": 32.66397420099838
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 3.3043572902679443,
+      "segundos": 33.330525720998594,
+      "exactitud": 0.9907656555772995,
+      "perdida_copia": 0.3599577024724852
+     }
+    ],
+    "segundos": 33.330525720998594,
+    "piezas_por_s": 1964325.4519310484,
+    "exactitud_por_largo": {
+     "1024": 0.9881360078277887,
+     "4096": 0.001373961895456766,
+     "16384": 0.0018617995360761812
+    }
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 2,
+    "parametros": 2497792,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.243917465209961,
+      "segundos": 0.6775082669996664
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.242739200592041,
+      "segundos": 1.3447646929998882
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.241470813751221,
+      "segundos": 2.0137915749996864
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.24061918258667,
+      "segundos": 2.6808417199999894
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.23992395401001,
+      "segundos": 3.347613356999773,
+      "exactitud": 0.002048679060665362,
+      "perdida_copia": 6.239082829126406
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.239259243011475,
+      "segundos": 4.014511750999645
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.2406182289123535,
+      "segundos": 4.681459665999682
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.239104747772217,
+      "segundos": 5.347171759999583
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.239102363586426,
+      "segundos": 6.0136553899997125
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.2396979331970215,
+      "segundos": 6.6801802359996145,
+      "exactitud": 0.0016511741682974559,
+      "perdida_copia": 6.239058612144157
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.238065242767334,
+      "segundos": 7.345922373999201
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.23872709274292,
+      "segundos": 8.012529223999536
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.091537952423096,
+      "segundos": 8.680363235999266
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 5.763623237609863,
+      "segundos": 9.346882417999495
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 5.546219825744629,
+      "segundos": 10.013757050999175,
+      "exactitud": 0.012078033268101761,
+      "perdida_copia": 4.8769647109298555
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 5.311545372009277,
+      "segundos": 10.68174972299903
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 5.281397342681885,
+      "segundos": 11.348455205999016
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 5.181766033172607,
+      "segundos": 12.016805663999094
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 5.0706353187561035,
+      "segundos": 12.683377824999297
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 5.050309658050537,
+      "segundos": 13.349762547999035,
+      "exactitud": 0.028773238747553817,
+      "perdida_copia": 3.8730472034670838
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 5.054773807525635,
+      "segundos": 14.016378305999297
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 4.97805643081665,
+      "segundos": 14.683431908998955
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 4.920639514923096,
+      "segundos": 15.35037647299896
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 4.871138572692871,
+      "segundos": 16.017451193999023
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 4.829564571380615,
+      "segundos": 16.686603129999185,
+      "exactitud": 0.08690068493150685,
+      "perdida_copia": 3.408380676388974
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 4.7955522537231445,
+      "segundos": 17.35277156599932
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 4.785620212554932,
+      "segundos": 18.019596659999024
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 4.732055187225342,
+      "segundos": 18.68556853499922
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 4.7064642906188965,
+      "segundos": 19.351349461999234
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 4.672515869140625,
+      "segundos": 20.018640242999027,
+      "exactitud": 0.137353228962818,
+      "perdida_copia": 3.1086046252465294
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 4.646603584289551,
+      "segundos": 20.687556182999288
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 4.615507125854492,
+      "segundos": 21.355655434999335
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 4.603126525878906,
+      "segundos": 22.021763215999272
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 4.58826208114624,
+      "segundos": 22.68965931799903
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 4.519524097442627,
+      "segundos": 23.35634832499909,
+      "exactitud": 0.2204929060665362,
+      "perdida_copia": 2.796238251628241
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 4.507132530212402,
+      "segundos": 24.022004911999375
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 4.458001136779785,
+      "segundos": 24.688643203999618
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 4.420688629150391,
+      "segundos": 25.35526822599968
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 4.409013748168945,
+      "segundos": 26.02166089899947
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 4.373920440673828,
+      "segundos": 26.6910535549996,
+      "exactitud": 0.3371758806262231,
+      "perdida_copia": 2.514924424501781
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 4.348565101623535,
+      "segundos": 27.358304271999714
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 4.326725959777832,
+      "segundos": 28.02405735799948
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 4.3018879890441895,
+      "segundos": 28.68998892599984
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 4.276631832122803,
+      "segundos": 29.356168134999734
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 4.260566234588623,
+      "segundos": 30.022043236999707,
+      "exactitud": 0.48489481409001955,
+      "perdida_copia": 2.2716058182389767
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 4.246234893798828,
+      "segundos": 30.687928897999427
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 4.228387832641602,
+      "segundos": 31.35361982699942
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 4.21629524230957,
+      "segundos": 32.019341443999565
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 4.193145751953125,
+      "segundos": 32.687028951999764
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 4.161472797393799,
+      "segundos": 33.35297150699944,
+      "exactitud": 0.5813661937377691,
+      "perdida_copia": 2.076368343106921
+     }
+    ],
+    "segundos": 33.35297150699944,
+    "piezas_por_s": 1963003.5058873263,
+    "exactitud_por_largo": {
+     "1024": 0.5768101761252447,
+     "4096": 0.0021983390327308255,
+     "16384": 0.0018923208399462825
+    }
+   },
+   {
+    "modelo": "Solo bloques locales",
+    "lr": 0.003,
+    "semilla": 1,
+    "parametros": 2236928,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.247103691101074,
+      "segundos": 0.5245103620000009
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.2428388595581055,
+      "segundos": 1.0419811399997343
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.238304138183594,
+      "segundos": 1.5588070199996764
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.238394737243652,
+      "segundos": 2.0758391259996642
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.23776388168335,
+      "segundos": 2.592869595999673,
+      "exactitud": 0.0019875244618395302,
+      "perdida_copia": 6.237667225578293
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.23819637298584,
+      "segundos": 3.1102090589993168
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.2377238273620605,
+      "segundos": 3.627329861999442
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.237321853637695,
+      "segundos": 4.144179709999662
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.236824989318848,
+      "segundos": 4.661227107999366
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.2374467849731445,
+      "segundos": 5.1781017369994515,
+      "exactitud": 0.0015900195694716242,
+      "perdida_copia": 6.237121701473826
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.23714017868042,
+      "segundos": 5.694982727999559
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.236839294433594,
+      "segundos": 6.21169893699971
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.237193584442139,
+      "segundos": 6.728408722999575
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.23676061630249,
+      "segundos": 7.245300072999726
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.236740589141846,
+      "segundos": 7.761996237999483,
+      "exactitud": 0.001834637964774951,
+      "perdida_copia": 6.236673075159002
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.236451148986816,
+      "segundos": 8.27880441699972
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.236600399017334,
+      "segundos": 8.795531427999776
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 6.236874580383301,
+      "segundos": 9.31248465399949
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 6.236708164215088,
+      "segundos": 9.829717370999788
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 6.236953258514404,
+      "segundos": 10.346978969999782,
+      "exactitud": 0.0019263698630136985,
+      "perdida_copia": 6.2368462668939575
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 6.236866474151611,
+      "segundos": 10.865175767999972
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 6.236949443817139,
+      "segundos": 11.383086365000054
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 6.236832141876221,
+      "segundos": 11.90104951100011
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 6.236645221710205,
+      "segundos": 12.4193773840002
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 6.236720561981201,
+      "segundos": 12.937470606999796,
+      "exactitud": 0.0018652152641878668,
+      "perdida_copia": 6.236641094409323
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 6.236772060394287,
+      "segundos": 13.455034218000037
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 6.236408233642578,
+      "segundos": 13.972741490999852
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 6.236401081085205,
+      "segundos": 14.490171309999823
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 6.236481666564941,
+      "segundos": 15.00818252199997
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 6.236563682556152,
+      "segundos": 15.526024250999853,
+      "exactitud": 0.0013759784735812132,
+      "perdida_copia": 6.236615055927792
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 6.236525058746338,
+      "segundos": 16.04404072899979
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 6.236417293548584,
+      "segundos": 16.563065455000014
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 6.23655891418457,
+      "segundos": 17.081643989999975
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 6.236543655395508,
+      "segundos": 17.599541619999854
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 6.236326217651367,
+      "segundos": 18.117527445999713,
+      "exactitud": 0.002018101761252446,
+      "perdida_copia": 6.236531117657626
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 6.236454010009766,
+      "segundos": 18.635404689000097
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 6.236508846282959,
+      "segundos": 19.153041548000147
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 6.236457347869873,
+      "segundos": 19.67077599000004
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 6.236454010009766,
+      "segundos": 20.18842865200031
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 6.236506462097168,
+      "segundos": 20.70739623700001,
+      "exactitud": 0.0020792563600782778,
+      "perdida_copia": 6.236339053995689
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 6.236368179321289,
+      "segundos": 21.225292726000134
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 6.236414909362793,
+      "segundos": 21.743743472999995
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 6.2364301681518555,
+      "segundos": 22.261652825000056
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 6.236403465270996,
+      "segundos": 22.78141695000022
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 6.236451148986816,
+      "segundos": 23.301029336000283,
+      "exactitud": 0.002262720156555773,
+      "perdida_copia": 6.2364166618093355
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 6.23646354675293,
+      "segundos": 23.820926799000517
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 6.236449718475342,
+      "segundos": 24.33930304600017
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 6.236263751983643,
+      "segundos": 24.858544256000187
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 6.236446380615234,
+      "segundos": 25.37676044300042
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 6.236335277557373,
+      "segundos": 25.895034354000472,
+      "exactitud": 0.0017429060665362034,
+      "perdida_copia": 6.236480205259678
+     }
+    ],
+    "segundos": 25.895034354000472,
+    "piezas_por_s": 2528361.1948514506,
+    "exactitud_por_largo": {
+     "1024": 0.0015900195694716242,
+     "4096": 0.001709819247679531,
+     "16384": 0.002037297033329264
+    }
+   },
+   {
+    "modelo": "Solo bloques locales",
+    "lr": 0.003,
+    "semilla": 2,
+    "parametros": 2236928,
+    "historial": [
+     {
+      "paso": 40,
+      "piezas": 1309440,
+      "perdida": 6.249552249908447,
+      "segundos": 0.5242994369996268
+     },
+     {
+      "paso": 80,
+      "piezas": 2618880,
+      "perdida": 6.242915153503418,
+      "segundos": 1.0423201639996478
+     },
+     {
+      "paso": 120,
+      "piezas": 3928320,
+      "perdida": 6.2391767501831055,
+      "segundos": 1.559658539999873
+     },
+     {
+      "paso": 160,
+      "piezas": 5237760,
+      "perdida": 6.239004611968994,
+      "segundos": 2.077103719999741
+     },
+     {
+      "paso": 200,
+      "piezas": 6547200,
+      "perdida": 6.238011360168457,
+      "segundos": 2.594235686999582,
+      "exactitud": 0.002476761252446184,
+      "perdida_copia": 6.238159358851364
+     },
+     {
+      "paso": 240,
+      "piezas": 7856640,
+      "perdida": 6.23746919631958,
+      "segundos": 3.1112408280000636
+     },
+     {
+      "paso": 280,
+      "piezas": 9166080,
+      "perdida": 6.238158226013184,
+      "segundos": 3.62788056699992
+     },
+     {
+      "paso": 320,
+      "piezas": 10475520,
+      "perdida": 6.237545967102051,
+      "segundos": 4.144945790000293
+     },
+     {
+      "paso": 360,
+      "piezas": 11784960,
+      "perdida": 6.237381458282471,
+      "segundos": 4.66180161300008
+     },
+     {
+      "paso": 400,
+      "piezas": 13094400,
+      "perdida": 6.237251281738281,
+      "segundos": 5.178764491000038,
+      "exactitud": 0.002048679060665362,
+      "perdida_copia": 6.236988164674046
+     },
+     {
+      "paso": 440,
+      "piezas": 14403840,
+      "perdida": 6.2368855476379395,
+      "segundos": 5.695662899000126
+     },
+     {
+      "paso": 480,
+      "piezas": 15713280,
+      "perdida": 6.237060070037842,
+      "segundos": 6.212700736999977
+     },
+     {
+      "paso": 520,
+      "piezas": 17022720,
+      "perdida": 6.237052917480469,
+      "segundos": 6.729522044000078
+     },
+     {
+      "paso": 560,
+      "piezas": 18332160,
+      "perdida": 6.23661470413208,
+      "segundos": 7.246889778999957
+     },
+     {
+      "paso": 600,
+      "piezas": 19641600,
+      "perdida": 6.2373223304748535,
+      "segundos": 7.764261002999774,
+      "exactitud": 0.0019875244618395302,
+      "perdida_copia": 6.236874156735414
+     },
+     {
+      "paso": 640,
+      "piezas": 20951040,
+      "perdida": 6.236480712890625,
+      "segundos": 8.282261108000057
+     },
+     {
+      "paso": 680,
+      "piezas": 22260480,
+      "perdida": 6.2367143630981445,
+      "segundos": 8.800295605999963
+     },
+     {
+      "paso": 720,
+      "piezas": 23569920,
+      "perdida": 6.236917495727539,
+      "segundos": 9.31737337100003
+     },
+     {
+      "paso": 760,
+      "piezas": 24879360,
+      "perdida": 6.237071990966797,
+      "segundos": 9.834456195000257
+     },
+     {
+      "paso": 800,
+      "piezas": 26188800,
+      "perdida": 6.236915111541748,
+      "segundos": 10.352079544999924,
+      "exactitud": 0.002201565557729941,
+      "perdida_copia": 6.2366317181671205
+     },
+     {
+      "paso": 840,
+      "piezas": 27498240,
+      "perdida": 6.236725330352783,
+      "segundos": 10.86954103700009
+     },
+     {
+      "paso": 880,
+      "piezas": 28807680,
+      "perdida": 6.236377716064453,
+      "segundos": 11.387672894999923
+     },
+     {
+      "paso": 920,
+      "piezas": 30117120,
+      "perdida": 6.23677396774292,
+      "segundos": 11.904978178999954
+     },
+     {
+      "paso": 960,
+      "piezas": 31426560,
+      "perdida": 6.236448287963867,
+      "segundos": 12.422509846999674
+     },
+     {
+      "paso": 1000,
+      "piezas": 32736000,
+      "perdida": 6.2369208335876465,
+      "segundos": 12.939932096999655,
+      "exactitud": 0.0019875244618395302,
+      "perdida_copia": 6.236726256965891
+     },
+     {
+      "paso": 1040,
+      "piezas": 34045440,
+      "perdida": 6.236996173858643,
+      "segundos": 13.457643402999565
+     },
+     {
+      "paso": 1080,
+      "piezas": 35354880,
+      "perdida": 6.23673677444458,
+      "segundos": 13.975150139999641
+     },
+     {
+      "paso": 1120,
+      "piezas": 36664320,
+      "perdida": 6.236540794372559,
+      "segundos": 14.492705320999448
+     },
+     {
+      "paso": 1160,
+      "piezas": 37973760,
+      "perdida": 6.236485958099365,
+      "segundos": 15.011336329999722
+     },
+     {
+      "paso": 1200,
+      "piezas": 39283200,
+      "perdida": 6.2365264892578125,
+      "segundos": 15.530439741999544,
+      "exactitud": 0.0019569471624266144,
+      "perdida_copia": 6.2365965124678935
+     },
+     {
+      "paso": 1240,
+      "piezas": 40592640,
+      "perdida": 6.236547470092773,
+      "segundos": 16.049305238999295
+     },
+     {
+      "paso": 1280,
+      "piezas": 41902080,
+      "perdida": 6.2365617752075195,
+      "segundos": 16.568596773999616
+     },
+     {
+      "paso": 1320,
+      "piezas": 43211520,
+      "perdida": 6.236461639404297,
+      "segundos": 17.087022634999357
+     },
+     {
+      "paso": 1360,
+      "piezas": 44520960,
+      "perdida": 6.236391067504883,
+      "segundos": 17.60546917399961
+     },
+     {
+      "paso": 1400,
+      "piezas": 45830400,
+      "perdida": 6.236536502838135,
+      "segundos": 18.123837089999597,
+      "exactitud": 0.0015594422700587083,
+      "perdida_copia": 6.236685019416585
+     },
+     {
+      "paso": 1440,
+      "piezas": 47139840,
+      "perdida": 6.23637580871582,
+      "segundos": 18.643109932999323
+     },
+     {
+      "paso": 1480,
+      "piezas": 48449280,
+      "perdida": 6.2365522384643555,
+      "segundos": 19.162090877999162
+     },
+     {
+      "paso": 1520,
+      "piezas": 49758720,
+      "perdida": 6.236367225646973,
+      "segundos": 19.681139561999316
+     },
+     {
+      "paso": 1560,
+      "piezas": 51068160,
+      "perdida": 6.236446380615234,
+      "segundos": 20.20063114099912
+     },
+     {
+      "paso": 1600,
+      "piezas": 52377600,
+      "perdida": 6.236473083496094,
+      "segundos": 20.719614021999405,
+      "exactitud": 0.0019263698630136985,
+      "perdida_copia": 6.236499316071811
+     },
+     {
+      "paso": 1640,
+      "piezas": 53687040,
+      "perdida": 6.236411094665527,
+      "segundos": 21.23830955599942
+     },
+     {
+      "paso": 1680,
+      "piezas": 54996480,
+      "perdida": 6.23652982711792,
+      "segundos": 21.756534815999657
+     },
+     {
+      "paso": 1720,
+      "piezas": 56305920,
+      "perdida": 6.236384868621826,
+      "segundos": 22.274716199999602
+     },
+     {
+      "paso": 1760,
+      "piezas": 57615360,
+      "perdida": 6.236449241638184,
+      "segundos": 22.792453053999452
+     },
+     {
+      "paso": 1800,
+      "piezas": 58924800,
+      "perdida": 6.236349582672119,
+      "segundos": 23.310100113999397,
+      "exactitud": 0.0016511741682974559,
+      "perdida_copia": 6.236395789219209
+     },
+     {
+      "paso": 1840,
+      "piezas": 60234240,
+      "perdida": 6.236496925354004,
+      "segundos": 23.82786720299964
+     },
+     {
+      "paso": 1880,
+      "piezas": 61543680,
+      "perdida": 6.236554145812988,
+      "segundos": 24.345919524999772
+     },
+     {
+      "paso": 1920,
+      "piezas": 62853120,
+      "perdida": 6.236343860626221,
+      "segundos": 24.86340270499977
+     },
+     {
+      "paso": 1960,
+      "piezas": 64162560,
+      "perdida": 6.2364606857299805,
+      "segundos": 25.381028839999544
+     },
+     {
+      "paso": 2000,
+      "piezas": 65472000,
+      "perdida": 6.2364606857299805,
+      "segundos": 25.898896252999748,
+      "exactitud": 0.0018957925636007827,
+      "perdida_copia": 6.236482146201535
+     }
+    ],
+    "segundos": 25.898896252999748,
+    "piezas_por_s": 2527984.1797279944,
+    "exactitud_por_largo": {
+     "1024": 0.0017123287671232876,
+     "4096": 0.0018930141670737664,
+     "16384": 0.0019228421438163838
+    }
+   }
+  ],
+  "mejor_lr": {
+   "ASRN": 0.003,
+   "Transformer": 0.001,
+   "Solo bloques locales": 0.003
+  },
+  "resumen": {
+   "ASRN": {
+    "1024": [
+     0.999633072407045,
+     0.00021184574456565902
+    ],
+    "4096": [
+     0.9546389024588829,
+     0.07706511101147552
+    ],
+    "16384": [
+     0.6561775119033085,
+     0.3361898602947405
+    ]
+   },
+   "Transformer": {
+    "1024": [
+     0.8067922374429224,
+     0.20993212585284796
+    ],
+    "4096": [
+     0.0018115942028985507,
+     0.0004145377759000224
+    ],
+    "16384": [
+     0.001902494607902983,
+     4.662206176449598e-05
+    ]
+   },
+   "Solo bloques locales": {
+    "1024": [
+     0.0019569471624266144,
+     0.000533133432429143
+    ],
+    "4096": [
+     0.0019337241491613744,
+     0.00024679115072834517
+    ],
+    "16384": [
+     0.002022036381394213,
+     9.251278577846217e-05
+    ]
+   }
+  }
+ },
+ "texto": {
+  "fuente": "WikiText-103 (tokenizador GPT-2)",
+  "piezas_planeadas": 30000000,
+  "largo": 1024,
+  "lote": 16,
+  "tasas": [
+   0.001,
+   0.003
+  ],
+  "semillas": [
+   0,
+   1,
+   2
+  ],
+  "corridas": [
+   {
+    "modelo": "ASRN",
+    "lr": 0.001,
+    "semilla": 0,
+    "parametros": 44335308,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 431.2231520999999,
+    "piezas_por_s": 69567.47070260101,
+    "perplejidad_por_largo": {
+     "1024": 70.85283020819148,
+     "4096": 68.54579376625793
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.18453311920166,
+      "segundos": 8.538328528999955
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.396718502044678,
+      "segundos": 17.231717176000075
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.110358238220215,
+      "segundos": 25.912399836000077
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.856263160705566,
+      "segundos": 34.592897299000015
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.658951282501221,
+      "segundos": 43.31928106800024
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.6780900955200195,
+      "segundos": 44.044774104000226,
+      "val_perdida": 5.642178249359131
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.338359355926514,
+      "segundos": 52.03080974899967
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.379887580871582,
+      "segundos": 60.69662067399986
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.360552787780762,
+      "segundos": 69.32359808799993
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 5.221885681152344,
+      "segundos": 77.90783729999976
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.443504333496094,
+      "segundos": 86.38918771899989
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 5.186195373535156,
+      "segundos": 87.79107086099975,
+      "val_perdida": 5.111582202911377
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 5.150463581085205,
+      "segundos": 94.81155133199991
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 4.958454132080078,
+      "segundos": 103.2811070759999
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 4.911242961883545,
+      "segundos": 111.77074551600026
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 4.907072067260742,
+      "segundos": 120.2140680880002
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.833126068115234,
+      "segundos": 128.71168511199994
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.7374725341796875,
+      "segundos": 130.83090613900004,
+      "val_perdida": 4.7909331703186036
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.675657272338867,
+      "segundos": 137.1934852290001
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 4.8226823806762695,
+      "segundos": 145.6964622370001
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.6371684074401855,
+      "segundos": 154.18969289300003
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.571137428283691,
+      "segundos": 162.64904813700014
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.619661808013916,
+      "segundos": 171.140225655
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.436208724975586,
+      "segundos": 173.9901763400003,
+      "val_perdida": 4.589535961151123
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.408245086669922,
+      "segundos": 179.65502340799958
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.455615997314453,
+      "segundos": 188.14128447899975
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.582211494445801,
+      "segundos": 196.5578189959997
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.379985809326172,
+      "segundos": 204.97553589899962
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.631682395935059,
+      "segundos": 213.43755629299994
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.538911819458008,
+      "segundos": 216.96429407099959,
+      "val_perdida": 4.4590340423583985
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.386353492736816,
+      "segundos": 221.91604731999996
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.355131149291992,
+      "segundos": 230.37925189299995
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.398260116577148,
+      "segundos": 238.81292074299972
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.299757480621338,
+      "segundos": 247.26444484600006
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 4.506039142608643,
+      "segundos": 255.72229691099983
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.396146774291992,
+      "segundos": 259.96488051200004,
+      "val_perdida": 4.3677223777771
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.471632957458496,
+      "segundos": 264.17269123899996
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.382007122039795,
+      "segundos": 272.5726025170002
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.308541774749756,
+      "segundos": 281.0130930189998
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.34423828125,
+      "segundos": 289.43928168
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.344599723815918,
+      "segundos": 297.8404983629998
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 4.057872772216797,
+      "segundos": 302.730685085,
+      "val_perdida": 4.2924041748046875
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.286064147949219,
+      "segundos": 306.2202790799997
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.221908092498779,
+      "segundos": 314.6304379959997
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 4.204891204833984,
+      "segundos": 323.01386392899985
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.297182083129883,
+      "segundos": 331.420981921
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.453607559204102,
+      "segundos": 339.8243639499997
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.231361389160156,
+      "segundos": 345.43823196799985,
+      "val_perdida": 4.237794628143311
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.163404941558838,
+      "segundos": 348.26002953299985
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.241537570953369,
+      "segundos": 356.68133136000006
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.188321113586426,
+      "segundos": 365.11466511499975
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.3417158126831055,
+      "segundos": 373.5182383370002
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.14124870300293,
+      "segundos": 381.90500751399986
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 4.236474990844727,
+      "segundos": 388.2325490540002,
+      "val_perdida": 4.205282402038574
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.30936336517334,
+      "segundos": 390.33244199599994
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.248351573944092,
+      "segundos": 398.74908747200016
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 4.125801086425781,
+      "segundos": 407.1634521589999
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 4.115720272064209,
+      "segundos": 415.5587975799999
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 4.126668930053711,
+      "segundos": 423.980691706
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 4.157532691955566,
+      "segundos": 430.99188378400004,
+      "val_perdida": 4.184463348388672
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 4.006782531738281,
+      "segundos": 431.2231520999999,
+      "val_perdida": 4.184360237121582
+     }
+    ]
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 0,
+    "parametros": 44634624,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 168.77001113100096,
+    "piezas_por_s": 177751.3895920431,
+    "perplejidad_por_largo": {
+     "1024": 62.58111015762571,
+     "4096": 116.03961225108627
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.085148811340332,
+      "segundos": 3.323193783000079
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.445224285125732,
+      "segundos": 6.638970428000448
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.1680402755737305,
+      "segundos": 9.958831293000003
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.955857276916504,
+      "segundos": 13.275217027000053
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.787431716918945,
+      "segundos": 16.590176497000357
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.803248405456543,
+      "segundos": 16.86711520200015,
+      "val_perdida": 5.762101821899414
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.48560094833374,
+      "segundos": 19.90933460999986
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.523461818695068,
+      "segundos": 23.231052659999932
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.5218281745910645,
+      "segundos": 26.547692738000023
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 5.36272668838501,
+      "segundos": 29.87081046000003
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.575414657592773,
+      "segundos": 33.18831079600022
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 5.332427024841309,
+      "segundos": 33.7429670800002,
+      "val_perdida": 5.273145427703858
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 5.3482232093811035,
+      "segundos": 36.5087514300003
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 5.0953874588012695,
+      "segundos": 39.830196874000194
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 5.068589687347412,
+      "segundos": 43.14269543800037
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 5.040054798126221,
+      "segundos": 46.46094320600014
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.99597692489624,
+      "segundos": 49.777167526000085
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.916264533996582,
+      "segundos": 50.60700043800034,
+      "val_perdida": 4.964796905517578
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.827413082122803,
+      "segundos": 53.09230871700038
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 5.022166728973389,
+      "segundos": 56.4093943010007
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.780959129333496,
+      "segundos": 59.731654866000554
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.763579368591309,
+      "segundos": 63.05275208000057
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.785333633422852,
+      "segundos": 66.37121046600078
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.558643341064453,
+      "segundos": 67.47646047300077,
+      "val_perdida": 4.740826110839844
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.563115119934082,
+      "segundos": 69.69040326300092
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.602357387542725,
+      "segundos": 73.01347849100102
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.693924427032471,
+      "segundos": 76.33394079900108
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.479597091674805,
+      "segundos": 79.64752176800084
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.722652912139893,
+      "segundos": 82.96644778400105
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.597601890563965,
+      "segundos": 84.34936462000087,
+      "val_perdida": 4.531623611450195
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.4689621925354,
+      "segundos": 86.28526543500084
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.400424957275391,
+      "segundos": 89.60233398900073
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.416620254516602,
+      "segundos": 92.91836287500064
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.366827964782715,
+      "segundos": 96.242032604001
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 4.515691757202148,
+      "segundos": 99.56263299400098
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.412987232208252,
+      "segundos": 101.22093489600093,
+      "val_perdida": 4.359382705688477
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.470479965209961,
+      "segundos": 102.8796304320008
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.36659049987793,
+      "segundos": 106.19773821000081
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.3006591796875,
+      "segundos": 109.52239946600048
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.302066802978516,
+      "segundos": 112.84219318400073
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.314208984375,
+      "segundos": 116.15714195900046
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 4.060932159423828,
+      "segundos": 118.09346041900062,
+      "val_perdida": 4.230940933227539
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.236560821533203,
+      "segundos": 119.47741301000042
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.189938068389893,
+      "segundos": 122.7956018810005
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 4.158324241638184,
+      "segundos": 126.10995093900056
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.230255126953125,
+      "segundos": 129.42681948500058
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.400389194488525,
+      "segundos": 132.74944609400063
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.184879302978516,
+      "segundos": 134.9616454890006,
+      "val_perdida": 4.155588550567627
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.107358932495117,
+      "segundos": 136.06650773700085
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.183366775512695,
+      "segundos": 139.38201321100087
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.112340450286865,
+      "segundos": 142.69948544500085
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.25930118560791,
+      "segundos": 146.02054912800077
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.060415267944336,
+      "segundos": 149.3361067610008
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 4.158563613891602,
+      "segundos": 151.81986522200077,
+      "val_perdida": 4.101151504516602
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.24507999420166,
+      "segundos": 152.6473271620007
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.139958381652832,
+      "segundos": 155.96613618800075
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 4.070384502410889,
+      "segundos": 159.28165893300093
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 4.0504655838012695,
+      "segundos": 162.59496999300063
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 4.033764839172363,
+      "segundos": 165.91141669600074
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 4.076121807098389,
+      "segundos": 168.67790377600068,
+      "val_perdida": 4.066768531799316
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.9399471282958984,
+      "segundos": 168.77001113100096,
+      "val_perdida": 4.066653308868408
+     }
+    ]
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 0,
+    "parametros": 44335308,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 447.20044522299986,
+    "piezas_por_s": 67082.00834871871,
+    "perplejidad_por_largo": {
+     "1024": 57.27460852832211,
+     "4096": 53.155062776407384
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.007627487182617,
+      "segundos": 8.67761575600025
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.280594825744629,
+      "segundos": 17.557183384999917
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 5.983226776123047,
+      "segundos": 26.46330855699989
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.621045112609863,
+      "segundos": 35.346842595
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.438823223114014,
+      "segundos": 44.199820889999955
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.474203586578369,
+      "segundos": 44.9307388430002,
+      "val_perdida": 5.390005378723145
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.075809001922607,
+      "segundos": 53.04875008599993
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.103142738342285,
+      "segundos": 61.86578732099997
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.067175388336182,
+      "segundos": 70.71349325600022
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 4.912830352783203,
+      "segundos": 79.56368768099992
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.15699577331543,
+      "segundos": 88.37694254300004
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 4.851994514465332,
+      "segundos": 89.84042659800025,
+      "val_perdida": 4.799730682373047
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 4.797412872314453,
+      "segundos": 97.1576029859998
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 4.663222789764404,
+      "segundos": 105.95296651999979
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 4.6509246826171875,
+      "segundos": 114.76852914099982
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 4.653237342834473,
+      "segundos": 123.57771253099963
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.562341690063477,
+      "segundos": 132.36340102099985
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.490044116973877,
+      "segundos": 134.55938845699984,
+      "val_perdida": 4.532441062927246
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.443006992340088,
+      "segundos": 141.12152684800003
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 4.569697856903076,
+      "segundos": 149.88903607300017
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.433377265930176,
+      "segundos": 158.6855909259998
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.292046546936035,
+      "segundos": 167.47726962800016
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.377296447753906,
+      "segundos": 176.21232409599997
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.206250190734863,
+      "segundos": 179.13039260699998,
+      "val_perdida": 4.3713531494140625
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.178981781005859,
+      "segundos": 184.97790817800023
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.25567626953125,
+      "segundos": 193.73877632700032
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.3466339111328125,
+      "segundos": 202.50994811100009
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.123212814331055,
+      "segundos": 211.26164737800036
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.422267436981201,
+      "segundos": 220.01973286500015
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.337785720825195,
+      "segundos": 223.67229167800042,
+      "val_perdida": 4.2681177139282225
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.150932312011719,
+      "segundos": 228.8101444050003
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.134316921234131,
+      "segundos": 237.5922305930003
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.181902885437012,
+      "segundos": 246.33439276100034
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.074386119842529,
+      "segundos": 255.09760841800016
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 4.299439907073975,
+      "segundos": 263.8892533500002
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.21040153503418,
+      "segundos": 268.27722789300014,
+      "val_perdida": 4.1809855079650875
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.274349689483643,
+      "segundos": 272.6821740820001
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.162647247314453,
+      "segundos": 281.45013608599993
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.085025787353516,
+      "segundos": 290.22509145699996
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.103148460388184,
+      "segundos": 298.99267652000026
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.089846611022949,
+      "segundos": 307.76302523799995
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 3.864196300506592,
+      "segundos": 312.86165173200015,
+      "val_perdida": 4.09706600189209
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.054278373718262,
+      "segundos": 316.498252417
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.011427879333496,
+      "segundos": 325.25609265
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 3.9603514671325684,
+      "segundos": 334.0269059900006
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.062565326690674,
+      "segundos": 342.8048494810005
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.228278160095215,
+      "segundos": 351.5814169730006
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.006425857543945,
+      "segundos": 357.44542551600034,
+      "val_perdida": 4.040186614990234
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 3.907186985015869,
+      "segundos": 360.3781668380002
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 3.992217540740967,
+      "segundos": 369.1894102299998
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 3.9088644981384277,
+      "segundos": 378.0047403269996
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.096100807189941,
+      "segundos": 386.79364721699994
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 3.9058122634887695,
+      "segundos": 395.62972813700026
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 3.9868221282958984,
+      "segundos": 402.2502226599995,
+      "val_perdida": 3.99942756652832
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.049662113189697,
+      "segundos": 404.4560688690003
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.014209747314453,
+      "segundos": 413.24237343699997
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 3.844611167907715,
+      "segundos": 422.02457065800036
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 3.8883275985717773,
+      "segundos": 430.80623104600045
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 3.849308967590332,
+      "segundos": 439.62753666800063
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 3.9055774211883545,
+      "segundos": 446.962138503,
+      "val_perdida": 3.9713647842407225
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.744575262069702,
+      "segundos": 447.20044522299986,
+      "val_perdida": 3.9712005996704103
+     }
+    ]
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.003,
+    "semilla": 0,
+    "parametros": 44634624,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 168.71893081099915,
+    "piezas_por_s": 177805.20452447233,
+    "perplejidad_por_largo": {
+     "1024": 91.36645804535803,
+     "4096": 98.72370436549326
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.295523643493652,
+      "segundos": 3.3251630989998375
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.707448959350586,
+      "segundos": 6.646413012999801
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.458680629730225,
+      "segundos": 9.962417884000388
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 6.27970027923584,
+      "segundos": 13.277224499000113
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 6.070225715637207,
+      "segundos": 16.59274024000024
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 6.106297969818115,
+      "segundos": 16.870231054000214,
+      "val_perdida": 6.078838577270508
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.819404602050781,
+      "segundos": 19.915666826000233
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.856089115142822,
+      "segundos": 23.233817215999807
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.8352766036987305,
+      "segundos": 26.54742033599996
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 5.704689979553223,
+      "segundos": 29.86613883100017
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.913814544677734,
+      "segundos": 33.18545988000005
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 5.686533451080322,
+      "segundos": 33.73810904899983,
+      "val_perdida": 5.6456337165832515
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 5.704099655151367,
+      "segundos": 36.50135653800044
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 5.494640350341797,
+      "segundos": 39.815545736000786
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 5.45761775970459,
+      "segundos": 43.13365148400044
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 5.434083461761475,
+      "segundos": 46.44687270100076
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 5.393980503082275,
+      "segundos": 49.759470616000726
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 5.323515892028809,
+      "segundos": 50.587343163000696,
+      "val_perdida": 5.355688743591308
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 5.222904205322266,
+      "segundos": 53.07406397900013
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 5.411827564239502,
+      "segundos": 56.39244030100053
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 5.194189071655273,
+      "segundos": 59.7106703670006
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 5.1711626052856445,
+      "segundos": 63.027026777000174
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 5.194422721862793,
+      "segundos": 66.34394034800061
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.989964008331299,
+      "segundos": 67.4522834190002,
+      "val_perdida": 5.149752197265625
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 5.002943992614746,
+      "segundos": 69.66582079399996
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 5.047778129577637,
+      "segundos": 72.98284359399986
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 5.112939834594727,
+      "segundos": 76.29923885699918
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.950072288513184,
+      "segundos": 79.61594190699998
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 5.1617231369018555,
+      "segundos": 82.93105737399947
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 5.061393737792969,
+      "segundos": 84.31207906999953,
+      "val_perdida": 5.007521190643311
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.948870658874512,
+      "segundos": 86.24790395999935
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.900914669036865,
+      "segundos": 89.56507871499889
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.954914093017578,
+      "segundos": 92.88501611499942
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.85771369934082,
+      "segundos": 96.20137540199903
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 5.012487411499023,
+      "segundos": 99.51901245099907
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.893496990203857,
+      "segundos": 101.17829332099882,
+      "val_perdida": 4.865683898925782
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.967962741851807,
+      "segundos": 102.83737275399926
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.851266860961914,
+      "segundos": 106.15623024399883
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.803644180297852,
+      "segundos": 109.47054125199884
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.809978008270264,
+      "segundos": 112.78329717899942
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.804361343383789,
+      "segundos": 116.09855879799943
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 4.518957138061523,
+      "segundos": 118.03558703599901,
+      "val_perdida": 4.731813831329346
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.721035957336426,
+      "segundos": 119.41570467599922
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.646143436431885,
+      "segundos": 122.7340258159984
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 4.713460922241211,
+      "segundos": 126.04866904299888
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.688720703125,
+      "segundos": 129.3680487469992
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.844365119934082,
+      "segundos": 132.68704604399863
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.638471603393555,
+      "segundos": 134.90197728099884,
+      "val_perdida": 4.608757076263427
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.567319869995117,
+      "segundos": 136.00640121099877
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.608578681945801,
+      "segundos": 139.32024181499855
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.534201622009277,
+      "segundos": 142.63886678699873
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.697190284729004,
+      "segundos": 145.95416584599843
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.485025405883789,
+      "segundos": 149.26691035899876
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 4.5938496589660645,
+      "segundos": 151.75438467399908,
+      "val_perdida": 4.518720474243164
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.673741340637207,
+      "segundos": 152.58461623199855
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.550783157348633,
+      "segundos": 155.90694476499812
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 4.508800029754639,
+      "segundos": 159.22357393199854
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 4.466036796569824,
+      "segundos": 162.53724223299832
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 4.432775497436523,
+      "segundos": 165.8567248249983
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 4.454715251922607,
+      "segundos": 168.62667194099868,
+      "val_perdida": 4.450661735534668
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 4.351154327392578,
+      "segundos": 168.71893081099915,
+      "val_perdida": 4.450607948303222
+     }
+    ]
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 1,
+    "parametros": 44335308,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 442.65347695700075,
+    "piezas_por_s": 67771.07955014234,
+    "perplejidad_por_largo": {
+     "1024": 57.248407167137145,
+     "4096": 53.42670317256324
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.071909427642822,
+      "segundos": 8.674950290000197
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.341879844665527,
+      "segundos": 17.55948752599943
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 5.931480407714844,
+      "segundos": 26.43100757999946
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.8444061279296875,
+      "segundos": 35.2922858969996
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.651627540588379,
+      "segundos": 44.131363084999975
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.43418025970459,
+      "segundos": 44.86697030399955,
+      "val_perdida": 5.430486488342285
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.409463882446289,
+      "segundos": 52.931509612999434
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.085505485534668,
+      "segundos": 61.73691559799954
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 4.743132591247559,
+      "segundos": 70.48498421299973
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 4.776628494262695,
+      "segundos": 79.18582487999993
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 4.8713459968566895,
+      "segundos": 87.88686819399936
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 4.713404655456543,
+      "segundos": 89.34090251899943,
+      "val_perdida": 4.792933979034424
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 4.704221248626709,
+      "segundos": 96.59797361100027
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 4.868973731994629,
+      "segundos": 105.30038982299993
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 4.70399808883667,
+      "segundos": 113.9825580780007
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 4.482898712158203,
+      "segundos": 122.6667499060004
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.521977424621582,
+      "segundos": 131.34378113999992
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.647401332855225,
+      "segundos": 133.50263748700036,
+      "val_perdida": 4.54064151763916
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.54682731628418,
+      "segundos": 139.99662989900025
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 4.546133518218994,
+      "segundos": 148.63269837500047
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.545750617980957,
+      "segundos": 157.2850909130002
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.290945529937744,
+      "segundos": 165.96934003099977
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.320056915283203,
+      "segundos": 174.6542816199999
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.270469665527344,
+      "segundos": 177.54473706099998,
+      "val_perdida": 4.393750171661377
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.190489768981934,
+      "segundos": 183.31578634499965
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.396518707275391,
+      "segundos": 192.0189042210004
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.46742057800293,
+      "segundos": 200.71153874799984
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.170271873474121,
+      "segundos": 209.39270176900027
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.385409355163574,
+      "segundos": 218.07584197699998
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.327739238739014,
+      "segundos": 221.66887356500047,
+      "val_perdida": 4.268615112304688
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.377683639526367,
+      "segundos": 226.7217577749998
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.139516353607178,
+      "segundos": 235.37657966500046
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 3.9537882804870605,
+      "segundos": 244.07934888900036
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.130188941955566,
+      "segundos": 252.7621144730001
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 3.9988584518432617,
+      "segundos": 261.4340743290004
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 3.9706616401672363,
+      "segundos": 265.76680323100027,
+      "val_perdida": 4.170767116546631
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.235603332519531,
+      "segundos": 270.08937851300107
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.154901027679443,
+      "segundos": 278.7706670000007
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 3.8930459022521973,
+      "segundos": 287.4347306870004
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.286097049713135,
+      "segundos": 296.1524153440005
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.226815223693848,
+      "segundos": 304.85391611900104
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 3.904489278793335,
+      "segundos": 309.90740660200026,
+      "val_perdida": 4.092119216918945
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.016049861907959,
+      "segundos": 313.5297721570005
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 3.932258367538452,
+      "segundos": 322.2106136230004
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 3.7516019344329834,
+      "segundos": 330.92228035800053
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 3.926619529724121,
+      "segundos": 339.57181934000073
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 3.8839664459228516,
+      "segundos": 348.27620157600086
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 3.9577150344848633,
+      "segundos": 354.08380204100104,
+      "val_perdida": 4.0293778228759765
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.105824947357178,
+      "segundos": 356.9859569300006
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.109735012054443,
+      "segundos": 365.68556737200106
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.017637252807617,
+      "segundos": 374.35443732800104
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 3.9317779541015625,
+      "segundos": 383.0545062460005
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.002950191497803,
+      "segundos": 391.7803696580013
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 4.201079845428467,
+      "segundos": 398.2643595940008,
+      "val_perdida": 3.9884274673461912
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.01186990737915,
+      "segundos": 400.44800709300034
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 3.768160343170166,
+      "segundos": 409.1198090800008
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 3.837339162826538,
+      "segundos": 417.8211632720004
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 3.8677263259887695,
+      "segundos": 426.5144930130009
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 3.9020438194274902,
+      "segundos": 435.17940765300045
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 3.7126760482788086,
+      "segundos": 442.41721032500027,
+      "val_perdida": 3.9684980392456053
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.7412660121917725,
+      "segundos": 442.65347695700075,
+      "val_perdida": 3.968184757232666
+     }
+    ]
+   },
+   {
+    "modelo": "ASRN",
+    "lr": 0.003,
+    "semilla": 2,
+    "parametros": 44335308,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 445.716214279998,
+    "piezas_por_s": 67305.39082689647,
+    "perplejidad_por_largo": {
+     "1024": 57.0458036842427,
+     "4096": 52.875086429067395
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 6.9653730392456055,
+      "segundos": 8.495646490000581
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.3559722900390625,
+      "segundos": 17.322942851000334
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.015196323394775,
+      "segundos": 26.139125645000604
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.736487865447998,
+      "segundos": 35.01069937000011
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.399805068969727,
+      "segundos": 43.94605826000043
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.379181861877441,
+      "segundos": 44.68933361800009,
+      "val_perdida": 5.433665618896485
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.222537994384766,
+      "segundos": 52.86676323099982
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.079216480255127,
+      "segundos": 61.753511009999784
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 4.727138042449951,
+      "segundos": 70.58186874800049
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 4.713695526123047,
+      "segundos": 79.38277387400012
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 4.7167510986328125,
+      "segundos": 88.15260941199995
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 4.697704315185547,
+      "segundos": 89.61301517500033,
+      "val_perdida": 4.787289810180664
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 4.759016036987305,
+      "segundos": 96.92363558500074
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 4.661696434020996,
+      "segundos": 105.713423307001
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 4.677783966064453,
+      "segundos": 114.45608129600078
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 4.722029685974121,
+      "segundos": 123.20208993500091
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.552011489868164,
+      "segundos": 131.9409590590003
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.499427795410156,
+      "segundos": 134.12633204900067,
+      "val_perdida": 4.531054382324219
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.50385856628418,
+      "segundos": 140.67343473300116
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 4.4286065101623535,
+      "segundos": 149.42430038700059
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.541618347167969,
+      "segundos": 158.1418493830006
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.415105819702148,
+      "segundos": 166.8917842990004
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.629975318908691,
+      "segundos": 175.63240252500054
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.4729743003845215,
+      "segundos": 178.55195955300042,
+      "val_perdida": 4.378641300201416
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.328987121582031,
+      "segundos": 184.38171495700044
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.411604404449463,
+      "segundos": 193.10645259000012
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.161949157714844,
+      "segundos": 201.8542841840008
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.304508209228516,
+      "segundos": 210.6148927130007
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.355953216552734,
+      "segundos": 219.3632839820002
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.180898666381836,
+      "segundos": 223.00512489600078,
+      "val_perdida": 4.252452087402344
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.277762413024902,
+      "segundos": 228.11728105899965
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.170769691467285,
+      "segundos": 236.88058800699946
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.282029151916504,
+      "segundos": 245.64793103600005
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.254459381103516,
+      "segundos": 254.39014555199992
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 3.995307445526123,
+      "segundos": 263.1130467359999
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.341106414794922,
+      "segundos": 267.48389784999927,
+      "val_perdida": 4.176453094482422
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.092655181884766,
+      "segundos": 271.8404940169994
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 3.914850950241089,
+      "segundos": 280.5789683719995
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.086270332336426,
+      "segundos": 289.30014847299935
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.322973728179932,
+      "segundos": 298.02835496399894
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.077620029449463,
+      "segundos": 306.79644714799906
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 3.8322317600250244,
+      "segundos": 311.8861857739994,
+      "val_perdida": 4.104259014129639
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.037318229675293,
+      "segundos": 315.51471474499976
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.092988967895508,
+      "segundos": 324.2323503359994
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 4.099644660949707,
+      "segundos": 332.99234814899955
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 3.957096576690674,
+      "segundos": 341.75276678499904
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 3.8159937858581543,
+      "segundos": 350.4861625629992
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.087429046630859,
+      "segundos": 356.320370514999,
+      "val_perdida": 4.027887573242188
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 3.945585250854492,
+      "segundos": 359.2504784369985
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 3.9218409061431885,
+      "segundos": 368.02454529999886
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.073272705078125,
+      "segundos": 376.7789858969991
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 3.9381461143493652,
+      "segundos": 385.51468320799904
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 3.8968398571014404,
+      "segundos": 394.29251756199847
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 3.719421863555908,
+      "segundos": 400.85640990799857,
+      "val_perdida": 3.9942683792114257
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.014874458312988,
+      "segundos": 403.056107940999
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.039010047912598,
+      "segundos": 411.81964036299905
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 3.7635412216186523,
+      "segundos": 420.5839683219983
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 3.9152047634124756,
+      "segundos": 429.37345854999876
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 3.897268295288086,
+      "segundos": 438.1523540229982
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 3.893609046936035,
+      "segundos": 445.4784024249984,
+      "val_perdida": 3.9683738708496095
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.68808650970459,
+      "segundos": 445.716214279998,
+      "val_perdida": 3.968404769897461
+     }
+    ]
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 1,
+    "parametros": 44634624,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 168.80843671299954,
+    "piezas_por_s": 177710.92834064402,
+    "perplejidad_por_largo": {
+     "1024": 63.524705133644915,
+     "4096": 121.34785595995547
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 7.0192036628723145,
+      "segundos": 3.3315860599996086
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.4136762619018555,
+      "segundos": 6.644859151999299
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.103053092956543,
+      "segundos": 9.959177785000065
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 6.07442569732666,
+      "segundos": 13.283169495999573
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.970861434936523,
+      "segundos": 16.602687612999944
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.7704758644104,
+      "segundos": 16.87922333899951,
+      "val_perdida": 5.76874475479126
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.844372749328613,
+      "segundos": 19.91834242799996
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.504978179931641,
+      "segundos": 23.238474537000002
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.261355876922607,
+      "segundos": 26.55968376800047
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 5.321263790130615,
+      "segundos": 29.882221143000606
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.359637260437012,
+      "segundos": 33.19730281400007
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 5.141104221343994,
+      "segundos": 33.75005311099994,
+      "val_perdida": 5.272796363830566
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 5.166304588317871,
+      "segundos": 36.51657653300026
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 5.356081485748291,
+      "segundos": 39.83469237300051
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 5.189655303955078,
+      "segundos": 43.14982069500002
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 4.96135950088501,
+      "segundos": 46.470586108000134
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 4.9928154945373535,
+      "segundos": 49.79435831200044
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 5.00275993347168,
+      "segundos": 50.62497918400004,
+      "val_perdida": 4.969401092529297
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.978855133056641,
+      "segundos": 53.114719749999495
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 5.030500888824463,
+      "segundos": 56.43312876799973
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 4.938374042510986,
+      "segundos": 59.75730724599998
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.749294757843018,
+      "segundos": 63.076279240000076
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.697958469390869,
+      "segundos": 66.39161493099982
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.649659633636475,
+      "segundos": 67.49651896999967,
+      "val_perdida": 4.763487586975097
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.557849884033203,
+      "segundos": 69.70792794599947
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.730127334594727,
+      "segundos": 73.02757750099954
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.752721786499023,
+      "segundos": 76.34737581199988
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.456601142883301,
+      "segundos": 79.66626133999944
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.69923210144043,
+      "segundos": 82.98665483699915
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.650126934051514,
+      "segundos": 84.37017390999972,
+      "val_perdida": 4.573467254638672
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.662665843963623,
+      "segundos": 86.30648881099933
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.394166946411133,
+      "segundos": 89.62959710499945
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.262194633483887,
+      "segundos": 92.94710723299886
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.432093620300293,
+      "segundos": 96.26282697999886
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 4.284889221191406,
+      "segundos": 99.5801151429987
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.2422027587890625,
+      "segundos": 101.23917210399941,
+      "val_perdida": 4.393097648620605
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.4862871170043945,
+      "segundos": 102.8964305519994
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.390128135681152,
+      "segundos": 106.21678139599953
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.184104919433594,
+      "segundos": 109.53865941399908
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.483111381530762,
+      "segundos": 112.85871083499933
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.407253265380859,
+      "segundos": 116.18068578999919
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 4.155261516571045,
+      "segundos": 118.11656422099895,
+      "val_perdida": 4.257687892913818
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.225927352905273,
+      "segundos": 119.49943121499928
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.136658191680908,
+      "segundos": 122.82001369299905
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 3.972743034362793,
+      "segundos": 126.13800432199969
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.151960372924805,
+      "segundos": 129.45434036199913
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.067124366760254,
+      "segundos": 132.77097179799966
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.1777873039245605,
+      "segundos": 134.98263462499926,
+      "val_perdida": 4.172308654785156
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.268951892852783,
+      "segundos": 136.08958925699972
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.312910556793213,
+      "segundos": 139.4115736219992
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.209925651550293,
+      "segundos": 142.72799576299985
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.124731063842773,
+      "segundos": 146.04758634499922
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.176523208618164,
+      "segundos": 149.36589153799923
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 4.432995796203613,
+      "segundos": 151.85828939699968,
+      "val_perdida": 4.11713565826416
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.197991371154785,
+      "segundos": 152.68842956699973
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 3.979036331176758,
+      "segundos": 156.00256521099982
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 4.036569595336914,
+      "segundos": 159.3171752169992
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 4.0093512535095215,
+      "segundos": 162.63687595699957
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 4.097978591918945,
+      "segundos": 165.95293986699926
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 3.9489073753356934,
+      "segundos": 168.71623986199938,
+      "val_perdida": 4.081798057556153
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.9672765731811523,
+      "segundos": 168.80843671299954,
+      "val_perdida": 4.081252098083496
+     }
+    ]
+   },
+   {
+    "modelo": "Transformer",
+    "lr": 0.001,
+    "semilla": 2,
+    "parametros": 44634624,
+    "pasos": 1831,
+    "piezas_vistas": 29999104,
+    "segundos": 168.77969747200132,
+    "piezas_por_s": 177741.18836168977,
+    "perplejidad_por_largo": {
+     "1024": 64.13397972909284,
+     "4096": 125.65336650846673
+    },
+    "historial": [
+     {
+      "paso": 36,
+      "piezas": 589824,
+      "perdida": 6.934132099151611,
+      "segundos": 3.3313235569994504
+     },
+     {
+      "paso": 72,
+      "piezas": 1179648,
+      "perdida": 6.417381763458252,
+      "segundos": 6.64801031099978
+     },
+     {
+      "paso": 108,
+      "piezas": 1769472,
+      "perdida": 6.178705215454102,
+      "segundos": 9.967038226000113
+     },
+     {
+      "paso": 144,
+      "piezas": 2359296,
+      "perdida": 5.981844902038574,
+      "segundos": 13.284667215999434
+     },
+     {
+      "paso": 180,
+      "piezas": 2949120,
+      "perdida": 5.7450714111328125,
+      "segundos": 16.60491053199985
+     },
+     {
+      "paso": 183,
+      "piezas": 2998272,
+      "perdida": 5.739891052246094,
+      "segundos": 16.881292003999988,
+      "val_perdida": 5.79239896774292
+     },
+     {
+      "paso": 216,
+      "piezas": 3538944,
+      "perdida": 5.614496231079102,
+      "segundos": 19.92068254699916
+     },
+     {
+      "paso": 252,
+      "piezas": 4128768,
+      "perdida": 5.603453636169434,
+      "segundos": 23.23735065099936
+     },
+     {
+      "paso": 288,
+      "piezas": 4718592,
+      "perdida": 5.26827335357666,
+      "segundos": 26.552367756999047
+     },
+     {
+      "paso": 324,
+      "piezas": 5308416,
+      "perdida": 5.1529130935668945,
+      "segundos": 29.868024070999127
+     },
+     {
+      "paso": 360,
+      "piezas": 5898240,
+      "perdida": 5.280183792114258,
+      "segundos": 33.18045856699973
+     },
+     {
+      "paso": 366,
+      "piezas": 5996544,
+      "perdida": 5.168195724487305,
+      "segundos": 33.732908719999614,
+      "val_perdida": 5.255673713684082
+     },
+     {
+      "paso": 396,
+      "piezas": 6488064,
+      "perdida": 5.252989292144775,
+      "segundos": 36.499307228999896
+     },
+     {
+      "paso": 432,
+      "piezas": 7077888,
+      "perdida": 5.1086320877075195,
+      "segundos": 39.81615238300037
+     },
+     {
+      "paso": 468,
+      "piezas": 7667712,
+      "perdida": 5.159259796142578,
+      "segundos": 43.134251876000235
+     },
+     {
+      "paso": 504,
+      "piezas": 8257536,
+      "perdida": 5.158680438995361,
+      "segundos": 46.4524596909996
+     },
+     {
+      "paso": 540,
+      "piezas": 8847360,
+      "perdida": 5.028271675109863,
+      "segundos": 49.77195895600016
+     },
+     {
+      "paso": 549,
+      "piezas": 8994816,
+      "perdida": 4.849435329437256,
+      "segundos": 50.60170896599993,
+      "val_perdida": 4.962585620880127
+     },
+     {
+      "paso": 576,
+      "piezas": 9437184,
+      "perdida": 4.949883460998535,
+      "segundos": 53.09152558000005
+     },
+     {
+      "paso": 612,
+      "piezas": 10027008,
+      "perdida": 4.868417263031006,
+      "segundos": 56.40651957299997
+     },
+     {
+      "paso": 648,
+      "piezas": 10616832,
+      "perdida": 5.031961441040039,
+      "segundos": 59.726358433000314
+     },
+     {
+      "paso": 684,
+      "piezas": 11206656,
+      "perdida": 4.777196884155273,
+      "segundos": 63.03886949600019
+     },
+     {
+      "paso": 720,
+      "piezas": 11796480,
+      "perdida": 4.974329948425293,
+      "segundos": 66.35453419500027
+     },
+     {
+      "paso": 732,
+      "piezas": 11993088,
+      "perdida": 4.832910537719727,
+      "segundos": 67.45857163500023,
+      "val_perdida": 4.748435916900635
+     },
+     {
+      "paso": 756,
+      "piezas": 12386304,
+      "perdida": 4.738093852996826,
+      "segundos": 69.66996407500028
+     },
+     {
+      "paso": 792,
+      "piezas": 12976128,
+      "perdida": 4.714853286743164,
+      "segundos": 72.99588457200025
+     },
+     {
+      "paso": 828,
+      "piezas": 13565952,
+      "perdida": 4.537101745605469,
+      "segundos": 76.32368257100006
+     },
+     {
+      "paso": 864,
+      "piezas": 14155776,
+      "perdida": 4.758612632751465,
+      "segundos": 79.6521396420003
+     },
+     {
+      "paso": 900,
+      "piezas": 14745600,
+      "perdida": 4.7383527755737305,
+      "segundos": 82.97955207700033
+     },
+     {
+      "paso": 915,
+      "piezas": 14991360,
+      "perdida": 4.52439546585083,
+      "segundos": 84.36326893900059,
+      "val_perdida": 4.5691015243530275
+     },
+     {
+      "paso": 936,
+      "piezas": 15335424,
+      "perdida": 4.650047302246094,
+      "segundos": 86.30328653000015
+     },
+     {
+      "paso": 972,
+      "piezas": 15925248,
+      "perdida": 4.488971710205078,
+      "segundos": 89.62896566100062
+     },
+     {
+      "paso": 1008,
+      "piezas": 16515072,
+      "perdida": 4.5546112060546875,
+      "segundos": 92.94780872500087
+     },
+     {
+      "paso": 1044,
+      "piezas": 17104896,
+      "perdida": 4.542999267578125,
+      "segundos": 96.26797929800068
+     },
+     {
+      "paso": 1080,
+      "piezas": 17694720,
+      "perdida": 4.299602031707764,
+      "segundos": 99.58403230000022
+     },
+     {
+      "paso": 1098,
+      "piezas": 17989632,
+      "perdida": 4.615883827209473,
+      "segundos": 101.24099356900024,
+      "val_perdida": 4.419749488830567
+     },
+     {
+      "paso": 1116,
+      "piezas": 18284544,
+      "perdida": 4.354992389678955,
+      "segundos": 102.90044196000053
+     },
+     {
+      "paso": 1152,
+      "piezas": 18874368,
+      "perdida": 4.185002326965332,
+      "segundos": 106.22054573700098
+     },
+     {
+      "paso": 1188,
+      "piezas": 19464192,
+      "perdida": 4.286934852600098,
+      "segundos": 109.54040429200086
+     },
+     {
+      "paso": 1224,
+      "piezas": 20054016,
+      "perdida": 4.5374016761779785,
+      "segundos": 112.85326859600082
+     },
+     {
+      "paso": 1260,
+      "piezas": 20643840,
+      "perdida": 4.374239921569824,
+      "segundos": 116.17067488200064
+     },
+     {
+      "paso": 1281,
+      "piezas": 20987904,
+      "perdida": 4.086922645568848,
+      "segundos": 118.10617014500076,
+      "val_perdida": 4.2851872062683105
+     },
+     {
+      "paso": 1296,
+      "piezas": 21233664,
+      "perdida": 4.25376033782959,
+      "segundos": 119.48718798800019
+     },
+     {
+      "paso": 1332,
+      "piezas": 21823488,
+      "perdida": 4.332061767578125,
+      "segundos": 122.80118742300056
+     },
+     {
+      "paso": 1368,
+      "piezas": 22413312,
+      "perdida": 4.341756820678711,
+      "segundos": 126.11848198999996
+     },
+     {
+      "paso": 1404,
+      "piezas": 23003136,
+      "perdida": 4.235738277435303,
+      "segundos": 129.4374466700001
+     },
+     {
+      "paso": 1440,
+      "piezas": 23592960,
+      "perdida": 4.048832893371582,
+      "segundos": 132.7550955680008
+     },
+     {
+      "paso": 1464,
+      "piezas": 23986176,
+      "perdida": 4.275065898895264,
+      "segundos": 134.96407946900035,
+      "val_perdida": 4.188498153686523
+     },
+     {
+      "paso": 1476,
+      "piezas": 24182784,
+      "perdida": 4.149797439575195,
+      "segundos": 136.0689747180004
+     },
+     {
+      "paso": 1512,
+      "piezas": 24772608,
+      "perdida": 4.096070289611816,
+      "segundos": 139.38638265999998
+     },
+     {
+      "paso": 1548,
+      "piezas": 25362432,
+      "perdida": 4.273782253265381,
+      "segundos": 142.7030353350001
+     },
+     {
+      "paso": 1584,
+      "piezas": 25952256,
+      "perdida": 4.130002975463867,
+      "segundos": 146.02043240700004
+     },
+     {
+      "paso": 1620,
+      "piezas": 26542080,
+      "perdida": 4.094062328338623,
+      "segundos": 149.34033961499972
+     },
+     {
+      "paso": 1647,
+      "piezas": 26984448,
+      "perdida": 3.9411978721618652,
+      "segundos": 151.8303872030001,
+      "val_perdida": 4.128965950012207
+     },
+     {
+      "paso": 1656,
+      "piezas": 27131904,
+      "perdida": 4.182880401611328,
+      "segundos": 152.65910922200055
+     },
+     {
+      "paso": 1692,
+      "piezas": 27721728,
+      "perdida": 4.247337818145752,
+      "segundos": 155.97452490900014
+     },
+     {
+      "paso": 1728,
+      "piezas": 28311552,
+      "perdida": 3.9963130950927734,
+      "segundos": 159.28570344900072
+     },
+     {
+      "paso": 1764,
+      "piezas": 28901376,
+      "perdida": 4.119229316711426,
+      "segundos": 162.6029395380001
+     },
+     {
+      "paso": 1800,
+      "piezas": 29491200,
+      "perdida": 4.09808349609375,
+      "segundos": 165.92298642700007
+     },
+     {
+      "paso": 1830,
+      "piezas": 29982720,
+      "perdida": 4.081542491912842,
+      "segundos": 168.6876055870007,
+      "val_perdida": 4.093457717895507
+     },
+     {
+      "paso": 1831,
+      "piezas": 29999104,
+      "perdida": 3.935441017150879,
+      "segundos": 168.77969747200132,
+      "val_perdida": 4.092937374114991
+     }
+    ]
+   }
+  ],
+  "mejor_lr": {
+   "ASRN": 0.003,
+   "Transformer": 0.001
+  },
+  "resumen": {
+   "ASRN": {
+    "1024": [
+     57.18960645990065,
+     0.12522402543915018
+    ],
+    "4096": [
+     53.152284126012674,
+     0.27581886918728626
+    ]
+   },
+   "Transformer": {
+    "1024": [
+     63.413265006787825,
+     0.7824098369157778
+    ],
+    "4096": [
+     121.01361157316948,
+     4.815584825636311
+    ]
+   }
+  }
+ }
+}

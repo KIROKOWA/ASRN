@@ -1,0 +1,321 @@
+{
+ "entorno": {
+  "torch": "2.14.1+cu130",
+  "gpu": "NVIDIA A100-SXM4-40GB"
+ },
+ "mismas_cuentas": [
+  {
+   "precision": "fp32",
+   "sin_triton_igual_bit_a_bit": true,
+   "salida_dif_relativa_max": 9.541901846432665e-08,
+   "gradiente_dif_relativa_max": 0.0001031088104355149,
+   "gradiente_peor_parametro": "w_sufijo",
+   "ruido_de_antes_consigo_misma": 5.5224463721970096e-05,
+   "ruido_peor_parametro": "w_sufijo"
+  },
+  {
+   "precision": "bf16",
+   "sin_triton_igual_bit_a_bit": true,
+   "salida_dif_relativa_max": 1.3894910807721317e-05,
+   "gradiente_dif_relativa_max": 0.08682634681463242,
+   "gradiente_peor_parametro": "afin_palabra.2.bias",
+   "ruido_de_antes_consigo_misma": 0.02187499962747097,
+   "ruido_peor_parametro": "afin_contexto.2.bias",
+   "antes_contra_fp32": 0.0011516680242493749,
+   "antes_contra_fp32_parametro": "g_conf.weight",
+   "ahora_contra_fp32": 0.0011516680242493749,
+   "ahora_contra_fp32_parametro": "g_conf.weight"
+  }
+ ],
+ "capa": {
+  "d": 512,
+  "lote": 1,
+  "filas": [
+   {
+    "largo": 1024,
+    "antes_ms": 23.982029000308103,
+    "antes_gb": 0.101797376,
+    "sin_triton_ms": 19.727015999706055,
+    "sin_triton_gb": 0.090633728,
+    "solo_escaneo_ms": 14.371226999628561,
+    "solo_escaneo_gb": 0.090633728,
+    "ahora_ms": 10.601944999962143,
+    "ahora_gb": 0.07866368,
+    "partida_ms": 10.535097000229143,
+    "partida_gb": 0.063516672,
+    "grafo_ms": 1.6015229998629366,
+    "veces": 14.974514260713434
+   },
+   {
+    "largo": 4096,
+    "antes_ms": 30.10213700008535,
+    "antes_gb": 0.339211776,
+    "sin_triton_ms": 20.98043600017263,
+    "sin_triton_gb": 0.291384832,
+    "solo_escaneo_ms": 14.854190000278322,
+    "solo_escaneo_gb": 0.291384832,
+    "ahora_ms": 11.024988999906782,
+    "ahora_gb": 0.245215232,
+    "partida_ms": 10.496920000150567,
+    "partida_gb": 0.1823744,
+    "grafo_ms": 2.224627000032342,
+    "veces": 13.531318733274261
+   },
+   {
+    "largo": 16384,
+    "antes_ms": 49.80259900003148,
+    "antes_gb": 1.217107456,
+    "sin_triton_ms": 25.606281999898783,
+    "sin_triton_gb": 1.022402048,
+    "solo_escaneo_ms": 17.762251000021934,
+    "solo_escaneo_gb": 1.022402048,
+    "ahora_ms": 11.328355999921769,
+    "ahora_gb": 0.847005696,
+    "partida_ms": 10.881386000164639,
+    "partida_gb": 0.595347456,
+    "grafo_ms": 6.577326000297035,
+    "veces": 7.571861117691654
+   },
+   {
+    "largo": 65536,
+    "antes_ms": 140.69231799976478,
+    "antes_gb": 4.68173056,
+    "sin_triton_ms": 49.247402000219154,
+    "sin_triton_gb": 3.901840896,
+    "solo_escaneo_ms": 47.84579200031658,
+    "solo_escaneo_gb": 3.901840896,
+    "ahora_ms": 22.708701999818004,
+    "ahora_gb": 3.205859328,
+    "partida_ms": 18.469306000042707,
+    "partida_gb": 2.199226368,
+    "grafo_ms": 22.490155000014056,
+    "veces": 6.255729140136066
+   },
+   {
+    "largo": 262144,
+    "antes_ms": 545.8092280000528,
+    "antes_gb": 18.494303744,
+    "sin_triton_ms": 183.27838799996243,
+    "sin_triton_gb": 15.371634176,
+    "solo_escaneo_ms": 182.5994509999873,
+    "solo_escaneo_gb": 15.371634176,
+    "ahora_ms": 84.64580400004706,
+    "ahora_gb": 12.591548416,
+    "partida_ms": 67.08087800006979,
+    "partida_gb": 8.565016576,
+    "grafo_ms": 86.07790499991097,
+    "veces": 6.44815457125021
+   }
+  ]
+ },
+ "modelo": {
+  "parametros": 49228176,
+  "piezas_por_paso": 32768,
+  "cada2": {
+   "parametros": 49478250,
+   "n_capas": 10,
+   "largo_cada": 2
+  },
+  "partido": {
+   "parametros": 49478250,
+   "d": 576,
+   "por_tabla": 72
+  },
+  "filas": [
+   {
+    "largo": 1024,
+    "lote": 32,
+    "antes_piezas_s": 44878.58288949551,
+    "antes_gpu_ocupada": 0.9908234364242355,
+    "ahora_piezas_s": 147547.5122869987,
+    "ahora_gpu_ocupada": 0.9815936369598935,
+    "ahora_compilado_piezas_s": 184982.39339408375,
+    "ahora_compilado_gpu_ocupada": 0.952142771904131,
+    "cada2_piezas_s": 171235.1638432505,
+    "cada2_gpu_ocupada": 0.9816297873184102,
+    "cada2_compilado_piezas_s": 214535.6899482341,
+    "cada2_compilado_gpu_ocupada": 0.9743808586616849,
+    "partido_piezas_s": 175670.35398064795,
+    "partido_gpu_ocupada": 0.9746132374695758,
+    "partido_compilado_piezas_s": 218788.0542604029,
+    "partido_compilado_gpu_ocupada": 0.962804541831292,
+    "transformer_piezas_s": 207572.94491673453,
+    "transformer_gpu_ocupada": 0.9941334924499974,
+    "transformer_compilado_piezas_s": 271581.84498207737,
+    "transformer_compilado_gpu_ocupada": 0.9919711627939991
+   },
+   {
+    "largo": 4096,
+    "lote": 8,
+    "antes_piezas_s": 45751.76878274053,
+    "antes_gpu_ocupada": 0.9862786050077038,
+    "ahora_piezas_s": 145843.98086464324,
+    "ahora_gpu_ocupada": 0.9711105408056067,
+    "ahora_compilado_piezas_s": 184599.03563341667,
+    "ahora_compilado_gpu_ocupada": 0.9504282973105904,
+    "cada2_piezas_s": 171117.9939407569,
+    "cada2_gpu_ocupada": 0.9826575610399253,
+    "cada2_compilado_piezas_s": 214549.85054117738,
+    "cada2_compilado_gpu_ocupada": 0.9732246461467164,
+    "partido_piezas_s": 175679.7957793691,
+    "partido_gpu_ocupada": 0.9767531045446354,
+    "partido_compilado_piezas_s": 219338.65579859732,
+    "partido_compilado_gpu_ocupada": 0.9648232016165673,
+    "transformer_piezas_s": 184860.1980084959,
+    "transformer_gpu_ocupada": 0.9948390392786246,
+    "transformer_compilado_piezas_s": 233917.45236753163,
+    "transformer_compilado_gpu_ocupada": 0.9917681230451817
+   },
+   {
+    "largo": 16384,
+    "lote": 2,
+    "antes_piezas_s": 45331.55395916756,
+    "antes_gpu_ocupada": 0.9811610304097882,
+    "ahora_piezas_s": 144301.8511475457,
+    "ahora_gpu_ocupada": 0.970579993299282,
+    "ahora_compilado_piezas_s": 182030.1136180713,
+    "ahora_compilado_gpu_ocupada": 0.9469790519989836,
+    "cada2_piezas_s": 169762.37344979742,
+    "cada2_gpu_ocupada": 0.9820953798573151,
+    "cada2_compilado_piezas_s": 211390.01637996515,
+    "cada2_compilado_gpu_ocupada": 0.9666273946657087,
+    "partido_piezas_s": 174464.32708426178,
+    "partido_gpu_ocupada": 0.9786801536182473,
+    "partido_compilado_piezas_s": 215468.9051299527,
+    "partido_compilado_gpu_ocupada": 0.9565288196081391,
+    "transformer_piezas_s": 129270.75270764582,
+    "transformer_gpu_ocupada": 0.9967696237783675,
+    "transformer_compilado_piezas_s": 151716.94943615881,
+    "transformer_compilado_gpu_ocupada": 0.997008789775982
+   },
+   {
+    "largo": 32768,
+    "lote": 1,
+    "antes_piezas_s": 44877.09462380553,
+    "antes_gpu_ocupada": 0.9731440855515731,
+    "ahora_piezas_s": 142897.02489241015,
+    "ahora_gpu_ocupada": 0.9604539635433376,
+    "ahora_compilado_piezas_s": 179315.16698699718,
+    "ahora_compilado_gpu_ocupada": 0.9271812806558106,
+    "cada2_piezas_s": 169188.53604147697,
+    "cada2_gpu_ocupada": 0.9813221236300039,
+    "cada2_compilado_piezas_s": 212413.02486239592,
+    "cada2_compilado_gpu_ocupada": 0.968301595484386,
+    "partido_piezas_s": 173270.1975823165,
+    "partido_gpu_ocupada": 0.9774159577953144,
+    "partido_compilado_piezas_s": 213960.83896315866,
+    "partido_compilado_gpu_ocupada": 0.9496092710590255,
+    "transformer_piezas_s": 92922.39301134051,
+    "transformer_gpu_ocupada": 0.9981011396338088,
+    "transformer_compilado_piezas_s": 103941.93870801287,
+    "transformer_compilado_gpu_ocupada": 0.9973272158998637
+   }
+  ],
+  "comparacion": [
+   {
+    "largo": 1024,
+    "transformer": 271581.84498207737,
+    "cada2": 214535.6899482341,
+    "partido": 218788.0542604029,
+    "partido_contra_cada2": 1.0198212442563512,
+    "partido_contra_transformer": 0.8056063330552949
+   },
+   {
+    "largo": 4096,
+    "transformer": 233917.45236753163,
+    "cada2": 214549.85054117738,
+    "partido": 219338.65579859732,
+    "partido_contra_cada2": 1.0223202451334303,
+    "partido_contra_transformer": 0.9376754644795461
+   },
+   {
+    "largo": 16384,
+    "transformer": 151716.94943615881,
+    "cada2": 211390.01637996515,
+    "partido": 215468.9051299527,
+    "partido_contra_cada2": 1.0192955600261457,
+    "partido_contra_transformer": 1.4202032530361426
+   },
+   {
+    "largo": 32768,
+    "transformer": 103941.93870801287,
+    "cada2": 212413.02486239592,
+    "partido": 213960.83896315866,
+    "partido_contra_cada2": 1.0072868135170403,
+    "partido_contra_transformer": 2.0584649624845266
+   }
+  ]
+ },
+ "donde_se_va_el_tiempo": [
+  {
+   "largo": 1024,
+   "d": 512,
+   "kernels": 403,
+   "sincronizaciones": 1,
+   "ms_por_parte": {
+    "contexto (reloj y confirmacion)": 2.8991700000915444,
+    "acumular (atencion por casilleros)": 5.234895999819855,
+    "repeticion (Hawkes y racha)": 4.115954000099009,
+    "combinar (puerta)": 5.159251999884873,
+    "capa entera": 14.177403000303457
+   },
+   "kernels_que_mas_tardan": "-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                            aten::copy_         4.51%     849.269us        16.60%       3.127ms      30.360us     319.809us        19.84%     319.809us       3.105us           103  \n                                               aten::to         0.83%     155.657us        19.61%       3.694ms      33.585us       0.000us         0.00%     239.839us       2.180us           110  \n                                         aten::_to_copy         2.34%     441.259us        18.78%       3.539ms      47.821us       0.000us         0.00%     239.839us       3.241us            74  \n                                              aten::sum         3.49%     657.473us         5.21%     981.835us      29.753us     222.429us        13.80%     222.429us       6.740us            33  \n                                           aten::linear         0.83%     155.887us        15.01%       2.828ms     128.528us       0.000us         0.00%     215.521us       9.796us            22  \nautograd::engine::evaluate_function: _CasillerosTrit...         0.33%      63.061us         6.11%       1.150ms       1.150ms       0.000us         0.00%     184.130us     184.130us             1  \n                              _CasillerosTritonBackward         2.15%     405.920us         5.57%       1.049ms       1.049ms      91.520us         5.68%     179.490us     179.490us             1  \n                                               aten::mm         4.71%     887.076us         6.59%       1.242ms      49.689us     174.372us        10.82%     174.372us       6.975us            25  \n    autograd::engine::evaluate_function: AddmmBackward0         0.90%     169.008us         6.54%       1.232ms     176.007us       0.000us         0.00%     143.009us      20.430us             7  \nvoid at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us     123.100us         7.64%     123.100us       3.971us            31  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     123.077us         7.64%     123.077us       2.564us            48  \nautograd::engine::evaluate_function: ToCopyBackward0...         1.31%     246.205us         6.65%       1.252ms      44.714us       0.000us         0.00%     121.372us       4.335us            28  \n                                              aten::mul         2.73%     513.625us         4.37%     822.519us      22.230us     111.521us         6.92%     111.521us       3.014us            37  \n                                             aten::add_         1.85%     347.763us         3.53%     665.845us      16.240us     109.251us         6.78%     109.251us       2.665us            41  \n                                        ToCopyBackward0         0.35%      65.299us         5.00%     941.246us      33.616us       0.000us         0.00%     107.804us       3.850us            28  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \nSelf CPU time total: 18.838ms\nSelf CUDA time total: 1.612ms\n"
+  },
+  {
+   "largo": 16384,
+   "d": 512,
+   "kernels": 462,
+   "sincronizaciones": 0,
+   "ms_por_parte": {
+    "contexto (reloj y confirmacion)": 3.0014620001566072,
+    "acumular (atencion por casilleros)": 5.649285000345117,
+    "repeticion (Hawkes y racha)": 4.344559999935882,
+    "combinar (puerta)": 5.016284999783238,
+    "capa entera": 14.818794999882812
+   },
+   "kernels_que_mas_tardan": "-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                            aten::copy_         4.48%     841.756us        16.23%       3.051ms      29.056us       1.517ms        20.34%       1.517ms      14.444us           105  \nautograd::engine::evaluate_function: _CasillerosTrit...         0.31%      57.793us         5.97%       1.122ms       1.122ms       0.000us         0.00%       1.368ms       1.368ms             1  \n                              _CasillerosTritonBackward         2.17%     406.940us         5.47%       1.027ms       1.027ms     916.416us        12.29%       1.363ms       1.363ms             1  \n                                               aten::to         0.70%     132.207us        19.18%       3.606ms      32.778us       0.000us         0.00%       1.066ms       9.693us           110  \n                                         aten::_to_copy         2.25%     423.711us        18.48%       3.473ms      46.937us       0.000us         0.00%       1.066ms      14.408us            74  \n                                           aten::linear         0.88%     164.778us        15.00%       2.820ms     128.186us       0.000us         0.00%       1.034ms      46.980us            22  \n                                     _casilleros_vuelta         0.00%       0.000us         0.00%       0.000us       0.000us     916.416us        12.29%     916.416us     916.416us             1  \nautograd::engine::evaluate_function: ToCopyBackward0...         1.31%     246.868us         6.48%       1.217ms      43.471us       0.000us         0.00%     821.505us      29.339us            28  \n                                               aten::mm         4.55%     854.888us         6.53%       1.227ms      49.082us     800.800us        10.74%     800.800us      32.032us            25  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us     783.295us        10.50%     783.295us      16.319us            48  \n                                              aten::sum         3.64%     684.651us         5.70%       1.071ms      32.444us     764.317us        10.25%     764.317us      23.161us            33  \n                                             aten::add_         1.87%     350.567us         3.51%     659.490us      16.085us     755.775us        10.14%     755.775us      18.434us            41  \nvoid at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us     536.705us         7.20%     536.705us      17.313us            31  \n                                      _CasillerosTriton         1.18%     221.064us         1.82%     342.181us     342.181us     394.240us         5.29%     534.687us     534.687us             1  \n                                        ToCopyBackward0         0.29%      54.668us         4.81%     904.832us      32.315us       0.000us         0.00%     515.713us      18.418us            28  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \nSelf CPU time total: 18.795ms\nSelf CUDA time total: 7.457ms\n"
+  }
+ ],
+ "paso_por_partes": [
+  {
+   "largo": 1024,
+   "lote": 32,
+   "ms": {
+    "paso entero": 225.4987540000002,
+    "vocabulario, salida y perdida": 54.36404500005665,
+    "9 bloques locales": 70.2532260006592,
+    "8 capas ASRN": 139.26956800059997,
+    "   contexto (reloj y confirmacion) (x8)": 28.41677600008552,
+    "   acumular (atencion por casilleros) (x8)": 69.59326400101418,
+    "   repeticion (Hawkes y racha) (x8)": 33.33180800109403,
+    "   combinar (puerta) (x8)": 44.9486559991783,
+    "recorte y AdamW": 4.516361000241886,
+    "Transformer: paso entero": 157.85400999993726,
+    "Transformer: 8 bloques (atencion + densa)": 108.78947199671529,
+    "Transformer compilado: paso entero": 120.81663600019965,
+    "ASRN compilado por partes: paso entero": 178.5422110001491
+   },
+   "kernels_que_mas_tardan": "-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                            aten::copy_         3.90%       8.152ms         8.20%      17.133ms      16.797us      46.156ms        21.17%      46.156ms      45.251us          1020  \n                                               aten::mm         3.71%       7.749ms         5.36%      11.208ms      46.894us      33.456ms        15.34%      33.456ms     139.985us           239  \nvoid at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us      16.297ms         7.47%      16.297ms      51.573us           316  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.440ms         7.08%      15.440ms      41.283us           374  \n                              _CasillerosTritonBackward         1.57%       3.277ms         4.01%       8.372ms       1.047ms      14.796ms         6.79%      22.846ms       2.856ms             8  \n                                     _casilleros_vuelta         0.00%       0.000us         0.00%       0.000us       0.000us      14.796ms         6.79%      14.796ms       1.849ms             8  \n                                             aten::add_         0.62%       1.295ms         1.08%       2.249ms      17.042us      14.622ms         6.71%      14.622ms     110.774us           132  \n                                              aten::sum         3.03%       6.342ms         4.66%       9.747ms      33.493us      14.060ms         6.45%      14.060ms      48.315us           291  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      14.036ms         6.44%      14.036ms      78.412us           179  \n                       aten::_log_softmax_backward_data         0.01%      18.017us         0.01%      28.982us      28.982us      12.651ms         5.80%      12.651ms      12.651ms             1  \nvoid at::native::(anonymous namespace)::cunn_SoftMax...         0.00%       0.000us         0.00%       0.000us       0.000us      12.651ms         5.80%      12.651ms      12.651ms             1  \n                                     aten::_log_softmax         0.01%      27.076us         0.02%      41.405us      41.405us      12.045ms         5.52%      12.045ms      12.045ms             1  \nvoid at::native::(anonymous namespace)::cunn_SoftMax...         0.00%       0.000us         0.00%       0.000us       0.000us      12.045ms         5.52%      12.045ms      12.045ms             1  \nvoid at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      11.130ms         5.10%      11.130ms      71.806us           155  \n                       aten::native_layer_norm_backward         0.23%     490.986us         0.80%       1.662ms      61.551us      10.468ms         4.80%      12.468ms     461.784us            27  \n                             aten::convolution_backward         0.65%       1.360ms         1.47%       3.062ms     340.273us      10.127ms         4.64%      12.746ms       1.416ms             9  \nvoid at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       8.893ms         4.08%       8.893ms     158.799us            56  \nampere_bf16_s16816gemm_bf16_128x128_ldg8_f2f_stages_...         0.00%       0.000us         0.00%       0.000us       0.000us       6.936ms         3.18%       6.936ms     408.024us            17  \nampere_bf16_s16816gemm_bf16_128x256_ldg8_f2f_stages_...         0.00%       0.000us         0.00%       0.000us       0.000us       6.585ms         3.02%       6.585ms     658.453us            10  \n                                            aten::addmm         1.51%       3.158ms         1.95%       4.082ms      55.164us       5.960ms         2.73%       5.960ms      80.534us            74  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \nSelf CPU time total: 209.012ms\nSelf CUDA time total: 218.042ms\n"
+  },
+  {
+   "largo": 4096,
+   "lote": 8,
+   "ms": {
+    "paso entero": 223.4971759999098,
+    "vocabulario, salida y perdida": 54.37371900006838,
+    "9 bloques locales": 70.69220099947415,
+    "8 capas ASRN": 140.37005600039265,
+    "   contexto (reloj y confirmacion) (x8)": 28.391848001774633,
+    "   acumular (atencion por casilleros) (x8)": 71.69557599991094,
+    "   repeticion (Hawkes y racha) (x8)": 35.0715679996938,
+    "   combinar (puerta) (x8)": 45.6597119991784,
+    "recorte y AdamW": 4.662074999941979,
+    "Transformer: paso entero": 177.22202499999185,
+    "Transformer: 8 bloques (atencion + densa)": 130.29576799817733,
+    "Transformer compilado: paso entero": 140.12915900002554,
+    "ASRN compilado por partes: paso entero": 178.870710999945
+   },
+   "kernels_que_mas_tardan": "-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \n                                            aten::copy_         3.75%       8.048ms         7.94%      17.028ms      16.694us      46.408ms        21.25%      46.408ms      45.498us          1020  \n                                               aten::mm         3.59%       7.713ms         5.18%      11.126ms      46.552us      33.451ms        15.32%      33.451ms     139.964us           239  \nvoid at::native::unrolled_elementwise_kernel<at::nat...         0.00%       0.000us         0.00%       0.000us       0.000us      16.295ms         7.46%      16.295ms      51.568us           316  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      15.429ms         7.07%      15.429ms      41.254us           374  \n                                             aten::add_         0.60%       1.279ms         1.08%       2.326ms      17.622us      14.623ms         6.70%      14.623ms     110.779us           132  \n                              _CasillerosTritonBackward         1.52%       3.253ms         3.87%       8.311ms       1.039ms      14.490ms         6.64%      22.616ms       2.827ms             8  \n                                     _casilleros_vuelta         0.00%       0.000us         0.00%       0.000us       0.000us      14.490ms         6.64%      14.490ms       1.811ms             8  \n                                              aten::sum         3.01%       6.464ms         4.78%      10.252ms      35.231us      14.148ms         6.48%      14.148ms      48.617us           291  \nvoid at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      14.032ms         6.43%      14.032ms      78.391us           179  \n                       aten::_log_softmax_backward_data         0.01%      17.341us         0.01%      27.453us      27.453us      12.655ms         5.79%      12.655ms      12.655ms             1  \nvoid at::native::(anonymous namespace)::cunn_SoftMax...         0.00%       0.000us         0.00%       0.000us       0.000us      12.655ms         5.79%      12.655ms      12.655ms             1  \n                                     aten::_log_softmax         0.01%      24.505us         0.02%      35.908us      35.908us      12.059ms         5.52%      12.059ms      12.059ms             1  \nvoid at::native::(anonymous namespace)::cunn_SoftMax...         0.00%       0.000us         0.00%       0.000us       0.000us      12.059ms         5.52%      12.059ms      12.059ms             1  \nvoid at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us      11.342ms         5.19%      11.342ms      73.176us           155  \n                       aten::native_layer_norm_backward         0.23%     487.667us         0.78%       1.664ms      61.619us      10.463ms         4.79%      12.644ms     468.280us            27  \n                             aten::convolution_backward         0.59%       1.269ms         1.39%       2.973ms     330.283us      10.161ms         4.65%      12.833ms       1.426ms             9  \nvoid at::native::reduce_kernel<128, 4, at::native::R...         0.00%       0.000us         0.00%       0.000us       0.000us       8.961ms         4.10%       8.961ms     160.016us            56  \nampere_bf16_s16816gemm_bf16_128x128_ldg8_f2f_stages_...         0.00%       0.000us         0.00%       0.000us       0.000us       6.941ms         3.18%       6.941ms     408.323us            17  \nampere_bf16_s16816gemm_bf16_128x256_ldg8_f2f_stages_...         0.00%       0.000us         0.00%       0.000us       0.000us       6.572ms         3.01%       6.572ms     657.247us            10  \n                                            aten::addmm         1.51%       3.243ms         1.95%       4.175ms      56.416us       5.968ms         2.73%       5.968ms      80.644us            74  \n-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  \nSelf CPU time total: 214.584ms\nSelf CUDA time total: 218.379ms\n"
+  }
+ ]
+}

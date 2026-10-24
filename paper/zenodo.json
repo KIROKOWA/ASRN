@@ -1,0 +1,37 @@
+{
+  "title": "ASRN: Adaptive Sparse Recurrence Networks — Linear-memory long-range copying with a learned proper-time clock and a Hawkes-gated copy gate",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "version": "1.0",
+  "language": "eng",
+  "license": "cc-by-4.0",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Calvario, Alexis",
+      "affiliation": "Independent researcher",
+      "orcid": "0009-0004-0854-6398"
+    }
+  ],
+  "description": "<p>The work per token of attention grows with the context, while linear-time models such as Mamba-2 and RWKV-7 keep a fixed-size state and lose exact recall of long spans.</p><p><b>ASRN</b> (Adaptive Sparse Recurrence Network) is a language-model layer that retrieves exact earlier occurrences with bounded work per token: each token attends only to its C most recent mates in learned sign-hash buckets and copies the token that followed each match; a learned <b>proper-time clock</b> B<sub>t</sub> = Σ β<sub>u</sub> sets the decay α<sub>s</sub> e<sup>−κ(B<sub>t</sub>−B<sub>s</sub>)</sup> of both the retrieval scores and a <b>Hawkes (self-exciting) intensity</b> over repeated n-grams; and a gate reads those intensities and a repetition streak through a learned <b>non-monotone response</b> to decide when to copy. Release 1.0 adds numerical protections to the v89 layer (exact masking, a 64-bit clock, bounds) that close a measured causal leak and clock drift for +7.5% time and +5.2% memory at 262k tokens, and generates in O(1) time per new token.</p><p>On one A100, at 262,144 tokens an ASRN layer is 21.6× faster than FlashAttention-2 attention, 7.6× faster than RWKV-7 and 2.5× faster than a Mamba-2 block without causal-conv1d; a ~50M-parameter model trains at 163–172k tokens/s from 1k to 32k tokens per sequence (199–210k compiled), 2.08× the speed of our Transformer++ at 32k (2.20× with both compiled), which is faster below about 2.4k tokens (5.4k compiled). With 2.5–46M parameters and 3 seeds, ASRN copies at 4× the training length when it leaves the initial plateau (99.99% and 99.98%; the third seed stayed on it), keeps MQAR recall with 4× the pairs (99.75%; Mamba-2 26.1%, RWKV-7 16.5%, neither fully converged), and reaches WikiText-103 perplexity 67.9 against 93.3 for the Transformer++ (p = 0.002), 74.3 for Mamba-2 (p = 0.008) and 75.8 for RWKV-7 (not significant, p = 0.13), far from convergence. It is slower on short inputs, uses about twice the memory of attention and generated slowest on the A100 (43 ms/token, measured with the earlier O(t) writer; on CPU the O(1) writer stays at 9.5–12.5 ms/token from 512 to 131k tokens of context, 9.7× faster than the O(t) one at 131k).</p><p>In a controlled bounded-quotation experiment (3 seeds, on CPU and on the A100), the gate learns without explicit supervision when to stop copying: the longest written repetition stays at 10 tokens, as in the real text, against 19–39 without its repetition signals or without a gate (removing only the Hawkes and streak signals leaves the validation loss practically unchanged).</p><p>Includes the English and Spanish versions of the preprint. Code, tests and all measurements: https://github.com/KIROKOWA/ASRN (Apache 2.0).</p>",
+  "keywords": [
+    "language models",
+    "efficient attention",
+    "sparse attention",
+    "long context",
+    "copying",
+    "Hawkes process",
+    "proper time",
+    "associative scan",
+    "linear memory",
+    "ASRN"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/KIROKOWA/ASRN",
+      "relation": "isSupplementedBy",
+      "resource_type": "software"
+    }
+  ],
+  "notes": "Author: Alexis Calvario (conception, architecture, implementation, experiments and direction). Code: Apache 2.0; text and figures: CC BY 4.0."
+}

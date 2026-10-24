@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use ASRN, please cite it as below."
+title: "ASRN: Adaptive Sparse Recurrence Network"
+abstract: >-
+  ASRN (Adaptive Sparse Recurrence Network) is a sequence-mixing layer for language models with learned-hash sparse
+  retrieval of earlier occurrences, a learned proper-time clock and Hawkes repetition signals, with numerically
+  protected Triton kernels.
+type: software
+authors:
+  - family-names: Calvario
+    given-names: Alexis
+    affiliation: Independent researcher
+    orcid: "https://orcid.org/0009-0004-0854-6398"
+version: 1.0.0
+date-released: "2026-10-24"
+license: Apache-2.0
+repository-code: "https://github.com/KIROKOWA/ASRN"
+keywords:
+  - language models
+  - sparse attention
+  - long context
+  - copying
+  - Hawkes process
+  - proper time
+  - associative scan

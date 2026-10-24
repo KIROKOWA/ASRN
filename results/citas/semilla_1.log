@@ -1,0 +1,18 @@
+/usr/local/lib/python3.13/dist-packages/fla/utils/_device.py:100: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  _cpu_device_warning()
+/usr/local/lib/python3.13/dist-packages/fla/utils/_device.py:100: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  _cpu_device_warning()
+semilla 1 | ASRN 1.0: 2686 s, perdida de validacion 3.7027
+/usr/local/lib/python3.13/dist-packages/fla/utils/_device.py:100: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  _cpu_device_warning()
+semilla 1 | ASRN 1.0: ya estaba
+semilla 1 | sin Hawkes ni racha: 4524 s, perdida de validacion 3.7076
+semilla 1 | puerta sin senales: 3998 s, perdida de validacion 3.7290
+semilla 1 | sin puerta: 3705 s, perdida de validacion 3.7372
+/usr/local/lib/python3.13/dist-packages/fla/utils/_device.py:100: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  _cpu_device_warning()
+semilla 1 | ASRN 1.0: ya estaba
+semilla 1 | sin Hawkes ni racha: ya estaba
+semilla 1 | puerta sin senales: ya estaba
+semilla 1 | sin puerta: ya estaba
+semilla 1 | sin reloj: 4718 s, perdida de validacion 3.7050

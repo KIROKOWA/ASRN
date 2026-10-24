@@ -1,0 +1,32 @@
+# The two test suites on CPU (no GPU needed: without Triton, the kernel-versus-PyTorch tests are skipped and every
+# other test runs the PyTorch path). The GPU checks (tests/verificar_gpu.py) run in benchmarks/asrn_colab.ipynb.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install PyTorch (CPU) and the package
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install .
+      - name: Stable layer and package API (tests/test_estable.py)
+        run: python tests/test_estable.py
+      - name: Core layer (tests/test_nucleo.py)
+        run: python tests/test_nucleo.py

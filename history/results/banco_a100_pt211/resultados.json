@@ -1,0 +1,8057 @@
+{
+ "entorno": {
+  "fecha": "2026-10-11 03:05 UTC",
+  "gpu": "NVIDIA A100-SXM4-80GB",
+  "torch": "2.11.0+cu130",
+  "cuda": "13.0",
+  "python": "3.13.15",
+  "codigo": "ZIP | sha256 176cfe250773",
+  "modo": "completo",
+  "mamba": "kernels Triton de Mamba-2",
+  "originales": {
+   "Transformer++": "si",
+   "Mamba-2": "si (mamba_ssm 2.3.2.post1, conv1d de PyTorch, sin compilar)",
+   "RWKV-7": "si (fla 0.5.2)"
+  },
+  "compila": false
+ },
+ "estado": {
+  "originales": {
+   "ok": true,
+   "minutos": 12.3
+  },
+  "pruebas": {
+   "ok": true,
+   "minutos": 5.0
+  },
+  "estabilidad": {
+   "ok": true,
+   "minutos": 0.5
+  },
+  "capa": {
+   "ok": true,
+   "minutos": 7.1
+  },
+  "modelo": {
+   "ok": true,
+   "minutos": 5.4
+  },
+  "escritura": {
+   "ok": true,
+   "minutos": 8.5
+  },
+  "copia": {
+   "ok": true,
+   "minutos": 17.5
+  },
+  "mqar": {
+   "ok": true,
+   "minutos": 15.6
+  },
+  "wikitext": {
+   "ok": true,
+   "minutos": 23.6
+  },
+  "ablacion": {
+   "ok": true,
+   "minutos": 0.0
+  }
+ },
+ "prueba_originales": {
+  "Transformer++": "ok; escribir paso a paso vs el texto entero: 7.9e-05",
+  "Mamba-2": "ok; escribir paso a paso vs el texto entero: 6.0e-04",
+  "RWKV-7": "ok; escribir paso a paso vs el texto entero: 0.0e+00"
+ },
+ "pruebas": {
+  "pruebas/test_asrn_v89.py": {
+   "resumen": "59 ok, 2 saltadas, 1 fallas",
+   "codigo": 1,
+   "fallas": [
+    "FALLA  test_entrenar_aprende_a_copiar_y_reanuda: AssertionError: 4.194668292999268"
+   ],
+   "minutos": 3.3
+  },
+  "pruebas/test_asrn_estable.py": {
+   "resumen": "13 ok, 0 saltadas, 1 fallas",
+   "codigo": 1,
+   "fallas": [
+    "FALLA  test_convertir_guardar_cargar: RuntimeError: Expected all tensors to be on the same device, but got index is on cpu, different from other tensors on cuda:0 (when checking argument in method wrapper_CUDA__index_select)"
+   ],
+   "minutos": 1.0
+  },
+  "verificar_gpu": [
+   {
+    "prueba": "1. bf16 en GPU, talla 30m",
+    "resultado": "PASA",
+    "detalle": "30,300,876 parametros | perdida 9.806 -> 0.203 | 43,672 piezas/s"
+   },
+   {
+    "prueba": "2. checkpoint por niveles: misma perdida, menos memoria",
+    "resultado": "PASA",
+    "detalle": "no: 2,009 MB | asrn: 1,708 MB | todo: 1,099 MB (largo 2048, lote 4, bf16)"
+   },
+   {
+    "prueba": "3. FSDP con NCCL en 1 proceso",
+    "resultado": "PASA",
+    "detalle": "repartido = sin repartir (dif 0.0e+00); entrena, guarda y carga (dif 0.0e+00)"
+   },
+   {
+    "prueba": "4. torch.compile en GPU: mismas cuentas",
+    "resultado": "SALTADA",
+    "detalle": "PyTorch 2.11.0+cu130: el compilador de PyTorch (Inductor/Triton) falla con este modelo antes de 2.14 (en CPU, y en una A100 con 2.11 y Triton). Es un error del compilador, no de ASRN: sin compilar las cuentas son las mismas (pruebas 5 a 7)"
+   },
+   {
+    "prueba": "5. GPU = CPU: misma salida y mismo gradiente (32 bits)",
+    "resultado": "PASA",
+    "detalle": "100.0% de las posiciones iguales (dif max 6.1e-07); gradiente: dif relativa 4.4e-07"
+   },
+   {
+    "prueba": "6. Causalidad en GPU: el futuro no cambia el pasado",
+    "resultado": "PASA",
+    "detalle": "dif max en el pasado 1.8e-07 (5 cortes, largo 513)"
+   },
+   {
+    "prueba": "7. Escribir paso a paso = texto entero en GPU",
+    "resultado": "PASA",
+    "detalle": "100.0% de los 80 pasos iguales (dif max 2.3e-07)"
+   }
+  ]
+ },
+ "estabilidad_gpu": {
+  "reloj_cumsum": [
+   {
+    "largo": 1048576,
+    "err_dif_1": 0.021574499267828107,
+    "err_dif_32": 0.0019233756538190154,
+    "err_dif_1024": 6.820203488303926e-05,
+    "parado": 0.0002632143732625991
+   },
+   {
+    "largo": 4194304,
+    "err_dif_1": 0.08599598257215843,
+    "err_dif_32": 0.007700920033032336,
+    "err_dif_1024": 0.00031686129070602174,
+    "parado": 0.01106977742165327
+   },
+   {
+    "largo": 16777216,
+    "err_dif_1": 0.502237164709584,
+    "err_dif_32": 0.03265844335565946,
+    "err_dif_1024": 0.0013127085039163606,
+    "parado": 0.16083963215351105
+   },
+   {
+    "largo": 33554432,
+    "err_dif_1": 1.0,
+    "err_dif_32": 0.0669040036408045,
+    "err_dif_1024": 0.002761549656304672,
+    "parado": 0.37210190296173096
+   }
+  ],
+  "kernel_triton": true,
+  "kernel_estable": {
+   "fp32_salida": 4.863238345365062e-08,
+   "fp32_gradientes": 5.289773071126547e-06,
+   "bf16_kernel": 0.09579548239707947,
+   "bf16_pytorch": 0.09109311550855637
+  },
+  "fuga_gamma_1e9": {
+   "v89": 0.01577022671699524,
+   "estable": 0.0
+  },
+  "reloj_corrido": {
+   "v89": {
+    "1e+06": 9.372211206937209e-05,
+    "1.6e+07": 0.002798875095322728,
+    "1e+09": 0.08801643550395966,
+    "1e6 contra 1e9": 0.08800027519464493
+   },
+   "estable": {
+    "1e+06": 5.52118493146736e-08,
+    "1.6e+07": 5.52118493146736e-08,
+    "1e+09": 5.52118493146736e-08,
+    "1e6 contra 1e9": 5.52118493146736e-08
+   }
+  },
+  "capa_1M": {
+   "v89": {
+    "segundos": 0.03515708400004769,
+    "memoria_gb": 2.185232896
+   },
+   "estable": {
+    "segundos": 0.03240366599993649,
+    "memoria_gb": 2.197815808
+   },
+   "diferencia_final": 0.0008180793956853449
+  },
+  "reloj_corrido_tf32": false,
+  "reloj_tf32": {
+   "v89": 1.9782299748039804,
+   "v89 bf16": 1.1641532182693481e-10,
+   "estable": 1.1641532182693481e-10,
+   "estable bf16": 5.820766091346741e-11
+  }
+ },
+ "capa_gpu": {
+  "d": 512,
+  "filas": [
+   {
+    "modelo": "ASRN (v89)",
+    "largo": 1024,
+    "implementacion": "asrn",
+    "segundos": 0.01363541399996393,
+    "memoria_gb": 0.041102848
+   },
+   {
+    "modelo": "ASRN (v89)",
+    "largo": 4096,
+    "implementacion": "asrn",
+    "segundos": 0.011504583000260027,
+    "memoria_gb": 0.162293248
+   },
+   {
+    "modelo": "ASRN (v89)",
+    "largo": 16384,
+    "implementacion": "asrn",
+    "segundos": 0.013025530000049912,
+    "memoria_gb": 0.645220864
+   },
+   {
+    "modelo": "ASRN (v89)",
+    "largo": 65536,
+    "implementacion": "asrn",
+    "segundos": 0.018187015999956202,
+    "memoria_gb": 2.578369024
+   },
+   {
+    "modelo": "ASRN (v89)",
+    "largo": 262144,
+    "implementacion": "asrn",
+    "segundos": 0.06417123749974962,
+    "memoria_gb": 10.309519872
+   },
+   {
+    "modelo": "ASRN (estable)",
+    "largo": 1024,
+    "implementacion": "asrn",
+    "segundos": 0.012219108000408596,
+    "memoria_gb": 0.042825216
+   },
+   {
+    "modelo": "ASRN (estable)",
+    "largo": 4096,
+    "implementacion": "asrn",
+    "segundos": 0.011908847000086098,
+    "memoria_gb": 0.17063168
+   },
+   {
+    "modelo": "ASRN (estable)",
+    "largo": 16384,
+    "implementacion": "asrn",
+    "segundos": 0.012130200000228797,
+    "memoria_gb": 0.678838784
+   },
+   {
+    "modelo": "ASRN (estable)",
+    "largo": 65536,
+    "implementacion": "asrn",
+    "segundos": 0.01929367900015677,
+    "memoria_gb": 2.715730432
+   },
+   {
+    "modelo": "ASRN (estable)",
+    "largo": 262144,
+    "implementacion": "asrn",
+    "segundos": 0.06624562099977993,
+    "memoria_gb": 10.850713088
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 1024,
+    "implementacion": "original",
+    "segundos": 0.003248208000059094,
+    "memoria_gb": 0.023762944
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 4096,
+    "implementacion": "original",
+    "segundos": 0.0032664639998074563,
+    "memoria_gb": 0.0877056
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 16384,
+    "implementacion": "original",
+    "segundos": 0.009914637999827391,
+    "memoria_gb": 0.343345152
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 65536,
+    "implementacion": "original",
+    "segundos": 0.10151616550001563,
+    "memoria_gb": 1.36590336
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 262144,
+    "implementacion": "original",
+    "segundos": 1.4889354934998664,
+    "memoria_gb": 5.456136192
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 1024,
+    "implementacion": "original",
+    "segundos": 0.007723089000137406,
+    "memoria_gb": 0.05200384
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 4096,
+    "implementacion": "original",
+    "segundos": 0.007845073000225966,
+    "memoria_gb": 0.15589888
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 16384,
+    "implementacion": "original",
+    "segundos": 0.011149732999911066,
+    "memoria_gb": 0.547725312
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 65536,
+    "implementacion": "original",
+    "segundos": 0.03526313099973777,
+    "memoria_gb": 2.11503104
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 262144,
+    "implementacion": "original",
+    "segundos": 0.18092739849998907,
+    "memoria_gb": 8.451362816
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 1024,
+    "implementacion": "original",
+    "segundos": 0.01121924099993521,
+    "memoria_gb": 0.084513792
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 4096,
+    "implementacion": "original",
+    "segundos": 0.012034016999905361,
+    "memoria_gb": 0.33176064
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 16384,
+    "implementacion": "original",
+    "segundos": 0.03534979199980626,
+    "memoria_gb": 1.320748032
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 65536,
+    "implementacion": "original",
+    "segundos": 0.13144726949985852,
+    "memoria_gb": 5.2766976
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 262144,
+    "implementacion": "original",
+    "segundos": 0.5197331939999685,
+    "memoria_gb": 21.100495872
+   }
+  ]
+ },
+ "modelo_gpu": {
+  "piezas_por_paso": 32768,
+  "filas": [
+   {
+    "modelo": "ASRN",
+    "largo": 1024,
+    "lote": 32,
+    "parametros": 50738670,
+    "implementacion": "asrn",
+    "primer_paso_s": 3.9898050770002556,
+    "segundos_paso": 0.1890324519999922,
+    "piezas_por_s": 173345.89724309006,
+    "memoria_gb": 23.50875648
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 4096,
+    "lote": 8,
+    "parametros": 50738670,
+    "implementacion": "asrn",
+    "primer_paso_s": 0.21473359099991285,
+    "segundos_paso": 0.19003510399988954,
+    "piezas_por_s": 172431.2998508899,
+    "memoria_gb": 23.5110656
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 16384,
+    "lote": 2,
+    "parametros": 50738670,
+    "implementacion": "asrn",
+    "primer_paso_s": 0.21357292399989092,
+    "segundos_paso": 0.19221654800003307,
+    "piezas_por_s": 170474.3964083382,
+    "memoria_gb": 23.510715392
+   },
+   {
+    "modelo": "ASRN",
+    "largo": 32768,
+    "lote": 1,
+    "parametros": 50738670,
+    "implementacion": "asrn",
+    "primer_paso_s": 0.21541337600001498,
+    "segundos_paso": 0.1922324799998023,
+    "piezas_por_s": 170460.2676927109,
+    "memoria_gb": 23.511732224
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 1024,
+    "lote": 32,
+    "parametros": 51031552,
+    "implementacion": "original",
+    "primer_paso_s": 0.18245286499995927,
+    "segundos_paso": 0.17939959499972247,
+    "piezas_por_s": 182653.70108583965,
+    "memoria_gb": 25.475493888
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 4096,
+    "lote": 8,
+    "parametros": 51031552,
+    "implementacion": "original",
+    "primer_paso_s": 0.20595553200018912,
+    "segundos_paso": 0.2034658140000829,
+    "piezas_por_s": 161049.16769942813,
+    "memoria_gb": 25.483751424
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 16384,
+    "lote": 2,
+    "parametros": 51031552,
+    "implementacion": "original",
+    "primer_paso_s": 0.29908604499996727,
+    "segundos_paso": 0.29656276700006856,
+    "piezas_por_s": 110492.62971029813,
+    "memoria_gb": 25.525366784
+   },
+   {
+    "modelo": "Transformer++",
+    "largo": 32768,
+    "lote": 1,
+    "parametros": 51031552,
+    "implementacion": "original",
+    "primer_paso_s": 0.4208784010002091,
+    "segundos_paso": 0.4180785369999285,
+    "piezas_por_s": 78377.61831817165,
+    "memoria_gb": 25.56803072
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 1024,
+    "lote": 32,
+    "parametros": 51179968,
+    "implementacion": "original",
+    "primer_paso_s": 19.154298282000127,
+    "segundos_paso": 0.28068113400013317,
+    "piezas_por_s": 116744.57607109587,
+    "memoria_gb": 26.401764352
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 4096,
+    "lote": 8,
+    "parametros": 51179968,
+    "implementacion": "original",
+    "primer_paso_s": 6.192621589999817,
+    "segundos_paso": 0.2806287000003067,
+    "piezas_por_s": 116766.38918244708,
+    "memoria_gb": 26.399192064
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 16384,
+    "lote": 2,
+    "parametros": 51179968,
+    "implementacion": "original",
+    "primer_paso_s": 0.30065369000021747,
+    "segundos_paso": 0.28439166799989835,
+    "piezas_por_s": 115221.37842664123,
+    "memoria_gb": 26.398270464
+   },
+   {
+    "modelo": "Mamba-2",
+    "largo": 32768,
+    "lote": 1,
+    "parametros": 51179968,
+    "implementacion": "original",
+    "primer_paso_s": 0.30500179099999514,
+    "segundos_paso": 0.2894427070000347,
+    "piezas_por_s": 113210.66037430361,
+    "memoria_gb": 26.398116864
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 1024,
+    "lote": 32,
+    "parametros": 51102208,
+    "implementacion": "original",
+    "primer_paso_s": 284.7146540709998,
+    "segundos_paso": 0.6629045660001793,
+    "piezas_por_s": 49430.94629399662,
+    "memoria_gb": 30.5154304
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 4096,
+    "lote": 8,
+    "parametros": 51102208,
+    "implementacion": "original",
+    "primer_paso_s": 0.6833436839997376,
+    "segundos_paso": 0.6670014940000328,
+    "piezas_por_s": 49127.3262425382,
+    "memoria_gb": 30.5154304
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 16384,
+    "lote": 2,
+    "parametros": 51102208,
+    "implementacion": "original",
+    "primer_paso_s": 12.768736090000402,
+    "segundos_paso": 0.6896683089998987,
+    "piezas_por_s": 47512.694975817445,
+    "memoria_gb": 30.5154304
+   },
+   {
+    "modelo": "RWKV-7",
+    "largo": 32768,
+    "lote": 1,
+    "parametros": 51102208,
+    "implementacion": "original",
+    "primer_paso_s": 1.247801428999992,
+    "segundos_paso": 0.7258761859998231,
+    "piezas_por_s": 45142.68498127584,
+    "memoria_gb": 30.5154304
+   }
+  ],
+  "compila": false,
+  "config_asrn": {
+   "V": 32768,
+   "d": 512,
+   "n_capas": 14,
+   "largo_cada": 2,
+   "ff": null,
+   "k": 4,
+   "dropout": 0.0,
+   "init_profundo": null,
+   "checkpoint": "no",
+   "mezcla": "conv",
+   "memoria_max": 1024,
+   "n_tablas": 8,
+   "n_bits": 14,
+   "afin_oculto": 128,
+   "chunk": 32,
+   "tablas_contexto": 4,
+   "confirmar": 16,
+   "sufijo": 4,
+   "vistos": 4,
+   "nodos_racha": 16,
+   "racha_max": 256
+  }
+ },
+ "escritura_gpu": {
+  "nuevos": 32,
+  "filas": [
+   {
+    "modelo": "ASRN",
+    "contexto": 1024,
+    "implementacion": "asrn",
+    "prefijo_s": 0.0822377989998131,
+    "ms_por_pieza": 40.53277690626089,
+    "memoria_gb": 0.155329024
+   },
+   {
+    "modelo": "ASRN",
+    "contexto": 4096,
+    "implementacion": "asrn",
+    "prefijo_s": 0.07868353899993963,
+    "ms_por_pieza": 40.1493071875052,
+    "memoria_gb": 0.300849664
+   },
+   {
+    "modelo": "ASRN",
+    "contexto": 16384,
+    "implementacion": "asrn",
+    "prefijo_s": 0.08938519399998768,
+    "ms_por_pieza": 40.976924718748364,
+    "memoria_gb": 1.006170624
+   },
+   {
+    "modelo": "ASRN",
+    "contexto": 65536,
+    "implementacion": "asrn",
+    "prefijo_s": 0.13630898199971853,
+    "ms_por_pieza": 40.97741462500437,
+    "memoria_gb": 3.816194048
+   },
+   {
+    "modelo": "Transformer++",
+    "contexto": 1024,
+    "implementacion": "original",
+    "prefijo_s": 0.01862244300036764,
+    "ms_por_pieza": 14.112625124994338,
+    "memoria_gb": 0.217055232
+   },
+   {
+    "modelo": "Transformer++",
+    "contexto": 4096,
+    "implementacion": "original",
+    "prefijo_s": 0.018462579999777518,
+    "ms_por_pieza": 14.528464218756199,
+    "memoria_gb": 0.488846848
+   },
+   {
+    "modelo": "Transformer++",
+    "contexto": 16384,
+    "implementacion": "original",
+    "prefijo_s": 0.05337797699985458,
+    "ms_por_pieza": 14.591593093740585,
+    "memoria_gb": 1.638047232
+   },
+   {
+    "modelo": "Transformer++",
+    "contexto": 65536,
+    "implementacion": "original",
+    "prefijo_s": 0.388139363999926,
+    "ms_por_pieza": 14.309777031243698,
+    "memoria_gb": 6.220653056
+   },
+   {
+    "modelo": "Mamba-2",
+    "contexto": 1024,
+    "implementacion": "original",
+    "prefijo_s": 0.04838352000024315,
+    "ms_por_pieza": 25.386838749994922,
+    "memoria_gb": 0.115291136
+   },
+   {
+    "modelo": "Mamba-2",
+    "contexto": 4096,
+    "implementacion": "original",
+    "prefijo_s": 0.04663659900006678,
+    "ms_por_pieza": 25.450306531240585,
+    "memoria_gb": 0.155633664
+   },
+   {
+    "modelo": "Mamba-2",
+    "contexto": 16384,
+    "implementacion": "original",
+    "prefijo_s": 0.046873012999640196,
+    "ms_por_pieza": 25.361180343736578,
+    "memoria_gb": 0.37576448
+   },
+   {
+    "modelo": "Mamba-2",
+    "contexto": 65536,
+    "implementacion": "original",
+    "prefijo_s": 0.13316152200013676,
+    "ms_por_pieza": 25.38916071874553,
+    "memoria_gb": 1.264444928
+   },
+   {
+    "modelo": "RWKV-7",
+    "contexto": 1024,
+    "implementacion": "original",
+    "prefijo_s": 121.12935099199967,
+    "ms_por_pieza": 34.683177687497846,
+    "memoria_gb": 0.3720448
+   },
+   {
+    "modelo": "RWKV-7",
+    "contexto": 4096,
+    "implementacion": "original",
+    "prefijo_s": 109.67262632500024,
+    "ms_por_pieza": 34.99694412499821,
+    "memoria_gb": 0.405147648
+   },
+   {
+    "modelo": "RWKV-7",
+    "contexto": 16384,
+    "implementacion": "original",
+    "prefijo_s": 121.76628952100009,
+    "ms_por_pieza": 35.680101812488374,
+    "memoria_gb": 0.971073536
+   },
+   {
+    "modelo": "RWKV-7",
+    "contexto": 65536,
+    "implementacion": "original",
+    "prefijo_s": 122.51704890799965,
+    "ms_por_pieza": 35.47555199999408,
+    "memoria_gb": 3.69321984
+   }
+  ]
+ },
+ "calidad": {
+  "d": 256,
+  "n_capas": 4,
+  "pasos": null,
+  "tareas": {
+   "copia": {
+    "V": 512,
+    "largo": 1024,
+    "evaluar": [
+     1024,
+     4096,
+     16384
+    ],
+    "pasos": 2000,
+    "lote": 32
+   },
+   "mqar": {
+    "V": 8192,
+    "largo": 512,
+    "evaluar": [
+     512,
+     1024,
+     2048
+    ],
+    "pasos": 2000,
+    "lote": 64,
+    "div_pares": 8
+   },
+   "wikitext": {
+    "V": 50257,
+    "largo": 1024,
+    "evaluar": [
+     1024,
+     4096
+    ],
+    "pasos": 1220,
+    "lote": 16,
+    "d": 512,
+    "parametros": "45m"
+   }
+  },
+  "corridas": [
+   {
+    "modelo": "ASRN",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 72.75545052000007,
+    "curva": [
+     [
+      200,
+      6.239091873168945
+     ],
+     [
+      400,
+      6.237295150756836
+     ],
+     [
+      600,
+      6.235311508178711
+     ],
+     [
+      800,
+      6.1576738357543945
+     ],
+     [
+      1000,
+      0.04951193556189537
+     ],
+     [
+      1200,
+      0.0008235230925492942
+     ],
+     [
+      1400,
+      9.737192885950208e-05
+     ],
+     [
+      1600,
+      3.192608346580528e-05
+     ],
+     [
+      1800,
+      1.4579817616322543e-05
+     ],
+     [
+      2000,
+      9.503600267635193e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9967330239374694
+     },
+     "16384": {
+      "exactitud": 0.4348827981931388
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 69.28888459799964,
+    "curva": [
+     [
+      200,
+      6.238475322723389
+     ],
+     [
+      400,
+      0.0028510447591543198
+     ],
+     [
+      600,
+      0.00011953071225434542
+     ],
+     [
+      800,
+      1.6494470401084982e-05
+     ],
+     [
+      1000,
+      1.950455771293491e-05
+     ],
+     [
+      1200,
+      6.249613943509758e-05
+     ],
+     [
+      1400,
+      1.705914837657474e-05
+     ],
+     [
+      1600,
+      1.7302785636275075e-05
+     ],
+     [
+      1800,
+      1.5947958900142112e-06
+     ],
+     [
+      2000,
+      1.0531451835049666e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999389350268686
+     },
+     "16384": {
+      "exactitud": 0.9898058845073862
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.97255466600018,
+    "curva": [
+     [
+      200,
+      6.238612174987793
+     ],
+     [
+      400,
+      6.237970352172852
+     ],
+     [
+      600,
+      6.234734535217285
+     ],
+     [
+      800,
+      5.275574684143066
+     ],
+     [
+      1000,
+      0.007792839780449867
+     ],
+     [
+      1200,
+      0.00043582855141721666
+     ],
+     [
+      1400,
+      5.317200702847913e-05
+     ],
+     [
+      1600,
+      3.417701373109594e-05
+     ],
+     [
+      1800,
+      5.4662174079567194e-05
+     ],
+     [
+      2000,
+      9.972313819162082e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9996030776746458
+     },
+     "16384": {
+      "exactitud": 0.6245727017458186
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 69.15772113700041,
+    "curva": [
+     [
+      200,
+      6.2392354011535645
+     ],
+     [
+      400,
+      6.2371087074279785
+     ],
+     [
+      600,
+      6.237649917602539
+     ],
+     [
+      800,
+      6.235520839691162
+     ],
+     [
+      1000,
+      6.139472484588623
+     ],
+     [
+      1200,
+      0.3121107816696167
+     ],
+     [
+      1400,
+      0.0018474056851118803
+     ],
+     [
+      1600,
+      0.0002154148241970688
+     ],
+     [
+      1800,
+      9.380895062349737e-05
+     ],
+     [
+      2000,
+      5.808203059132211e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999084025403029
+     },
+     "16384": {
+      "exactitud": 0.9675711146380174
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2541312,
+    "segundos": 40.04885929200009,
+    "curva": [
+     [
+      200,
+      0.0024776440113782883
+     ],
+     [
+      400,
+      0.00010754133109003305
+     ],
+     [
+      600,
+      5.687884913641028e-05
+     ],
+     [
+      800,
+      9.349392348667607e-05
+     ],
+     [
+      1000,
+      5.141054316482041e-06
+     ],
+     [
+      1200,
+      6.790946827095468e-06
+     ],
+     [
+      1400,
+      1.2991961284569697e-06
+     ],
+     [
+      1600,
+      6.719369594065938e-08
+     ],
+     [
+      1800,
+      2.644153695996465e-08
+     ],
+     [
+      2000,
+      1.826922435554934e-08
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.0016182217879824132
+     },
+     "16384": {
+      "exactitud": 0.0016328897570504213
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2541312,
+    "segundos": 40.0606716530001,
+    "curva": [
+     [
+      200,
+      4.060006141662598
+     ],
+     [
+      400,
+      2.9428586959838867
+     ],
+     [
+      600,
+      2.396749973297119
+     ],
+     [
+      800,
+      1.3916443586349487
+     ],
+     [
+      1000,
+      0.5423973202705383
+     ],
+     [
+      1200,
+      0.055070601403713226
+     ],
+     [
+      1400,
+      0.009151896461844444
+     ],
+     [
+      1600,
+      0.0038791683036834
+     ],
+     [
+      1800,
+      0.003998208791017532
+     ],
+     [
+      2000,
+      0.005289739929139614
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.9997553816046967
+     },
+     "4096": {
+      "exactitud": 0.002320468978993649
+     },
+     "16384": {
+      "exactitud": 0.0018160175802710292
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2541312,
+    "segundos": 40.01315961,
+    "curva": [
+     [
+      200,
+      0.0026294030249118805
+     ],
+     [
+      400,
+      8.744158549234271e-05
+     ],
+     [
+      600,
+      2.517577013350092e-05
+     ],
+     [
+      800,
+      8.182288729585707e-05
+     ],
+     [
+      1000,
+      2.6290397272532573e-06
+     ],
+     [
+      1200,
+      1.6896032093427493e-06
+     ],
+     [
+      1400,
+      8.9299334149473e-07
+     ],
+     [
+      1600,
+      2.172328947835922e-07
+     ],
+     [
+      1800,
+      1.1897596152721235e-07
+     ],
+     [
+      2000,
+      3.2762134338781834e-08
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.002320468978993649
+     },
+     "16384": {
+      "exactitud": 0.00206018801123184
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2541312,
+    "segundos": 40.037401749999844,
+    "curva": [
+     [
+      200,
+      0.002588447416201234
+     ],
+     [
+      400,
+      0.00020281155593693256
+     ],
+     [
+      600,
+      0.001259341137483716
+     ],
+     [
+      800,
+      1.4947409908927511e-05
+     ],
+     [
+      1000,
+      1.202609928441234e-05
+     ],
+     [
+      1200,
+      8.476457878714427e-06
+     ],
+     [
+      1400,
+      8.863232778821839e-07
+     ],
+     [
+      1600,
+      1.8639588006408303e-06
+     ],
+     [
+      1800,
+      1.0489821278270028e-07
+     ],
+     [
+      2000,
+      3.693934047532821e-08
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.002045676599902296
+     },
+     "16384": {
+      "exactitud": 0.0019228421438163838
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2458488,
+    "segundos": 121.92733382500046,
+    "curva": [
+     [
+      200,
+      6.240036487579346
+     ],
+     [
+      400,
+      6.238671779632568
+     ],
+     [
+      600,
+      6.237255573272705
+     ],
+     [
+      800,
+      6.238275051116943
+     ],
+     [
+      1000,
+      6.236990451812744
+     ],
+     [
+      1200,
+      6.237005233764648
+     ],
+     [
+      1400,
+      6.236598014831543
+     ],
+     [
+      1600,
+      6.236452579498291
+     ],
+     [
+      1800,
+      6.236791133880615
+     ],
+     [
+      2000,
+      6.236171722412109
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.001834637964774951
+     },
+     "4096": {
+      "exactitud": 0.0019235466536394723
+     },
+     "16384": {
+      "exactitud": 0.0018617995360761812
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2458488,
+    "segundos": 86.45291939399976,
+    "curva": [
+     [
+      200,
+      6.242580890655518
+     ],
+     [
+      400,
+      6.238272666931152
+     ],
+     [
+      600,
+      6.237572193145752
+     ],
+     [
+      800,
+      6.236941814422607
+     ],
+     [
+      1000,
+      6.236576557159424
+     ],
+     [
+      1200,
+      6.236396789550781
+     ],
+     [
+      1400,
+      6.236411094665527
+     ],
+     [
+      1600,
+      6.236557483673096
+     ],
+     [
+      1800,
+      6.2364397048950195
+     ],
+     [
+      2000,
+      6.236416816711426
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.002201565557729941
+     },
+     "4096": {
+      "exactitud": 0.0019540791402051783
+     },
+     "16384": {
+      "exactitud": 0.0019228421438163838
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2458488,
+    "segundos": 86.38468439400003,
+    "curva": [
+     [
+      200,
+      6.242778778076172
+     ],
+     [
+      400,
+      6.239165782928467
+     ],
+     [
+      600,
+      6.237132549285889
+     ],
+     [
+      800,
+      6.237333297729492
+     ],
+     [
+      1000,
+      6.236888885498047
+     ],
+     [
+      1200,
+      6.236486911773682
+     ],
+     [
+      1400,
+      6.2364325523376465
+     ],
+     [
+      1600,
+      6.2365851402282715
+     ],
+     [
+      1800,
+      6.236677646636963
+     ],
+     [
+      2000,
+      6.236329555511475
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.002446183953033268
+     },
+     "4096": {
+      "exactitud": 0.0018624816805080605
+     },
+     "16384": {
+      "exactitud": 0.0019228421438163838
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2458488,
+    "segundos": 86.40533229399989,
+    "curva": [
+     [
+      200,
+      6.241063117980957
+     ],
+     [
+      400,
+      6.237834930419922
+     ],
+     [
+      600,
+      6.237210273742676
+     ],
+     [
+      800,
+      6.237010478973389
+     ],
+     [
+      1000,
+      6.236844062805176
+     ],
+     [
+      1200,
+      6.236146450042725
+     ],
+     [
+      1400,
+      6.236242771148682
+     ],
+     [
+      1600,
+      6.2355875968933105
+     ],
+     [
+      1800,
+      6.235383033752441
+     ],
+     [
+      2000,
+      6.234944820404053
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0019569471624266144
+     },
+     "4096": {
+      "exactitud": 0.00201514411333659
+     },
+     "16384": {
+      "exactitud": 0.0019838847515565865
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.73118254100063,
+    "curva": [
+     [
+      200,
+      8.34041690826416
+     ],
+     [
+      400,
+      7.972253322601318
+     ],
+     [
+      600,
+      0.01604325883090496
+     ],
+     [
+      800,
+      0.0030160474125295877
+     ],
+     [
+      1000,
+      0.002073517069220543
+     ],
+     [
+      1200,
+      0.00013567498535849154
+     ],
+     [
+      1400,
+      0.0001042428775690496
+     ],
+     [
+      1600,
+      2.53852649620967e-05
+     ],
+     [
+      1800,
+      0.00015858646656852216
+     ],
+     [
+      2000,
+      4.976936543243937e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.9955240885416666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.01656803500009,
+    "curva": [
+     [
+      200,
+      5.707973003387451
+     ],
+     [
+      400,
+      0.01600760780274868
+     ],
+     [
+      600,
+      0.002807335928082466
+     ],
+     [
+      800,
+      0.0006292883772403002
+     ],
+     [
+      1000,
+      8.609794167568907e-05
+     ],
+     [
+      1200,
+      0.0001414743746863678
+     ],
+     [
+      1400,
+      2.0358653273433447e-05
+     ],
+     [
+      1600,
+      1.7401274817530066e-05
+     ],
+     [
+      1800,
+      2.5466906663496047e-06
+     ],
+     [
+      2000,
+      2.145701273548184e-06
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 1.0
+     },
+     "2048": {
+      "exactitud": 0.99951171875
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.05630242499956,
+    "curva": [
+     [
+      200,
+      8.333904266357422
+     ],
+     [
+      400,
+      8.118826866149902
+     ],
+     [
+      600,
+      1.1594958305358887
+     ],
+     [
+      800,
+      0.2497449368238449
+     ],
+     [
+      1000,
+      0.0672546848654747
+     ],
+     [
+      1200,
+      0.031137296929955482
+     ],
+     [
+      1400,
+      0.028061101213097572
+     ],
+     [
+      1600,
+      0.021532246842980385
+     ],
+     [
+      1800,
+      0.023102445527911186
+     ],
+     [
+      2000,
+      0.013334949500858784
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9993489583333334
+     },
+     "1024": {
+      "exactitud": 0.9895833333333334
+     },
+     "2048": {
+      "exactitud": 0.9645182291666666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.96424320299957,
+    "curva": [
+     [
+      200,
+      8.34891128540039
+     ],
+     [
+      400,
+      8.292110443115234
+     ],
+     [
+      600,
+      1.5998252630233765
+     ],
+     [
+      800,
+      0.029178807511925697
+     ],
+     [
+      1000,
+      0.006387485656887293
+     ],
+     [
+      1200,
+      0.005323035642504692
+     ],
+     [
+      1400,
+      0.0004325879563111812
+     ],
+     [
+      1600,
+      0.0010335911065340042
+     ],
+     [
+      1800,
+      0.00010836231376742944
+     ],
+     [
+      2000,
+      0.00016440074250567704
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9996744791666666
+     },
+     "1024": {
+      "exactitud": 0.9993489583333334
+     },
+     "2048": {
+      "exactitud": 0.9951985677083334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4507392,
+    "segundos": 53.881807831000515,
+    "curva": [
+     [
+      200,
+      7.943759918212891
+     ],
+     [
+      400,
+      7.758209705352783
+     ],
+     [
+      600,
+      7.624413967132568
+     ],
+     [
+      800,
+      7.54984712600708
+     ],
+     [
+      1000,
+      7.501490116119385
+     ],
+     [
+      1200,
+      7.500669002532959
+     ],
+     [
+      1400,
+      7.482321262359619
+     ],
+     [
+      1600,
+      7.457799434661865
+     ],
+     [
+      1800,
+      7.456195831298828
+     ],
+     [
+      2000,
+      7.426474094390869
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.013346354166666666
+     },
+     "1024": {
+      "exactitud": 0.00341796875
+     },
+     "2048": {
+      "exactitud": 0.0020345052083333335
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4507392,
+    "segundos": 53.88562158900004,
+    "curva": [
+     [
+      200,
+      8.340576171875
+     ],
+     [
+      400,
+      8.325074195861816
+     ],
+     [
+      600,
+      8.289207458496094
+     ],
+     [
+      800,
+      8.255738258361816
+     ],
+     [
+      1000,
+      8.222880363464355
+     ],
+     [
+      1200,
+      8.171853065490723
+     ],
+     [
+      1400,
+      8.124449729919434
+     ],
+     [
+      1600,
+      8.113520622253418
+     ],
+     [
+      1800,
+      8.05643367767334
+     ],
+     [
+      2000,
+      8.021597862243652
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.017578125
+     },
+     "1024": {
+      "exactitud": 0.010091145833333334
+     },
+     "2048": {
+      "exactitud": 0.004801432291666667
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4507392,
+    "segundos": 53.87913774499975,
+    "curva": [
+     [
+      200,
+      8.337456703186035
+     ],
+     [
+      400,
+      8.324028968811035
+     ],
+     [
+      600,
+      8.327003479003906
+     ],
+     [
+      800,
+      8.321965217590332
+     ],
+     [
+      1000,
+      8.317190170288086
+     ],
+     [
+      1200,
+      8.315914154052734
+     ],
+     [
+      1400,
+      8.312479019165039
+     ],
+     [
+      1600,
+      8.314909934997559
+     ],
+     [
+      1800,
+      8.306014060974121
+     ],
+     [
+      2000,
+      8.30481243133545
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0006510416666666666
+     },
+     "1024": {
+      "exactitud": 0.0006510416666666666
+     },
+     "2048": {
+      "exactitud": 0.0004069010416666667
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4507392,
+    "segundos": 53.897484260000056,
+    "curva": [
+     [
+      200,
+      8.351851463317871
+     ],
+     [
+      400,
+      8.327393531799316
+     ],
+     [
+      600,
+      8.31214427947998
+     ],
+     [
+      800,
+      8.306113243103027
+     ],
+     [
+      1000,
+      8.297645568847656
+     ],
+     [
+      1200,
+      8.282173156738281
+     ],
+     [
+      1400,
+      8.27719497680664
+     ],
+     [
+      1600,
+      8.27622127532959
+     ],
+     [
+      1800,
+      8.264145851135254
+     ],
+     [
+      2000,
+      8.257406234741211
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.005859375
+     },
+     "1024": {
+      "exactitud": 0.00439453125
+     },
+     "2048": {
+      "exactitud": 0.0020345052083333335
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4424568,
+    "segundos": 98.44167256100081,
+    "curva": [
+     [
+      200,
+      8.340523719787598
+     ],
+     [
+      400,
+      8.1572265625
+     ],
+     [
+      600,
+      7.900180816650391
+     ],
+     [
+      800,
+      7.720375061035156
+     ],
+     [
+      1000,
+      7.585044860839844
+     ],
+     [
+      1200,
+      7.510059356689453
+     ],
+     [
+      1400,
+      7.418581485748291
+     ],
+     [
+      1600,
+      7.403409481048584
+     ],
+     [
+      1800,
+      7.354001998901367
+     ],
+     [
+      2000,
+      7.314014434814453
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0166015625
+     },
+     "1024": {
+      "exactitud": 0.006022135416666667
+     },
+     "2048": {
+      "exactitud": 0.0030110677083333335
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4424568,
+    "segundos": 92.33906980899974,
+    "curva": [
+     [
+      200,
+      8.328036308288574
+     ],
+     [
+      400,
+      6.438867568969727
+     ],
+     [
+      600,
+      2.612877130508423
+     ],
+     [
+      800,
+      1.348667025566101
+     ],
+     [
+      1000,
+      0.7248981595039368
+     ],
+     [
+      1200,
+      0.5298797488212585
+     ],
+     [
+      1400,
+      0.334942489862442
+     ],
+     [
+      1600,
+      0.25756189227104187
+     ],
+     [
+      1800,
+      0.21716122329235077
+     ],
+     [
+      2000,
+      0.16439573466777802
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9645182291666666
+     },
+     "1024": {
+      "exactitud": 0.8349609375
+     },
+     "2048": {
+      "exactitud": 0.5263671875
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4424568,
+    "segundos": 92.29040640699986,
+    "curva": [
+     [
+      200,
+      8.317431449890137
+     ],
+     [
+      400,
+      8.126480102539062
+     ],
+     [
+      600,
+      2.340360164642334
+     ],
+     [
+      800,
+      0.8249955177307129
+     ],
+     [
+      1000,
+      0.4401848614215851
+     ],
+     [
+      1200,
+      0.28676876425743103
+     ],
+     [
+      1400,
+      0.1933203488588333
+     ],
+     [
+      1600,
+      0.15219180285930634
+     ],
+     [
+      1800,
+      0.12049714475870132
+     ],
+     [
+      2000,
+      0.09611818939447403
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9736328125
+     },
+     "1024": {
+      "exactitud": 0.8649088541666666
+     },
+     "2048": {
+      "exactitud": 0.609619140625
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4424568,
+    "segundos": 92.18039975099964,
+    "curva": [
+     [
+      200,
+      8.351391792297363
+     ],
+     [
+      400,
+      8.255270957946777
+     ],
+     [
+      600,
+      4.110166549682617
+     ],
+     [
+      800,
+      1.8333617448806763
+     ],
+     [
+      1000,
+      1.001934289932251
+     ],
+     [
+      1200,
+      0.6428078413009644
+     ],
+     [
+      1400,
+      0.4483567774295807
+     ],
+     [
+      1600,
+      0.3505310118198395
+     ],
+     [
+      1800,
+      0.26422199606895447
+     ],
+     [
+      2000,
+      0.24882709980010986
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.939453125
+     },
+     "1024": {
+      "exactitud": 0.80322265625
+     },
+     "2048": {
+      "exactitud": 0.495849609375
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 45138568,
+    "segundos": 143.93157076900025,
+    "curva": [
+     [
+      122,
+      5.974853515625
+     ],
+     [
+      244,
+      5.44495153427124
+     ],
+     [
+      366,
+      5.172727584838867
+     ],
+     [
+      488,
+      4.746719837188721
+     ],
+     [
+      610,
+      4.644286632537842
+     ],
+     [
+      732,
+      4.591882705688477
+     ],
+     [
+      854,
+      4.398431777954102
+     ],
+     [
+      976,
+      4.553736686706543
+     ],
+     [
+      1098,
+      4.406133651733398
+     ],
+     [
+      1220,
+      4.321124076843262
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 88.63258352375283
+     },
+     "4096": {
+      "perplejidad": 85.10437361940653
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 45138568,
+    "segundos": 144.17763490299967,
+    "curva": [
+     [
+      122,
+      5.871152877807617
+     ],
+     [
+      244,
+      5.0773210525512695
+     ],
+     [
+      366,
+      4.845635414123535
+     ],
+     [
+      488,
+      4.392364025115967
+     ],
+     [
+      610,
+      4.292900085449219
+     ],
+     [
+      732,
+      4.2100300788879395
+     ],
+     [
+      854,
+      4.09259033203125
+     ],
+     [
+      976,
+      4.232659816741943
+     ],
+     [
+      1098,
+      4.038175582885742
+     ],
+     [
+      1220,
+      3.9933676719665527
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 68.0285694553462
+     },
+     "4096": {
+      "perplejidad": 63.23282198729295
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "wikitext",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 45138568,
+    "segundos": 144.3463473519996,
+    "curva": [
+     [
+      122,
+      5.820002555847168
+     ],
+     [
+      244,
+      5.25103759765625
+     ],
+     [
+      366,
+      4.788413047790527
+     ],
+     [
+      488,
+      4.718793869018555
+     ],
+     [
+      610,
+      4.4130144119262695
+     ],
+     [
+      732,
+      4.290247917175293
+     ],
+     [
+      854,
+      4.140812873840332
+     ],
+     [
+      976,
+      4.15651273727417
+     ],
+     [
+      1098,
+      4.108997344970703
+     ],
+     [
+      1220,
+      3.9008331298828125
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 66.81002818815934
+     },
+     "4096": {
+      "perplejidad": 62.04498606923405
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN",
+    "tarea": "wikitext",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 45138568,
+    "segundos": 144.1919251950003,
+    "curva": [
+     [
+      122,
+      5.998325824737549
+     ],
+     [
+      244,
+      5.193086624145508
+     ],
+     [
+      366,
+      4.631950378417969
+     ],
+     [
+      488,
+      4.520461082458496
+     ],
+     [
+      610,
+      4.405190944671631
+     ],
+     [
+      732,
+      4.362762928009033
+     ],
+     [
+      854,
+      4.256619930267334
+     ],
+     [
+      976,
+      4.1278605461120605
+     ],
+     [
+      1098,
+      3.9096145629882812
+     ],
+     [
+      1220,
+      4.088318824768066
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 68.50733382891082
+     },
+     "4096": {
+      "perplejidad": 63.72626934381911
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 44416000,
+    "segundos": 120.81004938099977,
+    "curva": [
+     [
+      122,
+      6.219907283782959
+     ],
+     [
+      244,
+      5.649471282958984
+     ],
+     [
+      366,
+      5.343987941741943
+     ],
+     [
+      488,
+      4.901046276092529
+     ],
+     [
+      610,
+      4.836572647094727
+     ],
+     [
+      732,
+      4.767716884613037
+     ],
+     [
+      854,
+      4.543124675750732
+     ],
+     [
+      976,
+      4.579224586486816
+     ],
+     [
+      1098,
+      4.474926948547363
+     ],
+     [
+      1220,
+      4.419612884521484
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 95.05915478802825
+     },
+     "4096": {
+      "perplejidad": 129.41963698854565
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 44416000,
+    "segundos": 120.8389603959995,
+    "curva": [
+     [
+      122,
+      6.469908237457275
+     ],
+     [
+      244,
+      6.042291641235352
+     ],
+     [
+      366,
+      5.78171443939209
+     ],
+     [
+      488,
+      5.398764133453369
+     ],
+     [
+      610,
+      5.309160232543945
+     ],
+     [
+      732,
+      5.256628036499023
+     ],
+     [
+      854,
+      5.0142951011657715
+     ],
+     [
+      976,
+      5.056215286254883
+     ],
+     [
+      1098,
+      4.939118385314941
+     ],
+     [
+      1220,
+      4.882098197937012
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 144.9096335462031
+     },
+     "4096": {
+      "perplejidad": 169.37054415532103
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "wikitext",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 44416000,
+    "segundos": 120.84260342300058,
+    "curva": [
+     [
+      122,
+      6.178230285644531
+     ],
+     [
+      244,
+      5.67286491394043
+     ],
+     [
+      366,
+      5.337693214416504
+     ],
+     [
+      488,
+      5.122123718261719
+     ],
+     [
+      610,
+      4.872407913208008
+     ],
+     [
+      732,
+      4.829233169555664
+     ],
+     [
+      854,
+      4.565332412719727
+     ],
+     [
+      976,
+      4.574767112731934
+     ],
+     [
+      1098,
+      4.561882495880127
+     ],
+     [
+      1220,
+      4.3416852951049805
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 93.18513504650403
+     },
+     "4096": {
+      "perplejidad": 121.76326683955313
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Transformer++",
+    "tarea": "wikitext",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 44416000,
+    "segundos": 120.86422833800043,
+    "curva": [
+     [
+      122,
+      6.242396831512451
+     ],
+     [
+      244,
+      5.658297061920166
+     ],
+     [
+      366,
+      5.105901718139648
+     ],
+     [
+      488,
+      5.052088260650635
+     ],
+     [
+      610,
+      4.809212684631348
+     ],
+     [
+      732,
+      4.7433857917785645
+     ],
+     [
+      854,
+      4.562939167022705
+     ],
+     [
+      976,
+      4.557042121887207
+     ],
+     [
+      1098,
+      4.309173583984375
+     ],
+     [
+      1220,
+      4.510245323181152
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 92.86201646421884
+     },
+     "4096": {
+      "perplejidad": 125.50687299244174
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 44656912,
+    "segundos": 143.4789376640001,
+    "curva": [
+     [
+      122,
+      5.850353240966797
+     ],
+     [
+      244,
+      5.279696464538574
+     ],
+     [
+      366,
+      5.055065155029297
+     ],
+     [
+      488,
+      4.632296562194824
+     ],
+     [
+      610,
+      4.53111457824707
+     ],
+     [
+      732,
+      4.510870933532715
+     ],
+     [
+      854,
+      4.342179298400879
+     ],
+     [
+      976,
+      4.408261775970459
+     ],
+     [
+      1098,
+      4.282353401184082
+     ],
+     [
+      1220,
+      4.230672836303711
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 86.0188832051866
+     },
+     "4096": {
+      "perplejidad": 84.95999295728981
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 44656912,
+    "segundos": 141.47870991499985,
+    "curva": [
+     [
+      122,
+      5.818777084350586
+     ],
+     [
+      244,
+      5.186418533325195
+     ],
+     [
+      366,
+      4.996984481811523
+     ],
+     [
+      488,
+      4.511260986328125
+     ],
+     [
+      610,
+      4.4204864501953125
+     ],
+     [
+      732,
+      4.358828544616699
+     ],
+     [
+      854,
+      4.211728572845459
+     ],
+     [
+      976,
+      4.238408088684082
+     ],
+     [
+      1098,
+      4.075100898742676
+     ],
+     [
+      1220,
+      4.038328170776367
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 75.31733526308301
+     },
+     "4096": {
+      "perplejidad": 74.14110696700277
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "wikitext",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 44656912,
+    "segundos": 141.58234004299993,
+    "curva": [
+     [
+      122,
+      5.776116371154785
+     ],
+     [
+      244,
+      5.280032157897949
+     ],
+     [
+      366,
+      4.972414970397949
+     ],
+     [
+      488,
+      4.840366363525391
+     ],
+     [
+      610,
+      4.552089691162109
+     ],
+     [
+      732,
+      4.435135364532471
+     ],
+     [
+      854,
+      4.205030918121338
+     ],
+     [
+      976,
+      4.18774938583374
+     ],
+     [
+      1098,
+      4.2091522216796875
+     ],
+     [
+      1220,
+      3.959273099899292
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 73.33941729292816
+     },
+     "4096": {
+      "perplejidad": 72.15827137627417
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "Mamba-2",
+    "tarea": "wikitext",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 44656912,
+    "segundos": 141.8311852550005,
+    "curva": [
+     [
+      122,
+      5.864078521728516
+     ],
+     [
+      244,
+      5.315680503845215
+     ],
+     [
+      366,
+      4.727725982666016
+     ],
+     [
+      488,
+      4.695581436157227
+     ],
+     [
+      610,
+      4.488497734069824
+     ],
+     [
+      732,
+      4.454485893249512
+     ],
+     [
+      854,
+      4.286777496337891
+     ],
+     [
+      976,
+      4.193596839904785
+     ],
+     [
+      1098,
+      3.9610018730163574
+     ],
+     [
+      1220,
+      4.1416335105896
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 73.85990517999585
+     },
+     "4096": {
+      "perplejidad": 72.64319734250084
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2915328,
+    "segundos": 370.2897688369999,
+    "curva": [
+     [
+      200,
+      6.238638401031494
+     ],
+     [
+      400,
+      6.1787109375
+     ],
+     [
+      600,
+      5.858191013336182
+     ],
+     [
+      800,
+      5.383596897125244
+     ],
+     [
+      1000,
+      4.8146185874938965
+     ],
+     [
+      1200,
+      4.43452262878418
+     ],
+     [
+      1400,
+      3.9680466651916504
+     ],
+     [
+      1600,
+      3.9523823261260986
+     ],
+     [
+      1800,
+      3.4577088356018066
+     ],
+     [
+      2000,
+      3.5189383029937744
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.24889921722113503
+     },
+     "4096": {
+      "exactitud": 0.0028700537371763556
+     },
+     "16384": {
+      "exactitud": 0.002044927359296789
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 2915328,
+    "segundos": 191.94409758100028,
+    "curva": [
+     [
+      200,
+      6.236289024353027
+     ],
+     [
+      400,
+      6.100846767425537
+     ],
+     [
+      600,
+      5.915099143981934
+     ],
+     [
+      800,
+      5.536869525909424
+     ],
+     [
+      1000,
+      5.591054439544678
+     ],
+     [
+      1200,
+      5.33601188659668
+     ],
+     [
+      1400,
+      5.149407386779785
+     ],
+     [
+      1600,
+      5.097208023071289
+     ],
+     [
+      1800,
+      4.978871822357178
+     ],
+     [
+      2000,
+      4.651274681091309
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.09222113502935421
+     },
+     "4096": {
+      "exactitud": 0.0025952613580850024
+     },
+     "16384": {
+      "exactitud": 0.0011140275912586985
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2915328,
+    "segundos": 192.0550980019998,
+    "curva": [
+     [
+      200,
+      6.237593173980713
+     ],
+     [
+      400,
+      6.188174724578857
+     ],
+     [
+      600,
+      5.935362815856934
+     ],
+     [
+      800,
+      5.65715217590332
+     ],
+     [
+      1000,
+      5.475068092346191
+     ],
+     [
+      1200,
+      5.293977737426758
+     ],
+     [
+      1400,
+      5.166538715362549
+     ],
+     [
+      1600,
+      5.053427219390869
+     ],
+     [
+      1800,
+      5.002942085266113
+     ],
+     [
+      2000,
+      4.9275803565979
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.08133561643835617
+     },
+     "4096": {
+      "exactitud": 0.0022288715192965314
+     },
+     "16384": {
+      "exactitud": 0.0018617995360761812
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2915328,
+    "segundos": 191.892996003,
+    "curva": [
+     [
+      200,
+      6.238080978393555
+     ],
+     [
+      400,
+      6.0784592628479
+     ],
+     [
+      600,
+      5.433068752288818
+     ],
+     [
+      800,
+      4.19464111328125
+     ],
+     [
+      1000,
+      4.030667304992676
+     ],
+     [
+      1200,
+      2.6772122383117676
+     ],
+     [
+      1400,
+      2.243629217147827
+     ],
+     [
+      1600,
+      1.8812018632888794
+     ],
+     [
+      1800,
+      2.0680503845214844
+     ],
+     [
+      2000,
+      1.6993077993392944
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.585738747553816
+     },
+     "4096": {
+      "exactitud": 0.0028395212506106497
+     },
+     "16384": {
+      "exactitud": 0.0018160175802710292
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4881408,
+    "segundos": 223.86624773700032,
+    "curva": [
+     [
+      200,
+      8.319443702697754
+     ],
+     [
+      400,
+      8.263033866882324
+     ],
+     [
+      600,
+      8.203597068786621
+     ],
+     [
+      800,
+      4.95290994644165
+     ],
+     [
+      1000,
+      0.24476288259029388
+     ],
+     [
+      1200,
+      0.025550344958901405
+     ],
+     [
+      1400,
+      0.006801428738981485
+     ],
+     [
+      1600,
+      0.003699901746585965
+     ],
+     [
+      1800,
+      0.0020569602493196726
+     ],
+     [
+      2000,
+      0.0013605664717033505
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.5768229166666666
+     },
+     "2048": {
+      "exactitud": 0.297119140625
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 2000,
+    "parametros": 4881408,
+    "segundos": 207.15120698699957,
+    "curva": [
+     [
+      200,
+      8.341227531433105
+     ],
+     [
+      400,
+      8.333028793334961
+     ],
+     [
+      600,
+      8.325894355773926
+     ],
+     [
+      800,
+      8.319933891296387
+     ],
+     [
+      1000,
+      8.166455268859863
+     ],
+     [
+      1200,
+      8.110372543334961
+     ],
+     [
+      1400,
+      8.052002906799316
+     ],
+     [
+      1600,
+      8.00798511505127
+     ],
+     [
+      1800,
+      7.984608173370361
+     ],
+     [
+      2000,
+      7.952944278717041
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.006510416666666667
+     },
+     "1024": {
+      "exactitud": 0.0016276041666666667
+     },
+     "2048": {
+      "exactitud": 0.0003255208333333333
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4881408,
+    "segundos": 207.08954789699965,
+    "curva": [
+     [
+      200,
+      8.330267906188965
+     ],
+     [
+      400,
+      8.255504608154297
+     ],
+     [
+      600,
+      8.200554847717285
+     ],
+     [
+      800,
+      2.845781087875366
+     ],
+     [
+      1000,
+      0.06769094616174698
+     ],
+     [
+      1200,
+      0.006744062062352896
+     ],
+     [
+      1400,
+      0.0022809833753854036
+     ],
+     [
+      1600,
+      0.0008704388164915144
+     ],
+     [
+      1800,
+      0.0005968703771941364
+     ],
+     [
+      2000,
+      0.0005120818968862295
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.6025390625
+     },
+     "2048": {
+      "exactitud": 0.3037109375
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4881408,
+    "segundos": 207.23034778500005,
+    "curva": [
+     [
+      200,
+      8.34933090209961
+     ],
+     [
+      400,
+      8.289966583251953
+     ],
+     [
+      600,
+      7.555261611938477
+     ],
+     [
+      800,
+      4.8168253898620605
+     ],
+     [
+      1000,
+      1.7868808507919312
+     ],
+     [
+      1200,
+      0.4433664381504059
+     ],
+     [
+      1400,
+      0.11836376041173935
+     ],
+     [
+      1600,
+      0.03902556002140045
+     ],
+     [
+      1800,
+      0.02708052657544613
+     ],
+     [
+      2000,
+      0.017189783975481987
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9970703125
+     },
+     "1024": {
+      "exactitud": 0.5965169270833334
+     },
+     "2048": {
+      "exactitud": 0.2989908854166667
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 1220,
+    "parametros": 46320640,
+    "segundos": 435.91268068800036,
+    "curva": [
+     [
+      122,
+      6.296430587768555
+     ],
+     [
+      244,
+      5.5399169921875
+     ],
+     [
+      366,
+      5.165295600891113
+     ],
+     [
+      488,
+      4.704744815826416
+     ],
+     [
+      610,
+      4.567892074584961
+     ],
+     [
+      732,
+      4.515737533569336
+     ],
+     [
+      854,
+      4.305365562438965
+     ],
+     [
+      976,
+      4.376249313354492
+     ],
+     [
+      1098,
+      4.258565902709961
+     ],
+     [
+      1220,
+      4.2040815353393555
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 78.71062151892788
+     },
+     "4096": {
+      "perplejidad": 76.92288164278135
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "wikitext",
+    "semilla": 0,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 46320640,
+    "segundos": 304.68880024400005,
+    "curva": [
+     [
+      122,
+      6.340116500854492
+     ],
+     [
+      244,
+      5.537528038024902
+     ],
+     [
+      366,
+      5.193502426147461
+     ],
+     [
+      488,
+      4.655794143676758
+     ],
+     [
+      610,
+      4.4919939041137695
+     ],
+     [
+      732,
+      4.420232772827148
+     ],
+     [
+      854,
+      4.212848663330078
+     ],
+     [
+      976,
+      4.279804229736328
+     ],
+     [
+      1098,
+      4.116637229919434
+     ],
+     [
+      1220,
+      4.058645248413086
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 70.38873720613812
+     },
+     "4096": {
+      "perplejidad": 68.27875547405115
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "wikitext",
+    "semilla": 1,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 46320640,
+    "segundos": 304.76001778700083,
+    "curva": [
+     [
+      122,
+      6.348811626434326
+     ],
+     [
+      244,
+      5.637201309204102
+     ],
+     [
+      366,
+      5.1733784675598145
+     ],
+     [
+      488,
+      4.9299163818359375
+     ],
+     [
+      610,
+      4.6210222244262695
+     ],
+     [
+      732,
+      4.4818572998046875
+     ],
+     [
+      854,
+      4.250855922698975
+     ],
+     [
+      976,
+      4.232068061828613
+     ],
+     [
+      1098,
+      4.217253684997559
+     ],
+     [
+      1220,
+      3.9806582927703857
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 69.68392909219698
+     },
+     "4096": {
+      "perplejidad": 67.55059631266161
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "RWKV-7",
+    "tarea": "wikitext",
+    "semilla": 2,
+    "lr": 0.003,
+    "pasos": 1220,
+    "parametros": 46320640,
+    "segundos": 304.7447131429999,
+    "curva": [
+     [
+      122,
+      6.4659295082092285
+     ],
+     [
+      244,
+      5.7736310958862305
+     ],
+     [
+      366,
+      5.138304710388184
+     ],
+     [
+      488,
+      4.982271194458008
+     ],
+     [
+      610,
+      4.682445049285889
+     ],
+     [
+      732,
+      4.62548828125
+     ],
+     [
+      854,
+      4.420788764953613
+     ],
+     [
+      976,
+      4.320863723754883
+     ],
+     [
+      1098,
+      4.074234485626221
+     ],
+     [
+      1220,
+      4.246321678161621
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "perplejidad": 76.98937395945677
+     },
+     "4096": {
+      "perplejidad": 74.8995203303745
+     }
+    },
+    "implementacion": "original",
+    "perfil": "a100"
+   }
+  ],
+  "mejor_lr": {
+   "copia/ASRN": 0.001,
+   "copia/Transformer++": 0.001,
+   "copia/Mamba-2": 0.003,
+   "mqar/ASRN": 0.001,
+   "mqar/Transformer++": 0.003,
+   "mqar/Mamba-2": 0.003,
+   "wikitext/ASRN": 0.003,
+   "wikitext/Transformer++": 0.001,
+   "wikitext/Mamba-2": 0.003,
+   "copia/RWKV-7": 0.001,
+   "mqar/RWKV-7": 0.001,
+   "wikitext/RWKV-7": 0.003
+  }
+ },
+ "ablacion": {
+  "corridas": [
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 72.75545052000007,
+    "curva": [
+     [
+      200,
+      6.239091873168945
+     ],
+     [
+      400,
+      6.237295150756836
+     ],
+     [
+      600,
+      6.235311508178711
+     ],
+     [
+      800,
+      6.1576738357543945
+     ],
+     [
+      1000,
+      0.04951193556189537
+     ],
+     [
+      1200,
+      0.0008235230925492942
+     ],
+     [
+      1400,
+      9.737192885950208e-05
+     ],
+     [
+      1600,
+      3.192608346580528e-05
+     ],
+     [
+      1800,
+      1.4579817616322543e-05
+     ],
+     [
+      2000,
+      9.503600267635193e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9967330239374694
+     },
+     "16384": {
+      "exactitud": 0.4348827981931388
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.97255466600018,
+    "curva": [
+     [
+      200,
+      6.238612174987793
+     ],
+     [
+      400,
+      6.237970352172852
+     ],
+     [
+      600,
+      6.234734535217285
+     ],
+     [
+      800,
+      5.275574684143066
+     ],
+     [
+      1000,
+      0.007792839780449867
+     ],
+     [
+      1200,
+      0.00043582855141721666
+     ],
+     [
+      1400,
+      5.317200702847913e-05
+     ],
+     [
+      1600,
+      3.417701373109594e-05
+     ],
+     [
+      1800,
+      5.4662174079567194e-05
+     ],
+     [
+      2000,
+      9.972313819162082e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9996030776746458
+     },
+     "16384": {
+      "exactitud": 0.6245727017458186
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 69.15772113700041,
+    "curva": [
+     [
+      200,
+      6.2392354011535645
+     ],
+     [
+      400,
+      6.2371087074279785
+     ],
+     [
+      600,
+      6.237649917602539
+     ],
+     [
+      800,
+      6.235520839691162
+     ],
+     [
+      1000,
+      6.139472484588623
+     ],
+     [
+      1200,
+      0.3121107816696167
+     ],
+     [
+      1400,
+      0.0018474056851118803
+     ],
+     [
+      1600,
+      0.0002154148241970688
+     ],
+     [
+      1800,
+      9.380895062349737e-05
+     ],
+     [
+      2000,
+      5.808203059132211e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999084025403029
+     },
+     "16384": {
+      "exactitud": 0.9675711146380174
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 69.81188413400014,
+    "curva": [
+     [
+      200,
+      6.239086151123047
+     ],
+     [
+      400,
+      6.237377166748047
+     ],
+     [
+      600,
+      6.235581874847412
+     ],
+     [
+      800,
+      5.8539934158325195
+     ],
+     [
+      1000,
+      0.007730948738753796
+     ],
+     [
+      1200,
+      0.0005278462776914239
+     ],
+     [
+      1400,
+      7.189850293798372e-05
+     ],
+     [
+      1600,
+      2.7513986424310133e-05
+     ],
+     [
+      1800,
+      1.442827851860784e-05
+     ],
+     [
+      2000,
+      9.379918083141092e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9997862725940401
+     },
+     "16384": {
+      "exactitud": 0.6544225369307777
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 70.03683736000039,
+    "curva": [
+     [
+      200,
+      6.238608360290527
+     ],
+     [
+      400,
+      6.2379584312438965
+     ],
+     [
+      600,
+      6.233295440673828
+     ],
+     [
+      800,
+      6.169205188751221
+     ],
+     [
+      1000,
+      4.396205902099609
+     ],
+     [
+      1200,
+      0.005572693422436714
+     ],
+     [
+      1400,
+      0.0012767754960805178
+     ],
+     [
+      1600,
+      0.0010349138174206018
+     ],
+     [
+      1800,
+      0.00029435838223434985
+     ],
+     [
+      2000,
+      0.00038902528467588127
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9997557401074744
+     },
+     "16384": {
+      "exactitud": 0.9170278354291296
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 70.15759997700025,
+    "curva": [
+     [
+      200,
+      6.239243507385254
+     ],
+     [
+      400,
+      6.237418174743652
+     ],
+     [
+      600,
+      6.236649513244629
+     ],
+     [
+      800,
+      6.234198570251465
+     ],
+     [
+      1000,
+      0.15039683878421783
+     ],
+     [
+      1200,
+      0.0010615987703204155
+     ],
+     [
+      1400,
+      0.00012011088256258518
+     ],
+     [
+      1600,
+      3.924272823496722e-05
+     ],
+     [
+      1800,
+      2.021696127485484e-05
+     ],
+     [
+      2000,
+      1.3344928447622806e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999389350268686
+     },
+     "16384": {
+      "exactitud": 0.6892626052984984
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 57.43987482800003,
+    "curva": [
+     [
+      200,
+      6.239099979400635
+     ],
+     [
+      400,
+      6.237353324890137
+     ],
+     [
+      600,
+      6.237165451049805
+     ],
+     [
+      800,
+      6.2069807052612305
+     ],
+     [
+      1000,
+      0.22503197193145752
+     ],
+     [
+      1200,
+      0.0014061495894566178
+     ],
+     [
+      1400,
+      0.00020175965619273484
+     ],
+     [
+      1600,
+      7.154049671953544e-05
+     ],
+     [
+      1800,
+      2.2678870664094575e-05
+     ],
+     [
+      2000,
+      1.5947551219142042e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9998473375671715
+     },
+     "16384": {
+      "exactitud": 0.7134812599194238
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 57.07634997700006,
+    "curva": [
+     [
+      200,
+      6.238613605499268
+     ],
+     [
+      400,
+      6.237921237945557
+     ],
+     [
+      600,
+      6.236627101898193
+     ],
+     [
+      800,
+      6.236288070678711
+     ],
+     [
+      1000,
+      6.235999584197998
+     ],
+     [
+      1200,
+      6.236760139465332
+     ],
+     [
+      1400,
+      6.236374855041504
+     ],
+     [
+      1600,
+      6.235980987548828
+     ],
+     [
+      1800,
+      6.234933853149414
+     ],
+     [
+      2000,
+      6.236124515533447
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0023238747553816046
+     },
+     "4096": {
+      "exactitud": 0.001984611626770884
+     },
+     "16384": {
+      "exactitud": 0.0017549749725308266
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 57.486007229999814,
+    "curva": [
+     [
+      200,
+      6.239262580871582
+     ],
+     [
+      400,
+      6.236264228820801
+     ],
+     [
+      600,
+      6.237217903137207
+     ],
+     [
+      800,
+      6.231630802154541
+     ],
+     [
+      1000,
+      6.106106281280518
+     ],
+     [
+      1200,
+      0.9027777910232544
+     ],
+     [
+      1400,
+      0.0036734433379024267
+     ],
+     [
+      1600,
+      0.0003702379181049764
+     ],
+     [
+      1800,
+      0.00011893402552232146
+     ],
+     [
+      2000,
+      7.021036435617134e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9995420127015144
+     },
+     "16384": {
+      "exactitud": 0.6064735685508484
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 59.44930834199931,
+    "curva": [
+     [
+      200,
+      6.239102840423584
+     ],
+     [
+      400,
+      6.237386703491211
+     ],
+     [
+      600,
+      6.234872817993164
+     ],
+     [
+      800,
+      5.709143161773682
+     ],
+     [
+      1000,
+      0.006229159887880087
+     ],
+     [
+      1200,
+      0.00022319825075101107
+     ],
+     [
+      1400,
+      3.681955058709718e-05
+     ],
+     [
+      1600,
+      1.6898657122510485e-05
+     ],
+     [
+      1800,
+      9.335944014310371e-06
+     ],
+     [
+      2000,
+      5.9281378526065964e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9973436736687836
+     },
+     "16384": {
+      "exactitud": 0.4931937492369674
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 59.30447577999985,
+    "curva": [
+     [
+      200,
+      6.238615989685059
+     ],
+     [
+      400,
+      6.237990856170654
+     ],
+     [
+      600,
+      6.2186431884765625
+     ],
+     [
+      800,
+      6.130632400512695
+     ],
+     [
+      1000,
+      0.05217992141842842
+     ],
+     [
+      1200,
+      0.0005719702458009124
+     ],
+     [
+      1400,
+      0.00012080025771865621
+     ],
+     [
+      1600,
+      4.0126466046785936e-05
+     ],
+     [
+      1800,
+      1.963641625479795e-05
+     ],
+     [
+      2000,
+      1.5545943824690767e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999084025403029
+     },
+     "16384": {
+      "exactitud": 0.8565803931143938
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 59.29464145200018,
+    "curva": [
+     [
+      200,
+      6.239258289337158
+     ],
+     [
+      400,
+      6.235430717468262
+     ],
+     [
+      600,
+      6.2374701499938965
+     ],
+     [
+      800,
+      6.236580848693848
+     ],
+     [
+      1000,
+      6.20416259765625
+     ],
+     [
+      1200,
+      0.8523445725440979
+     ],
+     [
+      1400,
+      0.007617283146828413
+     ],
+     [
+      1600,
+      0.001547782914713025
+     ],
+     [
+      1800,
+      0.0002908387396018952
+     ],
+     [
+      2000,
+      0.00019213964696973562
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9996030776746458
+     },
+     "16384": {
+      "exactitud": 0.8916341106092053
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.06746180200025,
+    "curva": [
+     [
+      200,
+      6.239124298095703
+     ],
+     [
+      400,
+      6.237423896789551
+     ],
+     [
+      600,
+      6.237437725067139
+     ],
+     [
+      800,
+      6.234827995300293
+     ],
+     [
+      1000,
+      5.079038619995117
+     ],
+     [
+      1200,
+      0.008379007689654827
+     ],
+     [
+      1400,
+      0.0005070043262094259
+     ],
+     [
+      1600,
+      0.0001628882746445015
+     ],
+     [
+      1800,
+      9.294164919992909e-05
+     ],
+     [
+      2000,
+      3.551517511368729e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9989008304836345
+     },
+     "16384": {
+      "exactitud": 0.9153339030643389
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.13020606400005,
+    "curva": [
+     [
+      200,
+      6.238601207733154
+     ],
+     [
+      400,
+      6.237988471984863
+     ],
+     [
+      600,
+      6.233884811401367
+     ],
+     [
+      800,
+      6.2357683181762695
+     ],
+     [
+      1000,
+      6.2366719245910645
+     ],
+     [
+      1200,
+      6.236471652984619
+     ],
+     [
+      1400,
+      6.235321998596191
+     ],
+     [
+      1600,
+      6.236066818237305
+     ],
+     [
+      1800,
+      6.236209392547607
+     ],
+     [
+      2000,
+      6.236199378967285
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0007338551859099804
+     },
+     "4096": {
+      "exactitud": 0.0016182217879824132
+     },
+     "16384": {
+      "exactitud": 0.0018770601880112319
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.25735114200052,
+    "curva": [
+     [
+      200,
+      6.239260673522949
+     ],
+     [
+      400,
+      6.23798131942749
+     ],
+     [
+      600,
+      6.236698627471924
+     ],
+     [
+      800,
+      6.237157344818115
+     ],
+     [
+      1000,
+      6.189046859741211
+     ],
+     [
+      1200,
+      3.2240633964538574
+     ],
+     [
+      1400,
+      0.01331045851111412
+     ],
+     [
+      1600,
+      0.001280220109038055
+     ],
+     [
+      1800,
+      0.0005057810922153294
+     ],
+     [
+      2000,
+      0.0003892779059242457
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9998778700537372
+     },
+     "16384": {
+      "exactitud": 0.9573769991454035
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 65.33555413500108,
+    "curva": [
+     [
+      200,
+      6.239080905914307
+     ],
+     [
+      400,
+      6.237326622009277
+     ],
+     [
+      600,
+      6.236150741577148
+     ],
+     [
+      800,
+      6.235596179962158
+     ],
+     [
+      1000,
+      1.1444817781448364
+     ],
+     [
+      1200,
+      0.0022842399775981903
+     ],
+     [
+      1400,
+      0.00023163278819993138
+     ],
+     [
+      1600,
+      4.9567453970666975e-05
+     ],
+     [
+      1800,
+      2.471778316248674e-05
+     ],
+     [
+      2000,
+      1.6156533092726022e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.9998776908023483
+     },
+     "4096": {
+      "exactitud": 0.999694675134343
+     },
+     "16384": {
+      "exactitud": 0.6403979978024661
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 65.43531690600139,
+    "curva": [
+     [
+      200,
+      6.238601207733154
+     ],
+     [
+      400,
+      6.238017559051514
+     ],
+     [
+      600,
+      6.235133647918701
+     ],
+     [
+      800,
+      3.1286206245422363
+     ],
+     [
+      1000,
+      0.002500073052942753
+     ],
+     [
+      1200,
+      0.00023930468887556344
+     ],
+     [
+      1400,
+      4.7083201934583485e-05
+     ],
+     [
+      1600,
+      2.3606678951182403e-05
+     ],
+     [
+      1800,
+      1.210872687806841e-05
+     ],
+     [
+      2000,
+      8.224934390455019e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9997862725940401
+     },
+     "16384": {
+      "exactitud": 0.6308753509949945
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 65.60626361600043,
+    "curva": [
+     [
+      200,
+      6.239254474639893
+     ],
+     [
+      400,
+      6.239241600036621
+     ],
+     [
+      600,
+      6.231090545654297
+     ],
+     [
+      800,
+      6.235495090484619
+     ],
+     [
+      1000,
+      5.860061168670654
+     ],
+     [
+      1200,
+      0.031945496797561646
+     ],
+     [
+      1400,
+      0.0007219188846647739
+     ],
+     [
+      1600,
+      0.00016350930673070252
+     ],
+     [
+      1800,
+      0.00014539739640895277
+     ],
+     [
+      2000,
+      6.680925434920937e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9942293600390816
+     },
+     "16384": {
+      "exactitud": 0.806617018679038
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.48615358200004,
+    "curva": [
+     [
+      200,
+      6.2390947341918945
+     ],
+     [
+      400,
+      6.237422943115234
+     ],
+     [
+      600,
+      6.237275123596191
+     ],
+     [
+      800,
+      6.236657619476318
+     ],
+     [
+      1000,
+      6.2362775802612305
+     ],
+     [
+      1200,
+      6.236331462860107
+     ],
+     [
+      1400,
+      6.236217021942139
+     ],
+     [
+      1600,
+      6.23630428314209
+     ],
+     [
+      1800,
+      6.2359795570373535
+     ],
+     [
+      2000,
+      6.235754489898682
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0029354207436399216
+     },
+     "4096": {
+      "exactitud": 0.0021678065461651196
+     },
+     "16384": {
+      "exactitud": 0.001953363447686485
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.88735554699997,
+    "curva": [
+     [
+      200,
+      6.238600730895996
+     ],
+     [
+      400,
+      6.2379913330078125
+     ],
+     [
+      600,
+      6.236921787261963
+     ],
+     [
+      800,
+      6.235718727111816
+     ],
+     [
+      1000,
+      5.179415225982666
+     ],
+     [
+      1200,
+      0.007249264046549797
+     ],
+     [
+      1400,
+      0.0008878160733729601
+     ],
+     [
+      1600,
+      0.00042167704668827355
+     ],
+     [
+      1800,
+      0.00024773081531748176
+     ],
+     [
+      2000,
+      0.0005201217718422413
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9906265266243283
+     },
+     "16384": {
+      "exactitud": 0.501220852154804
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.76177224300045,
+    "curva": [
+     [
+      200,
+      6.239256858825684
+     ],
+     [
+      400,
+      6.237229347229004
+     ],
+     [
+      600,
+      6.236636161804199
+     ],
+     [
+      800,
+      3.5475306510925293
+     ],
+     [
+      1000,
+      0.0016168532893061638
+     ],
+     [
+      1200,
+      0.0007776435813866556
+     ],
+     [
+      1400,
+      0.0010706328321248293
+     ],
+     [
+      1600,
+      6.939652666915208e-05
+     ],
+     [
+      1800,
+      2.6430248908582143e-05
+     ],
+     [
+      2000,
+      2.150888212781865e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9999084025403029
+     },
+     "16384": {
+      "exactitud": 0.8770144060554267
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.53225503300018,
+    "curva": [
+     [
+      200,
+      6.239111423492432
+     ],
+     [
+      400,
+      6.237462520599365
+     ],
+     [
+      600,
+      6.237318515777588
+     ],
+     [
+      800,
+      6.189108371734619
+     ],
+     [
+      1000,
+      1.5208814144134521
+     ],
+     [
+      1200,
+      0.0017680940218269825
+     ],
+     [
+      1400,
+      0.00014208295033313334
+     ],
+     [
+      1600,
+      3.923492840840481e-05
+     ],
+     [
+      1800,
+      2.1161542463232763e-05
+     ],
+     [
+      2000,
+      1.747145870467648e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9997557401074744
+     },
+     "16384": {
+      "exactitud": 0.5184806494933464
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.29562535900004,
+    "curva": [
+     [
+      200,
+      6.2385945320129395
+     ],
+     [
+      400,
+      6.2379889488220215
+     ],
+     [
+      600,
+      6.236860275268555
+     ],
+     [
+      800,
+      6.092395782470703
+     ],
+     [
+      1000,
+      2.787177085876465
+     ],
+     [
+      1200,
+      0.006187093909829855
+     ],
+     [
+      1400,
+      0.0002608286449685693
+     ],
+     [
+      1600,
+      0.00011015385098289698
+     ],
+     [
+      1800,
+      2.820479312504176e-05
+     ],
+     [
+      2000,
+      3.143184949294664e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9998778700537372
+     },
+     "16384": {
+      "exactitud": 0.8328653400073252
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 68.42981538499953,
+    "curva": [
+     [
+      200,
+      6.239274978637695
+     ],
+     [
+      400,
+      6.237464427947998
+     ],
+     [
+      600,
+      5.954973220825195
+     ],
+     [
+      800,
+      3.2948386669158936
+     ],
+     [
+      1000,
+      0.006240443326532841
+     ],
+     [
+      1200,
+      0.00032687612110748887
+     ],
+     [
+      1400,
+      0.00011405384429963306
+     ],
+     [
+      1600,
+      3.149751864839345e-05
+     ],
+     [
+      1800,
+      2.3528178644482978e-05
+     ],
+     [
+      2000,
+      3.454946636338718e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.999480947728383
+     },
+     "16384": {
+      "exactitud": 0.7078958613111952
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2620304,
+    "segundos": 71.93175467900073,
+    "curva": [
+     [
+      200,
+      6.239102363586426
+     ],
+     [
+      400,
+      6.237412452697754
+     ],
+     [
+      600,
+      6.237407684326172
+     ],
+     [
+      800,
+      6.236518383026123
+     ],
+     [
+      1000,
+      6.225674152374268
+     ],
+     [
+      1200,
+      0.1328507512807846
+     ],
+     [
+      1400,
+      0.0012530145468190312
+     ],
+     [
+      1600,
+      0.0002086633030558005
+     ],
+     [
+      1800,
+      0.00017627206398174167
+     ],
+     [
+      2000,
+      4.699073906522244e-05
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9990229604298974
+     },
+     "16384": {
+      "exactitud": 0.4044225369307777
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2620304,
+    "segundos": 67.87852425800156,
+    "curva": [
+     [
+      200,
+      6.238614559173584
+     ],
+     [
+      400,
+      6.238033771514893
+     ],
+     [
+      600,
+      6.237026214599609
+     ],
+     [
+      800,
+      6.237182140350342
+     ],
+     [
+      1000,
+      6.236912727355957
+     ],
+     [
+      1200,
+      6.236557483673096
+     ],
+     [
+      1400,
+      6.236332893371582
+     ],
+     [
+      1600,
+      6.236432075500488
+     ],
+     [
+      1800,
+      6.236436367034912
+     ],
+     [
+      2000,
+      6.236286640167236
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.002201565557729941
+     },
+     "4096": {
+      "exactitud": 0.0018930141670737664
+     },
+     "16384": {
+      "exactitud": 0.00206018801123184
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2620304,
+    "segundos": 67.62480159900042,
+    "curva": [
+     [
+      200,
+      6.23929500579834
+     ],
+     [
+      400,
+      6.237565517425537
+     ],
+     [
+      600,
+      6.237293720245361
+     ],
+     [
+      800,
+      6.2367634773254395
+     ],
+     [
+      1000,
+      6.236832618713379
+     ],
+     [
+      1200,
+      6.236475467681885
+     ],
+     [
+      1400,
+      6.236401557922363
+     ],
+     [
+      1600,
+      6.236508846282959
+     ],
+     [
+      1800,
+      6.236370086669922
+     ],
+     [
+      2000,
+      6.236451625823975
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.001834637964774951
+     },
+     "4096": {
+      "exactitud": 0.0017708842208109428
+     },
+     "16384": {
+      "exactitud": 0.0018312782322060799
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2236928,
+    "segundos": 25.830515683999693,
+    "curva": [
+     [
+      200,
+      6.239088535308838
+     ],
+     [
+      400,
+      6.237446308135986
+     ],
+     [
+      600,
+      6.237365245819092
+     ],
+     [
+      800,
+      6.2366623878479
+     ],
+     [
+      1000,
+      6.236457824707031
+     ],
+     [
+      1200,
+      6.236437797546387
+     ],
+     [
+      1400,
+      6.236509323120117
+     ],
+     [
+      1600,
+      6.236573696136475
+     ],
+     [
+      1800,
+      6.236510276794434
+     ],
+     [
+      2000,
+      6.236495018005371
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.001834637964774951
+     },
+     "4096": {
+      "exactitud": 0.0018319491939423546
+     },
+     "16384": {
+      "exactitud": 0.002044927359296789
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2236928,
+    "segundos": 25.828367050999077,
+    "curva": [
+     [
+      200,
+      6.238626003265381
+     ],
+     [
+      400,
+      6.238027572631836
+     ],
+     [
+      600,
+      6.237000465393066
+     ],
+     [
+      800,
+      6.237185955047607
+     ],
+     [
+      1000,
+      6.2368483543396
+     ],
+     [
+      1200,
+      6.2365217208862305
+     ],
+     [
+      1400,
+      6.236314296722412
+     ],
+     [
+      1600,
+      6.236427307128906
+     ],
+     [
+      1800,
+      6.236418724060059
+     ],
+     [
+      2000,
+      6.236289978027344
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0009784735812133072
+     },
+     "4096": {
+      "exactitud": 0.0018014167073766487
+     },
+     "16384": {
+      "exactitud": 0.001953363447686485
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2236928,
+    "segundos": 25.841029109999,
+    "curva": [
+     [
+      200,
+      6.239285469055176
+     ],
+     [
+      400,
+      6.237621784210205
+     ],
+     [
+      600,
+      6.237308025360107
+     ],
+     [
+      800,
+      6.236813545227051
+     ],
+     [
+      1000,
+      6.236788749694824
+     ],
+     [
+      1200,
+      6.236459255218506
+     ],
+     [
+      1400,
+      6.236408233642578
+     ],
+     [
+      1600,
+      6.236495494842529
+     ],
+     [
+      1800,
+      6.236377716064453
+     ],
+     [
+      2000,
+      6.23643684387207
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 0.0020792563600782778
+     },
+     "4096": {
+      "exactitud": 0.0018930141670737664
+     },
+     "16384": {
+      "exactitud": 0.0017854962764009279
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "copia",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 223.10219546999906,
+    "curva": [
+     [
+      200,
+      6.238483428955078
+     ],
+     [
+      400,
+      0.009620290249586105
+     ],
+     [
+      600,
+      0.00023275386774912477
+     ],
+     [
+      800,
+      2.4183240384445526e-05
+     ],
+     [
+      1000,
+      1.1365073078195564e-05
+     ],
+     [
+      1200,
+      4.428803549672011e-06
+     ],
+     [
+      1400,
+      2.361877477596863e-06
+     ],
+     [
+      1600,
+      1.536287186354457e-06
+     ],
+     [
+      1800,
+      6.343632321659243e-07
+     ],
+     [
+      2000,
+      3.5522916164154594e-07
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9997557401074744
+     },
+     "16384": {
+      "exactitud": 0.9526004150897326
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "copia",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 219.9368790970002,
+    "curva": [
+     [
+      200,
+      6.237733840942383
+     ],
+     [
+      400,
+      0.008278723806142807
+     ],
+     [
+      600,
+      0.0016730258939787745
+     ],
+     [
+      800,
+      0.00026814526063390076
+     ],
+     [
+      1000,
+      4.4739052100339904e-05
+     ],
+     [
+      1200,
+      0.00028682456468231976
+     ],
+     [
+      1400,
+      7.714518687862437e-06
+     ],
+     [
+      1600,
+      4.700022145698313e-06
+     ],
+     [
+      1800,
+      4.695483312389115e-06
+     ],
+     [
+      2000,
+      0.00010260350245516747
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.999694675134343
+     },
+     "16384": {
+      "exactitud": 0.6609083140031742
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "copia",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 2631236,
+    "segundos": 215.25568998400013,
+    "curva": [
+     [
+      200,
+      6.229122638702393
+     ],
+     [
+      400,
+      0.009405718185007572
+     ],
+     [
+      600,
+      0.0009475714177824557
+     ],
+     [
+      800,
+      0.000697137089446187
+     ],
+     [
+      1000,
+      4.566542338579893e-05
+     ],
+     [
+      1200,
+      0.0005229069502092898
+     ],
+     [
+      1400,
+      2.206060707976576e-05
+     ],
+     [
+      1600,
+      0.00025376101257279515
+     ],
+     [
+      1800,
+      3.267188048994285e-06
+     ],
+     [
+      2000,
+      4.03593958253623e-06
+     ]
+    ],
+    "evaluacion": {
+     "1024": {
+      "exactitud": 1.0
+     },
+     "4096": {
+      "exactitud": 0.9987787005373717
+     },
+     "16384": {
+      "exactitud": 0.6284794286411916
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.73118254100063,
+    "curva": [
+     [
+      200,
+      8.34041690826416
+     ],
+     [
+      400,
+      7.972253322601318
+     ],
+     [
+      600,
+      0.01604325883090496
+     ],
+     [
+      800,
+      0.0030160474125295877
+     ],
+     [
+      1000,
+      0.002073517069220543
+     ],
+     [
+      1200,
+      0.00013567498535849154
+     ],
+     [
+      1400,
+      0.0001042428775690496
+     ],
+     [
+      1600,
+      2.53852649620967e-05
+     ],
+     [
+      1800,
+      0.00015858646656852216
+     ],
+     [
+      2000,
+      4.976936543243937e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.9955240885416666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.05630242499956,
+    "curva": [
+     [
+      200,
+      8.333904266357422
+     ],
+     [
+      400,
+      8.118826866149902
+     ],
+     [
+      600,
+      1.1594958305358887
+     ],
+     [
+      800,
+      0.2497449368238449
+     ],
+     [
+      1000,
+      0.0672546848654747
+     ],
+     [
+      1200,
+      0.031137296929955482
+     ],
+     [
+      1400,
+      0.028061101213097572
+     ],
+     [
+      1600,
+      0.021532246842980385
+     ],
+     [
+      1800,
+      0.023102445527911186
+     ],
+     [
+      2000,
+      0.013334949500858784
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9993489583333334
+     },
+     "1024": {
+      "exactitud": 0.9895833333333334
+     },
+     "2048": {
+      "exactitud": 0.9645182291666666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_A",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.96424320299957,
+    "curva": [
+     [
+      200,
+      8.34891128540039
+     ],
+     [
+      400,
+      8.292110443115234
+     ],
+     [
+      600,
+      1.5998252630233765
+     ],
+     [
+      800,
+      0.029178807511925697
+     ],
+     [
+      1000,
+      0.006387485656887293
+     ],
+     [
+      1200,
+      0.005323035642504692
+     ],
+     [
+      1400,
+      0.0004325879563111812
+     ],
+     [
+      1600,
+      0.0010335911065340042
+     ],
+     [
+      1800,
+      0.00010836231376742944
+     ],
+     [
+      2000,
+      0.00016440074250567704
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9996744791666666
+     },
+     "1024": {
+      "exactitud": 0.9993489583333334
+     },
+     "2048": {
+      "exactitud": 0.9951985677083334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.82196291500077,
+    "curva": [
+     [
+      200,
+      8.340335845947266
+     ],
+     [
+      400,
+      8.095033645629883
+     ],
+     [
+      600,
+      0.012604158371686935
+     ],
+     [
+      800,
+      0.0010975368786603212
+     ],
+     [
+      1000,
+      0.0012248088605701923
+     ],
+     [
+      1200,
+      0.00017392753215972334
+     ],
+     [
+      1400,
+      6.34661628282629e-05
+     ],
+     [
+      1600,
+      2.3085822249413468e-05
+     ],
+     [
+      1800,
+      0.00012675224570557475
+     ],
+     [
+      2000,
+      1.6809017324703746e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.9923502604166666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 82.0330975550005,
+    "curva": [
+     [
+      200,
+      8.33411693572998
+     ],
+     [
+      400,
+      8.196585655212402
+     ],
+     [
+      600,
+      0.11828040331602097
+     ],
+     [
+      800,
+      0.026081914082169533
+     ],
+     [
+      1000,
+      0.01302463561296463
+     ],
+     [
+      1200,
+      0.011280531994998455
+     ],
+     [
+      1400,
+      0.0030898358672857285
+     ],
+     [
+      1600,
+      0.0027435224037617445
+     ],
+     [
+      1800,
+      0.002068235771730542
+     ],
+     [
+      2000,
+      0.002083612373098731
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9996744791666666
+     },
+     "1024": {
+      "exactitud": 0.9973958333333334
+     },
+     "2048": {
+      "exactitud": 0.9784342447916666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:estable_AB",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.91153365599894,
+    "curva": [
+     [
+      200,
+      8.348963737487793
+     ],
+     [
+      400,
+      8.296560287475586
+     ],
+     [
+      600,
+      1.5940275192260742
+     ],
+     [
+      800,
+      0.42824018001556396
+     ],
+     [
+      1000,
+      0.10499861091375351
+     ],
+     [
+      1200,
+      0.06555581837892532
+     ],
+     [
+      1400,
+      0.03472738713026047
+     ],
+     [
+      1600,
+      0.02843008190393448
+     ],
+     [
+      1800,
+      0.024637775495648384
+     ],
+     [
+      2000,
+      0.014254738576710224
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9967447916666666
+     },
+     "1024": {
+      "exactitud": 0.9866536458333334
+     },
+     "2048": {
+      "exactitud": 0.9546712239583334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 72.58505908100051,
+    "curva": [
+     [
+      200,
+      8.3403902053833
+     ],
+     [
+      400,
+      7.989950656890869
+     ],
+     [
+      600,
+      0.041135724633932114
+     ],
+     [
+      800,
+      0.002425546059384942
+     ],
+     [
+      1000,
+      0.0016970563447102904
+     ],
+     [
+      1200,
+      0.0010457957396283746
+     ],
+     [
+      1400,
+      0.0005674839485436678
+     ],
+     [
+      1600,
+      0.0006459231954067945
+     ],
+     [
+      1800,
+      0.0005163238965906203
+     ],
+     [
+      2000,
+      0.00013263420260045677
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.99853515625
+     },
+     "2048": {
+      "exactitud": 0.9908854166666666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 72.50888477800072,
+    "curva": [
+     [
+      200,
+      8.334158897399902
+     ],
+     [
+      400,
+      8.226164817810059
+     ],
+     [
+      600,
+      0.19585514068603516
+     ],
+     [
+      800,
+      0.0636795237660408
+     ],
+     [
+      1000,
+      0.020150065422058105
+     ],
+     [
+      1200,
+      0.009755180217325687
+     ],
+     [
+      1400,
+      0.006836691405624151
+     ],
+     [
+      1600,
+      0.002408747561275959
+     ],
+     [
+      1800,
+      0.0024477632250636816
+     ],
+     [
+      2000,
+      0.003650943050161004
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9993489583333334
+     },
+     "1024": {
+      "exactitud": 0.99560546875
+     },
+     "2048": {
+      "exactitud": 0.9794108072916666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_puerta",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 72.29050239199933,
+    "curva": [
+     [
+      200,
+      8.349152565002441
+     ],
+     [
+      400,
+      8.2014741897583
+     ],
+     [
+      600,
+      1.5635040998458862
+     ],
+     [
+      800,
+      0.009836909361183643
+     ],
+     [
+      1000,
+      0.003973483573645353
+     ],
+     [
+      1200,
+      0.0009044625912792981
+     ],
+     [
+      1400,
+      0.00036635229480452836
+     ],
+     [
+      1600,
+      0.00019651772163342685
+     ],
+     [
+      1800,
+      0.000719855073839426
+     ],
+     [
+      2000,
+      0.00012741958198603243
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9996744791666666
+     },
+     "1024": {
+      "exactitud": 1.0
+     },
+     "2048": {
+      "exactitud": 0.99609375
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 74.39915850500074,
+    "curva": [
+     [
+      200,
+      8.34027099609375
+     ],
+     [
+      400,
+      8.024565696716309
+     ],
+     [
+      600,
+      0.029456064105033875
+     ],
+     [
+      800,
+      0.0013936996692791581
+     ],
+     [
+      1000,
+      0.0011126311728730798
+     ],
+     [
+      1200,
+      0.0005559758865274489
+     ],
+     [
+      1400,
+      0.00011371722939657047
+     ],
+     [
+      1600,
+      0.00015852654178161174
+     ],
+     [
+      1800,
+      3.0168695957399905e-05
+     ],
+     [
+      2000,
+      1.4669257325294893e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9996744791666666
+     },
+     "2048": {
+      "exactitud": 0.9937337239583334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 74.31712648499888,
+    "curva": [
+     [
+      200,
+      8.334158897399902
+     ],
+     [
+      400,
+      8.04065990447998
+     ],
+     [
+      600,
+      0.01724986732006073
+     ],
+     [
+      800,
+      0.013142377138137817
+     ],
+     [
+      1000,
+      0.007650758605450392
+     ],
+     [
+      1200,
+      0.02711804397404194
+     ],
+     [
+      1400,
+      0.09127002954483032
+     ],
+     [
+      1600,
+      0.023961151018738747
+     ],
+     [
+      1800,
+      0.020738080143928528
+     ],
+     [
+      2000,
+      0.010116921737790108
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9970703125
+     },
+     "1024": {
+      "exactitud": 0.9931640625
+     },
+     "2048": {
+      "exactitud": 0.9676106770833334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:puerta_sin_senales",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 74.02987258999929,
+    "curva": [
+     [
+      200,
+      8.348965644836426
+     ],
+     [
+      400,
+      8.257381439208984
+     ],
+     [
+      600,
+      1.2570509910583496
+     ],
+     [
+      800,
+      0.025232283398509026
+     ],
+     [
+      1000,
+      0.008268818259239197
+     ],
+     [
+      1200,
+      0.0016651800833642483
+     ],
+     [
+      1400,
+      0.0011354000307619572
+     ],
+     [
+      1600,
+      0.00027747059357352555
+     ],
+     [
+      1800,
+      0.00039217001176439226
+     ],
+     [
+      2000,
+      8.502075070282444e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.99951171875
+     },
+     "2048": {
+      "exactitud": 0.9932454427083334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.45443830899967,
+    "curva": [
+     [
+      200,
+      8.340412139892578
+     ],
+     [
+      400,
+      8.096158027648926
+     ],
+     [
+      600,
+      0.05344352126121521
+     ],
+     [
+      800,
+      0.006702819373458624
+     ],
+     [
+      1000,
+      0.006573151797056198
+     ],
+     [
+      1200,
+      0.002590212505310774
+     ],
+     [
+      1400,
+      0.0018884440651163459
+     ],
+     [
+      1600,
+      0.0006425603642128408
+     ],
+     [
+      1800,
+      0.0004200785479042679
+     ],
+     [
+      2000,
+      0.00017284184286836535
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9991861979166666
+     },
+     "2048": {
+      "exactitud": 0.991943359375
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.20993052700032,
+    "curva": [
+     [
+      200,
+      8.333734512329102
+     ],
+     [
+      400,
+      8.203207969665527
+     ],
+     [
+      600,
+      0.8175673484802246
+     ],
+     [
+      800,
+      0.19117218255996704
+     ],
+     [
+      1000,
+      0.07214763015508652
+     ],
+     [
+      1200,
+      0.028625935316085815
+     ],
+     [
+      1400,
+      0.0061265104450285435
+     ],
+     [
+      1600,
+      0.01151247601956129
+     ],
+     [
+      1800,
+      0.004278032574802637
+     ],
+     [
+      2000,
+      0.004714592359960079
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9990234375
+     },
+     "1024": {
+      "exactitud": 0.99658203125
+     },
+     "2048": {
+      "exactitud": 0.9866536458333334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_reloj",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.50514237300013,
+    "curva": [
+     [
+      200,
+      8.348910331726074
+     ],
+     [
+      400,
+      8.257009506225586
+     ],
+     [
+      600,
+      0.955845832824707
+     ],
+     [
+      800,
+      0.02716880477964878
+     ],
+     [
+      1000,
+      0.008301090449094772
+     ],
+     [
+      1200,
+      0.007359512150287628
+     ],
+     [
+      1400,
+      0.0016926765674725175
+     ],
+     [
+      1600,
+      0.0021438347175717354
+     ],
+     [
+      1800,
+      0.002272041281685233
+     ],
+     [
+      2000,
+      0.00015885998436715454
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9990234375
+     },
+     "1024": {
+      "exactitud": 0.9993489583333334
+     },
+     "2048": {
+      "exactitud": 0.9989420572916666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 79.64548823199948,
+    "curva": [
+     [
+      200,
+      8.340218544006348
+     ],
+     [
+      400,
+      8.081644058227539
+     ],
+     [
+      600,
+      0.013748840428888798
+     ],
+     [
+      800,
+      0.0006624911329708993
+     ],
+     [
+      1000,
+      0.0008556937682442367
+     ],
+     [
+      1200,
+      0.00029487445135600865
+     ],
+     [
+      1400,
+      0.00023152514768298715
+     ],
+     [
+      1600,
+      3.4449254599167034e-05
+     ],
+     [
+      1800,
+      0.00010401230974821374
+     ],
+     [
+      2000,
+      9.286017302656546e-06
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.995361328125
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 79.85611356899972,
+    "curva": [
+     [
+      200,
+      8.3338623046875
+     ],
+     [
+      400,
+      8.237200736999512
+     ],
+     [
+      600,
+      0.08067217469215393
+     ],
+     [
+      800,
+      0.0037365425378084183
+     ],
+     [
+      1000,
+      0.00772898830473423
+     ],
+     [
+      1200,
+      0.0013442564522847533
+     ],
+     [
+      1400,
+      0.0023018831852823496
+     ],
+     [
+      1600,
+      0.03022955358028412
+     ],
+     [
+      1800,
+      0.03143956884741783
+     ],
+     [
+      2000,
+      0.01647012121975422
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9970703125
+     },
+     "1024": {
+      "exactitud": 0.9874674479166666
+     },
+     "2048": {
+      "exactitud": 0.9442545572916666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_hawkes_racha",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 79.6001352459989,
+    "curva": [
+     [
+      200,
+      8.349114418029785
+     ],
+     [
+      400,
+      8.229939460754395
+     ],
+     [
+      600,
+      0.40966740250587463
+     ],
+     [
+      800,
+      0.007009676191955805
+     ],
+     [
+      1000,
+      0.0027490779757499695
+     ],
+     [
+      1200,
+      0.0012609033146873116
+     ],
+     [
+      1400,
+      0.0008740631747059524
+     ],
+     [
+      1600,
+      0.0005714819417335093
+     ],
+     [
+      1800,
+      6.243773532332852e-05
+     ],
+     [
+      2000,
+      0.0008673160336911678
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.9947102864583334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 81.27988897199975,
+    "curva": [
+     [
+      200,
+      8.340327262878418
+     ],
+     [
+      400,
+      7.9891743659973145
+     ],
+     [
+      600,
+      0.015157430432736874
+     ],
+     [
+      800,
+      0.002139150397852063
+     ],
+     [
+      1000,
+      0.00041601379052735865
+     ],
+     [
+      1200,
+      0.0005464836140163243
+     ],
+     [
+      1400,
+      0.0013144629774615169
+     ],
+     [
+      1600,
+      0.0005575043032877147
+     ],
+     [
+      1800,
+      5.2536692237481475e-05
+     ],
+     [
+      2000,
+      3.328730963403359e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9996744791666666
+     },
+     "2048": {
+      "exactitud": 0.99560546875
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.32742989799954,
+    "curva": [
+     [
+      200,
+      8.333821296691895
+     ],
+     [
+      400,
+      7.793497085571289
+     ],
+     [
+      600,
+      0.015462254174053669
+     ],
+     [
+      800,
+      0.014651012606918812
+     ],
+     [
+      1000,
+      0.0008844894473440945
+     ],
+     [
+      1200,
+      0.000616789679042995
+     ],
+     [
+      1400,
+      0.0003611884021665901
+     ],
+     [
+      1600,
+      3.215502147213556e-05
+     ],
+     [
+      1800,
+      2.0239178411429748e-05
+     ],
+     [
+      2000,
+      2.0368475816212595e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9998372395833334
+     },
+     "2048": {
+      "exactitud": 0.9964192708333334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_sufijo",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.81885147499997,
+    "curva": [
+     [
+      200,
+      8.349037170410156
+     ],
+     [
+      400,
+      8.274382591247559
+     ],
+     [
+      600,
+      1.5307350158691406
+     ],
+     [
+      800,
+      0.15434837341308594
+     ],
+     [
+      1000,
+      0.019276337698101997
+     ],
+     [
+      1200,
+      0.013712030835449696
+     ],
+     [
+      1400,
+      0.004217055160552263
+     ],
+     [
+      1600,
+      0.008746241219341755
+     ],
+     [
+      1800,
+      0.0014989638002589345
+     ],
+     [
+      2000,
+      0.0009884473402053118
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9990234375
+     },
+     "1024": {
+      "exactitud": 0.9977213541666666
+     },
+     "2048": {
+      "exactitud": 0.9856770833333334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 79.90808395899876,
+    "curva": [
+     [
+      200,
+      8.340195655822754
+     ],
+     [
+      400,
+      8.168734550476074
+     ],
+     [
+      600,
+      0.12503306567668915
+     ],
+     [
+      800,
+      0.0035025605466216803
+     ],
+     [
+      1000,
+      0.0009150548721663654
+     ],
+     [
+      1200,
+      0.0013194434577599168
+     ],
+     [
+      1400,
+      0.000697438430506736
+     ],
+     [
+      1600,
+      4.207197343930602e-05
+     ],
+     [
+      1800,
+      4.865596929448657e-05
+     ],
+     [
+      2000,
+      1.3148785910743754e-05
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 1.0
+     },
+     "2048": {
+      "exactitud": 0.9972330729166666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 79.98473247600123,
+    "curva": [
+     [
+      200,
+      8.334403038024902
+     ],
+     [
+      400,
+      8.2299165725708
+     ],
+     [
+      600,
+      0.574593722820282
+     ],
+     [
+      800,
+      0.016134873032569885
+     ],
+     [
+      1000,
+      0.004076071083545685
+     ],
+     [
+      1200,
+      0.002077659359201789
+     ],
+     [
+      1400,
+      0.004370133392512798
+     ],
+     [
+      1600,
+      0.0016041742637753487
+     ],
+     [
+      1800,
+      0.00024300458608195186
+     ],
+     [
+      2000,
+      0.00027182672056369483
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.9993489583333334
+     },
+     "2048": {
+      "exactitud": 0.9916178385416666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:sin_confirmacion",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 80.05288187100086,
+    "curva": [
+     [
+      200,
+      8.348977088928223
+     ],
+     [
+      400,
+      8.06688404083252
+     ],
+     [
+      600,
+      0.07554522901773453
+     ],
+     [
+      800,
+      0.0013789604417979717
+     ],
+     [
+      1000,
+      0.0009807907044887543
+     ],
+     [
+      1200,
+      0.0006761940312571824
+     ],
+     [
+      1400,
+      1.4798228221479803e-05
+     ],
+     [
+      1600,
+      0.0007693585357628763
+     ],
+     [
+      1800,
+      1.623238858883269e-05
+     ],
+     [
+      2000,
+      5.956850600341568e-06
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 1.0
+     },
+     "2048": {
+      "exactitud": 0.9982096354166666
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4586384,
+    "segundos": 83.26451216900023,
+    "curva": [
+     [
+      200,
+      8.340519905090332
+     ],
+     [
+      400,
+      8.320552825927734
+     ],
+     [
+      600,
+      1.7173233032226562
+     ],
+     [
+      800,
+      0.17710940539836884
+     ],
+     [
+      1000,
+      0.0796724408864975
+     ],
+     [
+      1200,
+      0.043035686016082764
+     ],
+     [
+      1400,
+      0.028193024918437004
+     ],
+     [
+      1600,
+      0.02096065878868103
+     ],
+     [
+      1800,
+      0.018411919474601746
+     ],
+     [
+      2000,
+      0.011247807182371616
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9977213541666666
+     },
+     "1024": {
+      "exactitud": 0.9925130208333334
+     },
+     "2048": {
+      "exactitud": 0.9541829427083334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4586384,
+    "segundos": 78.81997838400093,
+    "curva": [
+     [
+      200,
+      8.332533836364746
+     ],
+     [
+      400,
+      4.860977649688721
+     ],
+     [
+      600,
+      0.19318820536136627
+     ],
+     [
+      800,
+      0.06759706139564514
+     ],
+     [
+      1000,
+      0.04983764886856079
+     ],
+     [
+      1200,
+      0.05182928964495659
+     ],
+     [
+      1400,
+      0.02273797057569027
+     ],
+     [
+      1600,
+      0.024228474125266075
+     ],
+     [
+      1800,
+      0.01283515989780426
+     ],
+     [
+      2000,
+      0.014499052427709103
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.9954427083333334
+     },
+     "1024": {
+      "exactitud": 0.9925130208333334
+     },
+     "2048": {
+      "exactitud": 0.983642578125
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:dos_tablas",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4586384,
+    "segundos": 79.03246294799828,
+    "curva": [
+     [
+      200,
+      8.348688125610352
+     ],
+     [
+      400,
+      6.876956462860107
+     ],
+     [
+      600,
+      0.052196815609931946
+     ],
+     [
+      800,
+      0.010577719658613205
+     ],
+     [
+      1000,
+      0.0045324633829295635
+     ],
+     [
+      1200,
+      0.0019153350731357932
+     ],
+     [
+      1400,
+      0.0018197889439761639
+     ],
+     [
+      1600,
+      0.000222349728574045
+     ],
+     [
+      1800,
+      0.0012289946898818016
+     ],
+     [
+      2000,
+      0.0003925112832803279
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 1.0
+     },
+     "1024": {
+      "exactitud": 0.99853515625
+     },
+     "2048": {
+      "exactitud": 0.9817708333333334
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4203008,
+    "segundos": 41.25471719500092,
+    "curva": [
+     [
+      200,
+      8.340485572814941
+     ],
+     [
+      400,
+      8.331023216247559
+     ],
+     [
+      600,
+      8.32008171081543
+     ],
+     [
+      800,
+      8.312817573547363
+     ],
+     [
+      1000,
+      8.300816535949707
+     ],
+     [
+      1200,
+      8.299260139465332
+     ],
+     [
+      1400,
+      8.298600196838379
+     ],
+     [
+      1600,
+      8.287434577941895
+     ],
+     [
+      1800,
+      8.286362648010254
+     ],
+     [
+      2000,
+      8.284377098083496
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.017578125
+     },
+     "1024": {
+      "exactitud": 0.00830078125
+     },
+     "2048": {
+      "exactitud": 0.00439453125
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4203008,
+    "segundos": 41.29917315400053,
+    "curva": [
+     [
+      200,
+      8.334704399108887
+     ],
+     [
+      400,
+      8.323670387268066
+     ],
+     [
+      600,
+      8.319732666015625
+     ],
+     [
+      800,
+      8.311367988586426
+     ],
+     [
+      1000,
+      8.302099227905273
+     ],
+     [
+      1200,
+      8.296608924865723
+     ],
+     [
+      1400,
+      8.294212341308594
+     ],
+     [
+      1600,
+      8.290507316589355
+     ],
+     [
+      1800,
+      8.285101890563965
+     ],
+     [
+      2000,
+      8.284183502197266
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.018229166666666668
+     },
+     "1024": {
+      "exactitud": 0.009765625
+     },
+     "2048": {
+      "exactitud": 0.004231770833333333
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:solo_local",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4203008,
+    "segundos": 41.28235831100028,
+    "curva": [
+     [
+      200,
+      8.349648475646973
+     ],
+     [
+      400,
+      8.330906867980957
+     ],
+     [
+      600,
+      8.317452430725098
+     ],
+     [
+      800,
+      8.31091022491455
+     ],
+     [
+      1000,
+      8.304183959960938
+     ],
+     [
+      1200,
+      8.290616035461426
+     ],
+     [
+      1400,
+      8.292933464050293
+     ],
+     [
+      1600,
+      8.287445068359375
+     ],
+     [
+      1800,
+      8.282622337341309
+     ],
+     [
+      2000,
+      8.282432556152344
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0185546875
+     },
+     "1024": {
+      "exactitud": 0.009440104166666666
+     },
+     "2048": {
+      "exactitud": 0.003987630208333333
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "mqar",
+    "semilla": 0,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 167.8671133579992,
+    "curva": [
+     [
+      200,
+      8.338661193847656
+     ],
+     [
+      400,
+      NaN
+     ],
+     [
+      600,
+      NaN
+     ],
+     [
+      800,
+      NaN
+     ],
+     [
+      1000,
+      NaN
+     ],
+     [
+      1200,
+      NaN
+     ],
+     [
+      1400,
+      NaN
+     ],
+     [
+      1600,
+      NaN
+     ],
+     [
+      1800,
+      NaN
+     ],
+     [
+      2000,
+      NaN
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0
+     },
+     "1024": {
+      "exactitud": 0.0
+     },
+     "2048": {
+      "exactitud": 0.0
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "mqar",
+    "semilla": 1,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 171.3867055360006,
+    "curva": [
+     [
+      200,
+      8.33051586151123
+     ],
+     [
+      400,
+      NaN
+     ],
+     [
+      600,
+      NaN
+     ],
+     [
+      800,
+      NaN
+     ],
+     [
+      1000,
+      NaN
+     ],
+     [
+      1200,
+      NaN
+     ],
+     [
+      1400,
+      NaN
+     ],
+     [
+      1600,
+      NaN
+     ],
+     [
+      1800,
+      NaN
+     ],
+     [
+      2000,
+      NaN
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0
+     },
+     "1024": {
+      "exactitud": 0.0
+     },
+     "2048": {
+      "exactitud": 0.0
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   },
+   {
+    "modelo": "ASRN:mezcla_lse",
+    "tarea": "mqar",
+    "semilla": 2,
+    "lr": 0.001,
+    "pasos": 2000,
+    "parametros": 4597316,
+    "segundos": 164.4619727340014,
+    "curva": [
+     [
+      200,
+      8.33118724822998
+     ],
+     [
+      400,
+      NaN
+     ],
+     [
+      600,
+      NaN
+     ],
+     [
+      800,
+      NaN
+     ],
+     [
+      1000,
+      NaN
+     ],
+     [
+      1200,
+      NaN
+     ],
+     [
+      1400,
+      NaN
+     ],
+     [
+      1600,
+      NaN
+     ],
+     [
+      1800,
+      NaN
+     ],
+     [
+      2000,
+      NaN
+     ]
+    ],
+    "evaluacion": {
+     "512": {
+      "exactitud": 0.0
+     },
+     "1024": {
+      "exactitud": 0.0
+     },
+     "2048": {
+      "exactitud": 0.0
+     }
+    },
+    "implementacion": "asrn",
+    "perfil": "a100"
+   }
+  ]
+ },
+ "entornos_anteriores": [
+  {
+   "fecha": "2026-10-09 22:42 UTC",
+   "gpu": "NVIDIA A100-SXM4-80GB",
+   "torch": "2.11.0+cu130",
+   "cuda": "13.0",
+   "python": "3.13.15",
+   "codigo": "ZIP",
+   "modo": "completo",
+   "mamba": "kernels Triton de Mamba-2",
+   "originales": {
+    "Transformer++": "si",
+    "Mamba-2": "si (mamba_ssm 2.3.2.post1, conv1d de PyTorch, sin compilar)",
+    "RWKV-7": "si (fla 0.5.2)"
+   },
+   "compila": false
+  },
+  {
+   "fecha": "2026-10-11 02:53 UTC",
+   "gpu": "NVIDIA A100-SXM4-80GB",
+   "torch": "2.11.0+cu130",
+   "cuda": "13.0",
+   "python": "3.13.15",
+   "codigo": "ZIP | sha256 176cfe250773",
+   "modo": "completo",
+   "mamba": "kernels Triton de Mamba-2",
+   "originales": {
+    "Transformer++": "si",
+    "Mamba-2": "si (mamba_ssm 2.3.2.post1, conv1d de PyTorch, sin compilar)",
+    "RWKV-7": "si (fla 0.5.2)"
+   },
+   "compila": false
+  }
+ ]
+}

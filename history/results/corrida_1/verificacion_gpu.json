@@ -1,0 +1,37 @@
+[
+ {
+  "prueba": "1. bf16 en GPU, talla 30m",
+  "resultado": "PASA",
+  "detalle": "31,069,686 parametros | perdida 9.706 -> 0.201 | 14,795 piezas/s"
+ },
+ {
+  "prueba": "2. checkpoint por niveles: misma perdida, menos memoria",
+  "resultado": "PASA",
+  "detalle": "no: 3,390 MB | asrn: 1,756 MB | todo: 1,147 MB (largo 2048, lote 4, bf16)"
+ },
+ {
+  "prueba": "3. FSDP con NCCL en 1 proceso",
+  "resultado": "PASA",
+  "detalle": "repartido = sin repartir (dif 0.0e+00); entrena, guarda y carga (dif 0.0e+00)"
+ },
+ {
+  "prueba": "4. torch.compile en GPU: mismas cuentas",
+  "resultado": "FALLA",
+  "detalle": "InductorError: SubprocException: An exception occurred in a subprocess:\n\nName=triton_per_fused__to_copy__unsafe_view_add_addmm_clamp_div_floor_index_log1p_mul_native_layer_norm_native_layer_norm_backward_select_sigmoid_slice_stack_sub_sum_transpose_unsqueeze_view_75\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_inductor/compile_worker/subproc_pool.py\", line 457, in do_job\n    result = job()\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_inductor/runtime/compile_tasks.py\", line 68, in _worker_compile_triton\n    kernel.precompile(warm_cache_only=True)\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_inductor/runtime/triton_heuristics.py\", line 491, in precompile\n    self._precompile_worker()\n    ~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_inductor/runtime/triton_heuristics.py\", line 522, in _precompile_worker\n    compile_results.append(self._precompile_config(c))\n                           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"/usr/local/lib/python3.13/dist-packages/torch/_inductor/runtime/triton_heuristics.py\", line 872, in _precompile_config\n    binary = triton.compile(*compile_args, **compile_kwargs)\n  File \"/usr/local/lib/python3.13/dist-packages/triton/compiler/compiler.py\", line 324, in compile\n    next_module = compile_ir(module, metadata)\n  File \"/usr/local/lib/python3.13/dist-packages/triton/backends/nvidia/compiler.py\", line 541, in <lambda>\n    stages[\"ttgir\"] = lambda src, metadata: self.make_ttgir(src, metadata, options, capability)\n                                            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/triton/backends/nvidia/compiler.py\", line 316, in make_ttgir\n    pm.run(mod, 'make_ttgir')\n    ~~~~~~^^^^^^^^^^^^^^^^^^^\nRuntimeError: PassManager::run failed\n\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n"
+ },
+ {
+  "prueba": "5. GPU = CPU: misma salida y mismo gradiente (32 bits)",
+  "resultado": "PASA",
+  "detalle": "100.0% de las posiciones iguales (dif max 6.0e-07); gradiente: dif relativa 4.5e-07"
+ },
+ {
+  "prueba": "6. Causalidad en GPU: el futuro no cambia el pasado",
+  "resultado": "PASA",
+  "detalle": "dif max en el pasado 1.8e-07 (5 cortes, largo 513)"
+ },
+ {
+  "prueba": "7. Escribir paso a paso = texto entero en GPU",
+  "resultado": "PASA",
+  "detalle": "100.0% de los 80 pasos iguales (dif max 2.4e-07)"
+ }
+]

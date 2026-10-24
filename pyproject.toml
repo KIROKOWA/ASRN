@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asrn"
+version = "1.0.0"
+description = "ASRN (Adaptive Sparse Recurrence Network): a sequence-mixing layer for language models with learned-hash sparse retrieval of earlier occurrences, a learned proper-time clock and Hawkes repetition signals"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Alexis Calvario" }]
+requires-python = ">=3.11"
+dependencies = ["torch>=2.9", "numpy"]
+keywords = ["language model", "sparse attention", "recurrent neural network", "long context", "triton"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+# Benchmarks against the original rivals (benchmarks/); mamba-ssm is installed separately (the A100 notebook
+# benchmarks/asrn_colab.ipynb installs it; see benchmarks/README.md)
+bench = ["flash-linear-attention", "datasets", "tiktoken", "einops", "matplotlib"]
+
+[project.urls]
+Repository = "https://github.com/KIROKOWA/ASRN"
+Documentation = "https://github.com/KIROKOWA/ASRN/blob/main/docs/README.md"
+Issues = "https://github.com/KIROKOWA/ASRN/issues"
+Changelog = "https://github.com/KIROKOWA/ASRN/blob/main/CHANGELOG.md"
+
+[project.scripts]
+asrn-train = "asrn.__main__:main"
+
+[tool.setuptools]
+packages = ["asrn"]

@@ -1,0 +1,30 @@
+__pycache__/
+*.pyc
+*.pt
+*.bin
+*.i32
+*.u16
+*.tmp
+.ipynb_checkpoints/
+# LaTeX (paper/)
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
+paper/*.log
+
+# Packaging and environments
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+*.zip
+
+# LaTeX outputs (the PDFs are build products: attach them to the release and to Zenodo)
+paper/*.pdf
+*.synctex.gz
+*.toc
