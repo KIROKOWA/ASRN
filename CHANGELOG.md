@@ -3,7 +3,7 @@
 All notable changes to ASRN are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/).
 The measurements and caveats behind each entry are in the release notes.
 
-## [1.0.0] — 2026-10-24
+## [1.0] — 2026-10-24
 
 The first packaged release, relative to the v89 development code. Details:
 [docs/RELEASE_NOTES.md](docs/RELEASE_NOTES.md) (Spanish: [docs/RELEASE_NOTES_es.md](docs/RELEASE_NOTES_es.md)).

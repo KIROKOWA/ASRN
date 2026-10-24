@@ -38,12 +38,13 @@ runs, formerly in this folder, are in
 
 **Provenance.** `banco_a100/` and `citas_a100/` come from code fingerprint `5164e1f32513`: the first 12 hex digits of
 the sha256 of `asrn/*.py`, the root `*.py` and `benchmarks/*.py` concatenated in sorted order (the notebook prints it,
-and `entorno.codigo` records it). The 1.0.0 code differs from that code only in the O(1) writer (`asrn/nucleo.py`,
+and `entorno.codigo` records it). The 1.0 code differs from that code only in the O(1) writer (`asrn/nucleo.py`,
 `asrn/estable.py`), the generation benchmark passing new tokens from the CPU (`benchmarks/banco_gpu.py`), docstrings,
-and the new `benchmarks/medir_escritura.py`; the forward pass and gradients are bit-identical (verified). Every A100
-number except the generation timing therefore applies unchanged to 1.0.0; the generation timing (`escritura_gpu`) was
-measured with the previous O(t) writer, and the O(1) writer has not been measured on the A100 yet. The published
-repository does not contain the development commits, so the code is identified by this fingerprint, not by a commit.
+the version number and the new `benchmarks/medir_escritura.py`; the forward pass and gradients are bit-identical
+(verified). Every A100 number except the generation timing therefore applies unchanged to 1.0; the generation timing
+(`escritura_gpu`) was measured with the previous O(t) writer, and the O(1) writer has not been measured on the A100 yet.
+The published repository does not contain the development commits, so the code is identified by this fingerprint, not by
+a commit.
 
 ## `banco_cpu/`
 
@@ -193,14 +194,14 @@ corridas anteriores en A100, que antes estaban en esta carpeta, están en
 [`history/results/banco_a100_pt211/`](../history/results/banco_a100_pt211/RESUMEN.md) (ver *Resultados anteriores*).
 
 **Procedencia.** `banco_a100/` y `citas_a100/` salen del código de huella `5164e1f32513`: los primeros 12 dígitos
-hexadecimales del sha256 de `asrn/*.py`, los `*.py` de la raíz y `benchmarks/*.py` concatenados en orden (el cuaderno
-la imprime y `entorno.codigo` la guarda). El código de 1.0.0 difiere de ese solo en la escritura O(1) (`asrn/nucleo.py`,
-`asrn/estable.py`), en que el banco de escritura pasa las piezas nuevas desde la CPU (`benchmarks/banco_gpu.py`), en
-docstrings y en el nuevo `benchmarks/medir_escritura.py`; la ida y los gradientes son bit a bit iguales (comprobado).
-Por eso cada número de la A100, salvo el tiempo de escritura, vale sin cambios para 1.0.0; el tiempo de escritura
-(`escritura_gpu`) se midió con la escritura O(t) anterior, y la escritura O(1) todavía no se midió en la A100. El
-repositorio publicado no contiene los commits del desarrollo, así que el código se identifica por esta huella y no por
-un commit.
+hexadecimales del sha256 de `asrn/*.py`, los `*.py` de la raíz y `benchmarks/*.py` concatenados en orden (el cuaderno la
+imprime y `entorno.codigo` la guarda). El código de 1.0 difiere de ese solo en la escritura O(1) (`asrn/nucleo.py`,
+`asrn/estable.py`), en que el banco de escritura pasa las piezas nuevas desde la CPU (`benchmarks/banco_gpu.py`), en los
+docstrings, en el número de versión y en el nuevo `benchmarks/medir_escritura.py`; la ida y los gradientes son bit a bit
+iguales (comprobado). Por eso cada número de la A100, salvo el tiempo de escritura, vale sin cambios para 1.0; el tiempo
+de escritura (`escritura_gpu`) se midió con la escritura O(t) anterior, y la escritura O(1) todavía no se midió en la
+A100. El repositorio publicado no contiene los commits del desarrollo, así que el código se identifica por esta huella y
+no por un commit.
 
 ### `banco_cpu/`
 

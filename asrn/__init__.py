@@ -43,7 +43,7 @@ from .nucleo import (TALLAS, BloqueLocal, CapaASRN, ConfigASRN, ModeloASRN, Paso
                      guardar, inicializar, leer_cantidad, leer_piezas, materializar, pesos_completos, repartir_fsdp,
                      tasa_aprendizaje)
 
-__version__ = '1.0.0'
+__version__ = '1.0'
 
 __all__ = ['CapaASRN', 'CapaASRNEstable', 'BloqueLocal', 'ModeloASRN', 'ConfigASRN', 'TALLAS', 'Protecciones',
            'RecorteDinamico', 'PasoGrafado', 'crear_modelo', 'crear_desde_config', 'cargar', 'guardar', 'convertir',

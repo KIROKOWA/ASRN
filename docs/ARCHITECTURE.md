@@ -84,7 +84,7 @@ asrn/                         the production package (pip install .)
 │                             (group A); re-exports entrenar, evaluar, escribir, guardar, ConfigASRN, TALLAS,
 │                             Protecciones, RecorteDinamico, convertir, inicializar, materializar, repartir_fsdp, …
 │                             English aliases of the same objects (ASRNLayer, ASRNModel, create_model, train,
-│                             generate, load, …); __version__ = '1.0.0'
+│                             generate, load, …); __version__ = '1.0'
 ├── __main__.py               python -m asrn  /  asrn-train: the core CLI with convertir() as its model hook
 ├── estable.py                CapaASRNEstable, Protecciones, _ProyeccionIEEE, _TiempoRelativo, convertir(),
 │                             RecorteDinamico (formerly asrn_estable.py)

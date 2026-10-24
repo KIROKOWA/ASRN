@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version 1.0.0](https://img.shields.io/badge/version-1.0.0-informational.svg)](docs/RELEASE_NOTES.md)
+[![Version 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23607506.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Exact long-range copying for language models, with bounded work per token: learned hash tables find where the
@@ -106,7 +106,7 @@ The models were trained and timed on one NVIDIA A100-SXM4-80GB in Colab on Octob
 bf16. Only the two compiled-training rows are compiled; every other row ran uncompiled. For the quality rows, each
 model used the better of two learning rates (10⁻³, 3·10⁻³) on seed 0, and the figures are the mean ± standard deviation
 of 3 seeds unless the cell says otherwise. ASRN is the 1.0 stable layer (group A). The forward pass and gradients of
-1.0.0 are bit-identical to the code of this run, so every number applies unchanged to 1.0.0 except the generation
+1.0 are bit-identical to the code of this run, so every number applies unchanged to 1.0 except the generation
 timing, which was measured with the previous O(t) writer (footnote ⁴). Every number in the table is in
 [`results/banco_a100/`](results/banco_a100/RESUMEN.md), and the p-values in footnote ³ are paired t-tests on its
 per-seed values. The previous A100 run (October 9 and 11, PyTorch 2.11, uncompiled) is kept as a replication in
@@ -136,7 +136,7 @@ of this protocol, not a limit of attention.
 tokens). In an earlier development run with another protocol and a reimplemented RWKV-7, RWKV-7 was the best on text
 (47.87 vs 57.02 for ASRN).
 ⁴ ASRN's generation figures (time per token, prefix and memory) were measured with the O(t) writer of this run's code.
-1.0.0 writes in O(1) per new token, and that writer has not been measured on the A100 yet (on CPU its time per token
+1.0 writes in O(1) per new token, and that writer has not been measured on the A100 yet (on CPU its time per token
 does not grow with the context: see [O(1) generation](#o1-generation-new-in-10)).
 Per-token time at batch 1, measured after the prefix. The prefix pass now computes logits for the last position only
 (the previous run computed them for all 65,536 prefix positions of Transformer++). Re-measured at 65,536 tokens, the
@@ -209,7 +209,7 @@ memory, generation and the ablation.*
   attention and 31 KiB for a Mamba-2 block (RWKV-7: 79 KiB).
 - **Generation on the A100.** It was the slowest of the four at batch 1 (43 ms/token), measured with the O(t) writer of
   this run's code. The GPU time was flat with context (slope 3.0 ns per context token, 95% CI −25 to 31 ns), probably
-  because kernel launches dominate (not profiled), so the O(t) term did not show. 1.0.0 writes in O(1) per new token,
+  because kernel launches dominate (not profiled), so the O(t) term did not show. 1.0 writes in O(1) per new token,
   but that writer has not been measured on the A100 yet; on CPU it removes the growth with the context (see
   [O(1) generation](#o1-generation-new-in-10)).
 - **Learning speed within the training length.** Transformer++ learns the copy task in ≤ 200 steps. At the same
@@ -296,7 +296,7 @@ parameter group (clock, gate, rest) with an adaptive threshold.
 ### O(1) generation (new in 1.0)
 
 Writing step by step (`asrn.generate`, i.e. `escribir`) costs O(1) time per new token, independent of how much text
-there is; before 1.0.0 it was O(t). Each table keeps, per bucket, a ring with the 32 most recent positions, exactly the
+there is; before 1.0 it was O(t). Each table keeps, per bucket, a ring with the 32 most recent positions, exactly the
 keys the previous writer chose among the whole memory, so the new token scores only its 8 × 32 candidates. The Hawkes
 intensity is carried per n-gram key (the clock and the intensity at the key's last occurrence), the same recurrence
 that the whole-text scan uses, and the repetition streak is one number. On CPU, the O(1) writer equals the previous
@@ -493,7 +493,7 @@ python tests/verificar_gpu.py        # 7 GPU checks: bf16, checkpoint memory, FS
 
 The core tests cover the Triton kernels against their PyTorch paths, the O(1) writer against the O(t) writer and the
 whole-text pass, gradient checkpointing, saving, loading and resuming, meta-device construction, FSDP2 with two CPU
-processes, causality and edge cases. On CPU, the Triton kernels run in the interpreter. For 1.0.0 both suites pass in
+processes, causality and edge cases. On CPU, the Triton kernels run in the interpreter. For 1.0 both suites pass in
 full on CPU with Python 3.13.16, PyTorch 2.14.1 and Triton 3.8.0: 57 / 57 and 19 / 19 (76 tests). The A100 run of
 October 17, 2026 (PyTorch 2.14.1) passed the suites of that time, 55 / 55 and 18 / 18, and the GPU checks 7 / 7,
 including `torch.compile` (see [`results/banco_a100/`](results/banco_a100/RESUMEN.md)). With PyTorch 2.11.0, 55 core
@@ -634,7 +634,7 @@ Folder guides, each with what is there, how to run it and where its outputs go: 
   remains a property of copy learning.
 - **Speed and memory.** There is a ~12 ms floor per layer on short inputs. The layer uses about twice attention's memory
   per token. On the A100, generation was the slowest of the four models (measured with the O(t) writer; most likely
-  bound by kernel launches). With the O(1) writer of 1.0.0 the cost per new token is constant in the context (CPU
+  bound by kernel launches). With the O(1) writer of 1.0 the cost per new token is constant in the context (CPU
   measurement), but the A100 figure is pending. Memory per sequence still grows with the text, plus the fixed rings
   (17 MiB per ASRN layer per sequence at the default sizes).
 - **Regulation mechanisms on natural text.** The gate, the clock and the Hawkes and streak signals are non-intrusive on
@@ -677,7 +677,7 @@ If you use ASRN, please cite the software ([`CITATION.cff`](CITATION.cff) has th
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version = {1.0.0},
+  version = {1.0},
   year    = {2026},
   url     = {https://github.com/KIROKOWA/ASRN}
 }

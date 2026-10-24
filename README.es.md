@@ -2,7 +2,7 @@
 
 [![pruebas](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![Licencia: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Versión 1.0.0](https://img.shields.io/badge/version-1.0.0-informational.svg)](docs/RELEASE_NOTES_es.md)
+[![Versión 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES_es.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23607506.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Copia exacta de largo alcance para modelos de lenguaje, con trabajo acotado por pieza: tablas de hash aprendidas
@@ -10,7 +10,7 @@ encuentran dónde apareció antes el contexto actual, y una capa con puerta copi
 
 [English version](README.md) · [Arquitectura](docs/ARCHITECTURE_es.md) ·
 [Reporte técnico](docs/TECHNICAL_REPORT_es.md) · [Notas de la versión](docs/RELEASE_NOTES_es.md) ·
-[Resultados](results/README.md) · Versión 1.0.0 · Licencia Apache 2.0
+[Resultados](results/README.md) · Versión 1.0 · Licencia Apache 2.0
 
 ### Instalar y usar
 
@@ -109,8 +109,8 @@ Los modelos se entrenaron y midieron en una NVIDIA A100-SXM4-80GB en Colab, el 1
 2.14.1, en bf16. Solo las dos filas de entrenamiento compilado están compiladas; las demás no se compilaron. En las
 filas de calidad, cada modelo usó la mejor de dos tasas de aprendizaje (10⁻³, 3·10⁻³) con la semilla 0, y las cifras
 son la media ± la desviación estándar de 3 semillas, salvo que la celda diga otra cosa. ASRN es la capa estable de la
-versión 1.0 (grupo A). La pasada hacia adelante y los gradientes de 1.0.0 son idénticos bit a bit a los del código de
-esta corrida, así que cada número vale sin cambios para 1.0.0, salvo el tiempo de escritura, que se midió con la
+versión 1.0 (grupo A). La pasada hacia adelante y los gradientes de 1.0 son idénticos bit a bit a los del código de
+esta corrida, así que cada número vale sin cambios para 1.0, salvo el tiempo de escritura, que se midió con la
 escritura O(t) anterior (nota ⁴). Cada número de la tabla está en
 [`results/banco_a100/`](results/banco_a100/RESUMEN.md), y los valores p de la nota ³ son pruebas t pareadas con sus
 valores por semilla. La corrida anterior en la A100 (9 y 11 de octubre, PyTorch 2.11, sin compilar) se conserva
@@ -141,7 +141,7 @@ en este protocolo, no un límite de la atención.
 0.084 con 4 096 piezas). En una corrida anterior del desarrollo, con otro protocolo y una reimplementación de RWKV-7,
 RWKV-7 fue el mejor en texto (47.87 contra 57.02 de ASRN).
 ⁴ Las cifras de escritura de ASRN (tiempo por pieza, prefijo y memoria) se midieron con la escritura O(t) del código de
-esta corrida. 1.0.0 escribe en O(1) por pieza nueva, y esa escritura todavía no se ha medido en la A100 (en CPU su
+esta corrida. 1.0 escribe en O(1) por pieza nueva, y esa escritura todavía no se ha medido en la A100 (en CPU su
 tiempo por pieza no crece con el contexto: ver [Escritura en O(1)](#escritura-en-o1-nuevo-en-10)).
 Tiempo por pieza nueva con lote 1, medido después del prefijo. El paso del prefijo ahora calcula los logits solo de la
 última posición (la corrida anterior los calculaba en las 65 536 posiciones del prefijo del Transformer++). Medido de
@@ -217,7 +217,7 @@ exacta de números de pieza, un sesgo inductivo alineado con la copia y MQAR. El
 - **Escritura en la A100.** Fue la más lenta de las cuatro con lote 1 (43 ms por pieza), medida con la escritura O(t)
   del código de esta corrida. En la GPU el tiempo fue plano con el contexto (pendiente de 3.0 ns por pieza de contexto,
   IC 95% de −25 a 31 ns), probablemente porque lo dominan los lanzamientos de kernels (no se perfiló), así que el
-  término O(t) no se notó. 1.0.0 escribe en O(1) por pieza nueva, pero esa escritura todavía no se ha medido en la
+  término O(t) no se notó. 1.0 escribe en O(1) por pieza nueva, pero esa escritura todavía no se ha medido en la
   A100; en CPU quita el crecimiento con el contexto (ver [Escritura en O(1)](#escritura-en-o1-nuevo-en-10)).
 - **Velocidad para aprender dentro del largo entrenado.** El Transformer++ aprende la copia en ≤ 200 pasos. Con la
   misma tasa, ASRN necesita 1 000 pasos cuando sale de la meseta inicial (1 000–1 200 en la corrida anterior), y salir
@@ -306,7 +306,7 @@ grupos de parámetros (reloj, puerta, resto) con un umbral que se adapta.
 ### Escritura en O(1) (nuevo en 1.0)
 
 Escribir paso a paso (`asrn.escribir`) cuesta tiempo O(1) por pieza nueva, sin importar cuánto texto haya; antes de
-1.0.0 era O(t). Cada tabla guarda, por casillero, un anillo con las 32 posiciones más recientes, que son justo las
+1.0 era O(t). Cada tabla guarda, por casillero, un anillo con las 32 posiciones más recientes, que son justo las
 llaves que la escritura anterior elegía entre toda la memoria, así que la pieza nueva puntúa solo a sus 8 × 32
 candidatos. La intensidad de Hawkes se lleva por llave de grupo de piezas (el reloj y la intensidad en la última
 aparición de la llave), con la misma recurrencia que usa el escaneo del texto entero, y la racha de repetición es un
@@ -510,7 +510,7 @@ python tests/verificar_gpu.py        # 7 comprobaciones en GPU: bf16, memoria co
 Las pruebas del núcleo cubren los kernels Triton contra sus caminos en PyTorch, la escritura O(1) contra la O(t) y
 contra la pasada por el texto entero, el checkpoint de gradientes, guardar, cargar y reanudar, la construcción en el
 dispositivo `meta`, FSDP2 con dos procesos en CPU, la causalidad y los casos límite. En CPU, los kernels Triton corren
-en el intérprete. En 1.0.0 las dos baterías pasan completas en CPU con Python 3.13.16, PyTorch 2.14.1 y Triton 3.8.0:
+en el intérprete. En 1.0 las dos baterías pasan completas en CPU con Python 3.13.16, PyTorch 2.14.1 y Triton 3.8.0:
 57 / 57 y 19 / 19 (76 pruebas). La corrida en la A100 del 17 de octubre de 2026 (PyTorch 2.14.1) pasó las baterías de
 ese momento, 55 / 55 y 18 / 18, y las comprobaciones en GPU 7 / 7, incluida la de `torch.compile` (ver
 [`results/banco_a100/`](results/banco_a100/RESUMEN.md)). Con PyTorch 2.11.0 pasan 55 pruebas del núcleo y se saltan las
@@ -656,7 +656,7 @@ Guías de cada carpeta, con qué hay, cómo correrlo y dónde quedan sus salidas
   del 17 de octubre); la meseta en sí sigue siendo una propiedad del aprendizaje de la copia.
 - **Velocidad y memoria.** Hay un piso de ~12 ms por capa con textos cortos. La capa usa cerca del doble de memoria por
   pieza que la atención. En la A100, la escritura fue la más lenta de los cuatro modelos (medida con la escritura O(t);
-  muy probablemente limitada por los lanzamientos de kernels). Con la escritura O(1) de 1.0.0 el costo por pieza nueva
+  muy probablemente limitada por los lanzamientos de kernels). Con la escritura O(1) de 1.0 el costo por pieza nueva
   es constante con el contexto (medición en CPU), pero la cifra en la A100 está pendiente. La memoria por texto sigue
   creciendo con el texto, más los anillos fijos (17 MiB por capa ASRN y por texto con los tamaños por omisión).
 - **Mecanismos de regulación en texto natural.** La puerta, el reloj y las señales de Hawkes y de racha no interfieren
@@ -700,7 +700,7 @@ Si usas ASRN, cita el software ([`CITATION.cff`](CITATION.cff) tiene los mismos 
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version = {1.0.0},
+  version = {1.0},
   year    = {2026},
   url     = {https://github.com/KIROKOWA/ASRN}
 }

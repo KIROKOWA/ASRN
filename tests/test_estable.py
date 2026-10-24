@@ -204,7 +204,7 @@ def test_api_del_paquete_usa_la_capa_estable():
         assert isinstance(c.largos[0], est.CapaASRNEstable)
         asrn.guardar(c, f)                                  # y al reves
         assert not isinstance(v89.cargar(f, dispositivo='cpu').largos[0], est.CapaASRNEstable)
-    assert asrn.__version__ == '1.0.0' and set(asrn.__all__) <= set(dir(asrn))
+    assert asrn.__version__ == '1.0' and set(asrn.__all__) <= set(dir(asrn))
 
 
 def test_alias_en_ingles_son_los_mismos_objetos():

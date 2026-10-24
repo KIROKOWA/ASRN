@@ -1,4 +1,4 @@
-# ASRN 1.0.0 — Release notes
+# ASRN 1.0 — Release notes
 
 *October 2026 · Alexis Calvario · Apache 2.0 · [Versión en español](RELEASE_NOTES_es.md)*
 
@@ -9,7 +9,7 @@ feed a copy gate. Work per token in the bucketed attention is bounded (at most 8
 saved for the backward pass grow linearly with length. Writing step by step costs O(1) time per new token, whatever
 the length of the text; its memory still grows with the text.
 
-1.0.0 is the first packaged release. It turns the v89 research code into an installable package, makes the
+1.0 is the first packaged release. It turns the v89 research code into an installable package, makes the
 numerically protected layer the default, makes generation O(1) per new token, ships the benchmark against Mamba-2,
 RWKV-7 and a Transformer++ together with its results, and moves the development history to `history/`.
 
@@ -27,7 +27,7 @@ development documents are in Spanish.
 
 ## Highlights
 
-- **An installable package.** `pip install .` gives `import asrn` (version `1.0.0`), `python -m asrn` and the
+- **An installable package.** `pip install .` gives `import asrn` (version `1.0`), `python -m asrn` and the
   `asrn-train` command. Python ≥ 3.11, PyTorch ≥ 2.9, NumPy. English aliases (`asrn.ASRNLayer`, `asrn.ASRNModel`,
   `asrn.create_model`, `asrn.train`, `asrn.generate`, `asrn.load`, …) name the same objects as the Spanish API.
 - **The full test suite passes.** The current suites, 57 core tests and 19 tests of the stable layer and the package
@@ -98,7 +98,7 @@ development documents are in Spanish.
 |---|---|
 | `asrn/nucleo.py` | The core: the former `asrn_v89.py`. Includes `CapaASRN` and its Triton kernels (including the `ESTABLE` mode), `BloqueLocal`, `ModeloASRN`, `ConfigASRN` / `TALLAS` / `para_parametros`, `entrenar`, `evaluar`, `escribir` (with the O(1) writer `_Escritor`), `guardar` / `cargar`, FSDP (`repartir_fsdp`, `materializar`), `compilar_partes`, `PasoGrafado` and the command line |
 | `asrn/estable.py` | The former `asrn_estable.py`: `CapaASRNEstable`, `Protecciones`, `_ProyeccionIEEE`, `_TiempoRelativo`, `convertir()`, `RecorteDinamico` |
-| `asrn/__init__.py` | The public API (stable layer by default), with English aliases of the same objects (`ASRNLayer`, `ASRNCoreLayer`, `ASRNModel`, `ASRNConfig`, `LocalBlock`, `Protections`, `DynamicClip`, `create_model`, `create_from_config`, `convert`, `train`, `evaluate`, `generate`, `save`, `load`); `__version__ = '1.0.0'` |
+| `asrn/__init__.py` | The public API (stable layer by default), with English aliases of the same objects (`ASRNLayer`, `ASRNCoreLayer`, `ASRNModel`, `ASRNConfig`, `LocalBlock`, `Protections`, `DynamicClip`, `create_model`, `create_from_config`, `convert`, `train`, `evaluate`, `generate`, `save`, `load`); `__version__ = '1.0'` |
 | `asrn/__main__.py` | `python -m asrn` and the `asrn-train` console script: the core command line with the stable layer |
 | `pyproject.toml`, `requirements.txt` | `pip install .`; Python ≥ 3.11, `torch>=2.9`, `numpy`; extra `[bench]` |
 | `tests/` | `test_nucleo.py` (57 tests of the core), `test_estable.py` (19 tests of the stable layer, the package API and the English aliases), `verificar_gpu.py` (7 GPU checks) |
@@ -154,7 +154,7 @@ The package also exports `entrenar`, `evaluar`, `escribir`, `guardar`, `ConfigAS
 ### O(1) generation
 
 Writing step by step (`_Escritor` in `asrn/nucleo.py`, used by `escribir()` / `asrn.generate`) costs O(1) time per new
-token, independent of how much text there is. Before 1.0.0 it was O(t) per token.
+token, independent of how much text there is. Before 1.0 it was O(t) per token.
 - **Where to copy.** Each table keeps, per bucket, a ring with the C = 32 most recent positions: exactly the keys the
   previous `_atender` chose among the whole memory. With prompt-only copy memory (`memoria_de_lo_ajeno`, the default),
   only prompt positions can be keys, so the rings are filled from the prompt and never change. The new token scores
@@ -660,7 +660,7 @@ one-process NCCL check on the A100. The next versions build on this:
 | Same CPU, PyTorch 2.11.0 (the version of the previous Colab runs), Triton 3.6, NumPy 2.3.5, 16 October 2026 | Same two suites (62-test core suite at that time) | 60 pass and 2 skipped (`torch.compile`, needs 2.14); **18 / 18** pass. With NumPy ≥ 2.4, Triton 3.6's interpreter fails in the three kernel-versus-PyTorch tests (`TypeError: only 0-dimensional arrays can be converted to Python scalars`), a Triton issue that Triton 3.8 does not have |
 | Same CPU, PyTorch 2.11.0 and 2.14.1, 12 threads (`torch.set_num_threads(12)`), 16 October 2026 | `test_entrenar_aprende_a_copiar_y_reanuda` | Passes on both. The previous version of the test (lr 3e-3) fails on 2.11 with copy loss 4.199, the value seen on Colab |
 | Same CPU, one thread (`OMP_NUM_THREADS=1`), after the reorganization of 1.0 (folder names in English, v85/v87 comparisons removed), 16 October 2026 | `python tests/test_nucleo.py`; `python tests/test_estable.py` | PyTorch 2.14.1 (Triton 3.8, NumPy 2.5.3): **55 / 55** and **18 / 18** pass. PyTorch 2.11.0 (Triton 3.6, NumPy 2.3.5): 53 pass and 2 skipped (`torch.compile`, needs 2.14), **18 / 18** pass |
-| Fresh virtual environment (Python 3.13, PyTorch 2.14.1), 15 October 2026 | `pip install .` (no build isolation, no dependency resolution) | Installs `asrn 1.0.0` and the `asrn-train` entry point |
+| Fresh virtual environment (Python 3.13, PyTorch 2.14.1), 15 October 2026 | `pip install .` (no build isolation, no dependency resolution) | Installs `asrn 1.0` and the `asrn-train` entry point |
 | CPU (4 cores, Python 3.13, PyTorch 2.14.1, Triton 3.8), 23 October 2026, with the O(1) writer | `python tests/test_nucleo.py`; `python tests/test_estable.py` (the current suites: 57 and 19 tests, 76 in total) | **57 / 57** and **19 / 19** pass |
 | Same CPU, PyTorch 2.11.0 (Triton 3.6.0, NumPy 2.3.5), 23 October 2026, with the O(1) writer | Same two suites | 55 pass and 2 skipped (`torch.compile`, needs 2.14); **19 / 19** pass |
 | Same CPU, PyTorch 2.14.1, 23 October 2026 | O(1) writer against the O(t) writer and the whole-text forward pass (`test_escritura_o1_igual_que_o_t` in both suites, `test_anillo_y_ngramas_como_su_definicion`): v89 and stable layer, rings that overflow, batches of 1–3, prompts of 1, 2 and 40 tokens, with and without prompt-only copy memory | Equal: max difference 2.2·10⁻⁷ |
@@ -686,8 +686,8 @@ without Triton, the kernel-versus-PyTorch tests are skipped there. Tested enviro
 ### Provenance of the results
 
 `results/banco_a100/` and `results/citas_a100/` come from code fingerprint `5164e1f32513`: the first 12 hex digits of
-the sha256 of `asrn/*.py`, the root `*.py` and `benchmarks/*.py` concatenated in sorted order (the notebook prints
-it). The 1.0.0 code differs from that code only in the O(1) writer (`asrn/nucleo.py`, `asrn/estable.py`), the
-generation benchmark passing new tokens from the CPU (`benchmarks/banco_gpu.py`), docstrings, and the new
+the sha256 of `asrn/*.py`, the root `*.py` and `benchmarks/*.py` concatenated in sorted order (the notebook prints it).
+The 1.0 code differs from that code only in the O(1) writer (`asrn/nucleo.py`, `asrn/estable.py`), the generation
+benchmark passing new tokens from the CPU (`benchmarks/banco_gpu.py`), docstrings, the version number and the new
 `benchmarks/medir_escritura.py`. The model's forward pass and gradients are bit-identical (verified), so every A100
-number except the generation timing applies unchanged to 1.0.0.
+number except the generation timing applies unchanged to 1.0.

@@ -1,4 +1,4 @@
-# ASRN 1.0.0 — Notas de la versión
+# ASRN 1.0 — Notas de la versión
 
 *Octubre de 2026 · Alexis Calvario · Apache 2.0 · [English version](RELEASE_NOTES.md)*
 
@@ -10,7 +10,7 @@ pieza de la atención por casilleros está acotado (a lo sumo 8 × 32 candidatos
 crece lineal con el largo. Escribir paso a paso cuesta un tiempo O(1) por pieza nueva, sea cual sea el largo del
 texto; su memoria sigue creciendo con el texto.
 
-1.0.0 es el primer lanzamiento empaquetado. Convierte el código de investigación de v89 en un paquete instalable, deja
+1.0 es el primer lanzamiento empaquetado. Convierte el código de investigación de v89 en un paquete instalable, deja
 como capa por omisión la que tiene las protecciones numéricas, hace que escribir cueste O(1) por pieza nueva, trae el
 banco de pruebas contra Mamba-2, RWKV-7 y un Transformer++ junto con sus resultados, y pasa el historial de desarrollo
 a `history/`.
@@ -29,7 +29,7 @@ A100, PyTorch 2.11), y `history/docs/` (el whitepaper de v89 y el registro de ve
 
 ## Lo principal
 
-- **Un paquete instalable.** `pip install .` da `import asrn` (versión `1.0.0`), `python -m asrn` y el comando
+- **Un paquete instalable.** `pip install .` da `import asrn` (versión `1.0`), `python -m asrn` y el comando
   `asrn-train`. Python ≥ 3.11, PyTorch ≥ 2.9, NumPy. Los alias en inglés (`asrn.ASRNLayer`, `asrn.ASRNModel`,
   `asrn.create_model`, `asrn.train`, `asrn.generate`, `asrn.load`, …) nombran los mismos objetos que la API en español.
 - **La batería completa de pruebas pasa.** Las baterías actuales, 57 pruebas del núcleo y 19 de la capa estable y de la
@@ -104,7 +104,7 @@ A100, PyTorch 2.11), y `history/docs/` (el whitepaper de v89 y el registro de ve
 |---|---|
 | `asrn/nucleo.py` | El núcleo: lo que antes era `asrn_v89.py`. Trae `CapaASRN` y sus kernels Triton (con el modo `ESTABLE`), `BloqueLocal`, `ModeloASRN`, `ConfigASRN` / `TALLAS` / `para_parametros`, `entrenar`, `evaluar`, `escribir` (con la escritura O(1), `_Escritor`), `guardar` / `cargar`, FSDP (`repartir_fsdp`, `materializar`), `compilar_partes`, `PasoGrafado` y la línea de comandos |
 | `asrn/estable.py` | Lo que antes era `asrn_estable.py`: `CapaASRNEstable`, `Protecciones`, `_ProyeccionIEEE`, `_TiempoRelativo`, `convertir()`, `RecorteDinamico` |
-| `asrn/__init__.py` | La API pública (capa estable por omisión), con alias en inglés de los mismos objetos (`ASRNLayer`, `ASRNCoreLayer`, `ASRNModel`, `ASRNConfig`, `LocalBlock`, `Protections`, `DynamicClip`, `create_model`, `create_from_config`, `convert`, `train`, `evaluate`, `generate`, `save`, `load`); `__version__ = '1.0.0'` |
+| `asrn/__init__.py` | La API pública (capa estable por omisión), con alias en inglés de los mismos objetos (`ASRNLayer`, `ASRNCoreLayer`, `ASRNModel`, `ASRNConfig`, `LocalBlock`, `Protections`, `DynamicClip`, `create_model`, `create_from_config`, `convert`, `train`, `evaluate`, `generate`, `save`, `load`); `__version__ = '1.0'` |
 | `asrn/__main__.py` | `python -m asrn` y el comando `asrn-train`: la línea de comandos del núcleo con la capa estable |
 | `pyproject.toml`, `requirements.txt` | `pip install .`; Python ≥ 3.11, `torch>=2.9`, `numpy`; extra `[bench]` |
 | `tests/` | `test_nucleo.py` (57 pruebas del núcleo), `test_estable.py` (19 pruebas de la capa estable, la API del paquete y los alias en inglés), `verificar_gpu.py` (7 comprobaciones en GPU) |
@@ -161,7 +161,7 @@ El paquete exporta además `entrenar`, `evaluar`, `escribir`, `guardar`, `Config
 ### Escritura en O(1)
 
 Escribir paso a paso (`_Escritor` en `asrn/nucleo.py`, que usan `escribir()` / `asrn.generate`) cuesta un tiempo O(1)
-por pieza nueva, sin importar cuánto texto haya. Antes de 1.0.0 costaba O(t) por pieza.
+por pieza nueva, sin importar cuánto texto haya. Antes de 1.0 costaba O(t) por pieza.
 - **Dónde copiar.** Cada tabla lleva, por casillero, un anillo con las C = 32 posiciones más recientes: justo las
   llaves que el `_atender` anterior elegía entre toda la memoria. Con la memoria de lo ajeno (`memoria_de_lo_ajeno`, por
   omisión), solo las posiciones del inicio pueden ser llaves, así que los anillos se llenan con el inicio y no cambian
@@ -687,7 +687,7 @@ versiones parten de ahí:
 | La misma CPU, PyTorch 2.11.0 (la versión de las corridas anteriores en Colab), Triton 3.6, NumPy 2.3.5, 16 de octubre de 2026 | Las mismas dos baterías (batería del núcleo de 62 pruebas en ese momento) | 60 pasan y 2 se saltan (`torch.compile`, necesita 2.14); pasan **18 / 18**. Con NumPy ≥ 2.4, el intérprete de Triton 3.6 falla en las tres pruebas de kernel contra PyTorch (`TypeError: only 0-dimensional arrays can be converted to Python scalars`), un problema de Triton que Triton 3.8 no tiene |
 | La misma CPU, PyTorch 2.11.0 y 2.14.1, 12 hilos (`torch.set_num_threads(12)`), 16 de octubre de 2026 | `test_entrenar_aprende_a_copiar_y_reanuda` | Pasa en las dos. La versión anterior de la prueba (lr 3e-3) falla en 2.11 con pérdida de copia 4.199, la cifra vista en Colab |
 | La misma CPU, un hilo (`OMP_NUM_THREADS=1`), después de la reorganización de 1.0 (nombres de carpetas en inglés, sin las comparaciones con v85/v87), 16 de octubre de 2026 | `python tests/test_nucleo.py`; `python tests/test_estable.py` | PyTorch 2.14.1 (Triton 3.8, NumPy 2.5.3): pasan **55 / 55** y **18 / 18**. PyTorch 2.11.0 (Triton 3.6, NumPy 2.3.5): 53 pasan y 2 se saltan (`torch.compile`, necesita 2.14); pasan **18 / 18** |
-| Un entorno virtual nuevo (Python 3.13, PyTorch 2.14.1), 15 de octubre de 2026 | `pip install .` (sin aislamiento de compilación y sin resolver dependencias) | Instala `asrn 1.0.0` y el comando `asrn-train` |
+| Un entorno virtual nuevo (Python 3.13, PyTorch 2.14.1), 15 de octubre de 2026 | `pip install .` (sin aislamiento de compilación y sin resolver dependencias) | Instala `asrn 1.0` y el comando `asrn-train` |
 | CPU (4 núcleos, Python 3.13, PyTorch 2.14.1, Triton 3.8), 23 de octubre de 2026, con la escritura O(1) | `python tests/test_nucleo.py`; `python tests/test_estable.py` (las baterías actuales: 57 y 19 pruebas, 76 en total) | Pasan **57 / 57** y **19 / 19** |
 | La misma CPU, PyTorch 2.11.0 (Triton 3.6.0, NumPy 2.3.5), 23 de octubre de 2026, con la escritura O(1) | Las mismas dos baterías | 55 pasan y 2 se saltan (`torch.compile`, necesita 2.14); pasan **19 / 19** |
 | La misma CPU, PyTorch 2.14.1, 23 de octubre de 2026 | Escritura O(1) contra la escritura O(t) y la ida sobre el texto entero (`test_escritura_o1_igual_que_o_t` en las dos baterías, `test_anillo_y_ngramas_como_su_definicion`): capa de v89 y estable, anillos que se desbordan, lotes de 1 a 3, inicios de 1, 2 y 40 piezas, con y sin la memoria de lo ajeno | Iguales: diferencia máxima 2.2·10⁻⁷ |
@@ -713,9 +713,9 @@ sin Triton, ahí se saltan las pruebas de kernel contra PyTorch. Entornos probad
 ### Procedencia de los resultados
 
 `results/banco_a100/` y `results/citas_a100/` salen del código con huella `5164e1f32513`: los primeros 12 dígitos
-hexadecimales del sha256 de `asrn/*.py`, los `*.py` de la raíz y `benchmarks/*.py`, ordenados por nombre y
-concatenados (el cuaderno la muestra). El código de 1.0.0 difiere de ese código solo en la escritura O(1)
-(`asrn/nucleo.py`, `asrn/estable.py`), en que la medición de escritura pasa las piezas nuevas desde la CPU
-(`benchmarks/banco_gpu.py`), en docstrings y en el nuevo `benchmarks/medir_escritura.py`. La ida y los gradientes del
-modelo son iguales bit a bit (comprobado), así que cada cifra de la A100 salvo el tiempo de escritura vale sin cambios
-para 1.0.0.
+hexadecimales del sha256 de `asrn/*.py`, los `*.py` de la raíz y `benchmarks/*.py`, ordenados por nombre y concatenados
+(el cuaderno la muestra). El código de 1.0 difiere de ese código solo en la escritura O(1) (`asrn/nucleo.py`,
+`asrn/estable.py`), en que la medición de escritura pasa las piezas nuevas desde la CPU (`benchmarks/banco_gpu.py`), en
+docstrings, en el número de versión y en el nuevo `benchmarks/medir_escritura.py`. La ida y los gradientes del modelo
+son iguales bit a bit (comprobado), así que cada cifra de la A100 salvo el tiempo de escritura vale sin cambios para
+1.0.

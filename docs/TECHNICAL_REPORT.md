@@ -3,7 +3,7 @@
 ### Technical report for release 1.0: learned-hash sparse retrieval, a proper-time clock, Hawkes repetition signals and numerically protected kernels
 
 **Alexis Calvario** (independent researcher)
-Version 1.0.0 — October 2026
+Version 1.0 — October 2026
 Code: the `asrn` package in this repository [Calvario, 2026] (Apache License 2.0). Raw results: [`results/`](../results/README.md). Development history: [`history/`](../history/README.md). [Versión en español](TECHNICAL_REPORT_es.md).
 
 ---
@@ -18,7 +18,7 @@ Code: the `asrn` package in this repository [Calvario, 2026] (Apache License 2.0
 >   A100-SXM4-80GB in Google Colab (PyTorch 2.14.1, CUDA 13.0, Python 3.13.15, code fingerprint `5164e1f32513`). Every
 >   section, including RWKV-7, comes from it: `results/banco_a100/` for the benchmark and `results/citas_a100/` for the
 >   bounded-quotation experiment. Two rows of the training table are compiled; every other measurement is uncompiled.
->   That code computes the same forward pass and gradients as release 1.0.0, bit for bit; only its generation writer
+>   That code computes the same forward pass and gradients as release 1.0, bit for bit; only its generation writer
 >   was the earlier $O(t)$ one (Section 6.6 and *Reproducibility*).
 > - **[A100-Oct9]** and **[A100-Oct11]**: the two executions of the previous A100 run (notebook `banco_a100.ipynb`,
 >   PyTorch 2.11.0, nothing compiled; `history/results/banco_a100_pt211/`), cited only as a replication. The Oct 11
@@ -51,7 +51,7 @@ development run (run 5) with another protocol and a reimplemented RWKV-7 found R
 74.3, but ahead of ASRN when both use a learning rate of 10⁻³, one seed). The models are far from convergence, the
 corpus rewards copying, and ASRN has exact token matching built in, a bias aligned with copy and MQAR. ASRN is slower on
 short inputs, uses about twice attention's memory and generated slowest on the A100 (43 ms/token, measured with the
-earlier O(t) writer and most likely launch-bound). Release 1.0.0 generates in O(1) time per new token (a ring of recent
+earlier O(t) writer and most likely launch-bound). Release 1.0 generates in O(1) time per new token (a ring of recent
 positions per bucket, a Hawkes state per n-gram): with a ~0.7M-parameter model on CPU, 9.49–12.47 ms per token from 512
 to 131,072 tokens of context, 9.7× faster than the O(t) writer at 131,072; it has not yet been measured on the A100. The
 design separates two responsibilities: bucketed sparse attention decides *where* to copy, and the gate, the proper-time
@@ -378,7 +378,7 @@ recording the step as a CUDA Graph earlier reduced one layer at 1,024 tokens fro
 
 ### 2.11 Generation path
 
-`escribir()` (`asrn.generate`) processes a prompt once and then one token at a time, and in release 1.0.0 each new
+`escribir()` (`asrn.generate`) processes a prompt once and then one token at a time, and in release 1.0 each new
 token costs **$O(1)$ time**, however much text there is (`_Escritor` in `asrn/nucleo.py`). Each ASRN layer caches, per
 position, $\varphi$, bucket ids, values, $K_c$, the four previous token ids, the clock $B$ and $\log\alpha$, in buffers
 reserved in advance; each local block keeps its last $k-1$ normalized inputs. Three structures make the step
@@ -979,7 +979,7 @@ meaningful comparisons (RWKV-7 runs step by step in Python; the chunked SSD back
 ### 6.6 Generation
 
 **On the A100, with the $O(t)$ writer.** The run of 17 October measured the code of that time, whose writer was $O(t)$
-per token (Section 2.11). **The $O(1)$ writer of release 1.0.0 has not been measured on the A100 yet.** The notebook's
+per token (Section 2.11). **The $O(1)$ writer of release 1.0 has not been measured on the A100 yet.** The notebook's
 generation section (`benchmarks/asrn_colab.ipynb`, section 6) now runs the $O(1)$ writer, with the new tokens passed
 from the CPU as `escribir()` does, so the next Colab run measures it.
 
@@ -1143,7 +1143,7 @@ non-parametric test can go below two-sided $p=0.10$ (the t-tests above assume no
 
 ### 6.8 Tests
 
-In release 1.0.0, `tests/test_nucleo.py` holds 57 tests of the core and `tests/test_estable.py` 19 tests of the stable
+In release 1.0, `tests/test_nucleo.py` holds 57 tests of the core and `tests/test_estable.py` 19 tests of the stable
 layer and the package API (15 at the time of the stability review, plus the package API, command-line and English-alias
 tests and the writer test), 76 in total, and `tests/verificar_gpu.py` 7 GPU checks. The tests added with the $O(1)$
 writer are `test_escritura_o1_igual_que_o_t` (in both suites: $O(1)$ writer = $O(t)$ writer = whole-text forward,
@@ -1467,7 +1467,7 @@ Only decisions backed by a measurement are listed; each was made against a measu
   1,024 tokens [A100-Oct17] (1.27× in a development measurement [A100-dev]). The development analysis attributed the
   remaining short-input gap to work per token, not to scheduling.
 - **Generation.** Slowest of the four models on the A100 (43 ms/token, measured with the $O(t)$ writer; most likely
-  launch-bound, not profiled). Release 1.0.0 writes in $O(1)$ time per token (Section 2.11), and on CPU its time per
+  launch-bound, not profiled). Release 1.0 writes in $O(1)$ time per token (Section 2.11), and on CPU its time per
   token is constant in the context (Section 6.6); its A100 figure is pending, and the per-token kernel launches remain.
 - **Memory.** About 2× attention per layer.
 
@@ -1499,7 +1499,7 @@ The kernel proposals that address these limits, estimated from the code, are col
   made it fail on the Colab machine (now trained at 6e-3; Section 6.8).
 - **Speed.** Slower than attention and Mamba-2 for single layers below ~18–20k tokens; memory per layer is about twice
   attention's. On the A100, generation was the slowest of the four models (43 ms/token, measured with the $O(t)$
-  writer; most likely launch-bound, not profiled). With the $O(1)$ writer of release 1.0.0 the per-token cost is
+  writer; most likely launch-bound, not profiled). With the $O(1)$ writer of release 1.0 the per-token cost is
   constant in the context on CPU (Section 6.6), but the A100 figure is pending; memory per sequence still grows with the
   text, plus the fixed rings (Section 2.11).
 - **Regulation mechanisms.** On copy and MQAR, where every evaluated position requires copying, the gate, its signals,
@@ -1603,12 +1603,12 @@ previous A100 run (PyTorch 2.11.0+cu130; the Oct 11 execution with fingerprint `
 a ZIP without fingerprint) is kept in `history/results/banco_a100_pt211/`.
 
 **Provenance of the A100 results.** `results/banco_a100/` and `results/citas_a100/` come from code fingerprint
-`5164e1f32513`: the first 12 hex digits of the sha256 of `asrn/*.py`, the root `*.py` and `benchmarks/*.py`
-concatenated in sorted order (the notebook prints it). The 1.0.0 code differs from that code only in the $O(1)$ writer
+`5164e1f32513`: the first 12 hex digits of the sha256 of `asrn/*.py`, the root `*.py` and `benchmarks/*.py` concatenated
+in sorted order (the notebook prints it). The 1.0 code differs from that code only in the $O(1)$ writer
 (`asrn/nucleo.py`, `asrn/estable.py`), the generation benchmark passing the new tokens from the CPU
-(`benchmarks/banco_gpu.py`), docstrings, and the new `benchmarks/medir_escritura.py`. The forward pass and the
-gradients are bit-identical (verified), so every A100 number except the generation timing, which measured the earlier
-$O(t)$ writer (Section 6.6), applies unchanged to 1.0.0.
+(`benchmarks/banco_gpu.py`), docstrings, the version number and the new `benchmarks/medir_escritura.py`. The forward
+pass and the gradients are bit-identical (verified), so every A100 number except the generation timing, which measured
+the earlier $O(t)$ writer (Section 6.6), applies unchanged to 1.0.
 
 ```bash
 pip install .

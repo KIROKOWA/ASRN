@@ -1,7 +1,7 @@
 {
   "title": "ASRN: Adaptive Sparse Recurrence Network",
   "upload_type": "software",
-  "version": "1.0.0",
+  "version": "1.0",
   "description": "<p>ASRN (Adaptive Sparse Recurrence Network) is a sequence-mixing layer for language models, shipped as a PyTorch package: learned-hash sparse retrieval of earlier occurrences with bounded work per token, a learned proper-time clock, Hawkes repetition signals and a gated copy, with numerically protected Triton kernels and O(1) generation per new token. This archive contains the package, its tests, the benchmark notebook and scripts, the raw results and the LaTeX sources of the accompanying preprint.</p>",
   "creators": [
     {

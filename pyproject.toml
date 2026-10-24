@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "asrn"
-version = "1.0.0"
+version = "1.0"
 description = "ASRN (Adaptive Sparse Recurrence Network): a sequence-mixing layer for language models with learned-hash sparse retrieval of earlier occurrences, a learned proper-time clock and Hawkes repetition signals"
 readme = "README.md"
 license = "Apache-2.0"

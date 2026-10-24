@@ -3,7 +3,7 @@
 ### Reporte técnico de la versión 1.0: recuperación dispersa con hash aprendido, un reloj de tiempo propio, señales de repetición de Hawkes y kernels protegidos numéricamente
 
 **Alexis Calvario** (investigador independiente)
-Versión 1.0.0 — octubre de 2026
+Versión 1.0 — octubre de 2026
 Código: el paquete `asrn` de este repositorio [Calvario, 2026] (Licencia Apache 2.0). Resultados en bruto: [`results/`](../results/README.md). Historial de desarrollo: [`history/`](../history/README.md). [English version](TECHNICAL_REPORT.md).
 
 *Terminología: pieza = token; casillero = bucket; racha = streak; puerta = gate; vistos = seen flags;
@@ -21,7 +21,7 @@ escribir = generar.*
 >   A100-SXM4-80GB en Google Colab (PyTorch 2.14.1, CUDA 13.0, Python 3.13.15, huella del código `5164e1f32513`).
 >   Todas las secciones, incluido RWKV-7, salen de ella: `results/banco_a100/` para el banco y `results/citas_a100/`
 >   para el experimento de citas acotadas. Dos filas de la tabla de entrenamiento están compiladas; todas las demás
->   mediciones se tomaron sin compilar. Ese código calcula la misma ida y los mismos gradientes que la versión 1.0.0,
+>   mediciones se tomaron sin compilar. Ese código calcula la misma ida y los mismos gradientes que la versión 1.0,
 >   bit a bit; solo su escritura era la $O(t)$ anterior (sección 6.6 y *Reproducibilidad*).
 > - **[A100-Oct9]** y **[A100-Oct11]**: las dos ejecuciones de la corrida anterior en la A100 (cuaderno
 >   `banco_a100.ipynb`, PyTorch 2.11.0, nada compilado; `history/results/banco_a100_pt211/`), citadas solo como
@@ -57,7 +57,7 @@ a RWKV-7 como el mejor, 47.87 contra 57.02; Mamba-2 74.3, pero por delante de AS
 aprendizaje de 10⁻³, una semilla). Los modelos están lejos de converger, el corpus premia copiar y ASRN trae incorporada
 la coincidencia exacta de piezas, un sesgo alineado con la copia y con MQAR. ASRN es más lento con entradas cortas, usa
 cerca del doble de memoria que la atención y fue el que escribió más lento en la A100 (43 ms/pieza, medido con la
-escritura O(t) anterior y, muy probablemente, limitado por los lanzamientos de kernels). La versión 1.0.0 escribe en un
+escritura O(t) anterior y, muy probablemente, limitado por los lanzamientos de kernels). La versión 1.0 escribe en un
 tiempo O(1) por pieza nueva (un anillo de posiciones recientes por casillero, un estado de Hawkes por grupo de n
 piezas): con un modelo de ~0.7M parámetros en CPU, 9.49–12.47 ms por pieza de 512 a 131 072 piezas de contexto, 9.7× más
 rápida que la escritura O(t) con 131 072; todavía no se midió en la A100. El diseño separa dos responsabilidades: la
@@ -409,7 +409,7 @@ como CUDA Graph redujo antes una capa con 1 024 piezas de 11.4 a 1.6 ms (FlashAt
 
 ### 2.11 Camino de generación
 
-`escribir()` (`asrn.generate`) procesa una vez el inicio y luego una pieza a la vez, y en la versión 1.0.0 cada pieza
+`escribir()` (`asrn.generate`) procesa una vez el inicio y luego una pieza a la vez, y en la versión 1.0 cada pieza
 nueva cuesta un **tiempo $O(1)$**, sin importar cuánto texto haya (`_Escritor` en `asrn/nucleo.py`). Cada capa ASRN
 guarda en caché, por posición, $\varphi$, los ids de casillero, los valores, $K_c$, los ids de las cuatro piezas
 anteriores, el reloj $B$ y $\log\alpha$, en búferes reservados de antemano; cada bloque local conserva sus últimas $k-1$
@@ -1027,8 +1027,8 @@ escala mal en CPU).
 ### 6.6 Generación
 
 **En la A100, con la escritura $O(t)$.** La corrida del 17 de octubre midió el código de entonces, cuya escritura era
-$O(t)$ por pieza (sección 2.11). **La escritura $O(1)$ de la versión 1.0.0 todavía no se midió en la A100.** La sección
-de generación del cuaderno (`benchmarks/asrn_colab.ipynb`, sección 6) corre ahora la escritura $O(1)$, con las piezas
+$O(t)$ por pieza (sección 2.11). **La escritura $O(1)$ de la versión 1.0 todavía no se midió en la A100.** La sección de
+generación del cuaderno (`benchmarks/asrn_colab.ipynb`, sección 6) corre ahora la escritura $O(1)$, con las piezas
 nuevas pasadas desde la CPU como hace `escribir()`, así que la próxima ejecución en Colab la mide.
 
 | ms por pieza nueva [A100-Oct17] | contexto 1 024 | 4 096 | 16 384 | 65 536 | prefijo 65 536 (s) | memoria con 65 536 (GB) |
@@ -1200,7 +1200,7 @@ normalidad).
 
 ### 6.8 Pruebas
 
-En la versión 1.0.0, `tests/test_nucleo.py` tiene 57 pruebas del núcleo y `tests/test_estable.py` 19 pruebas de la capa
+En la versión 1.0, `tests/test_nucleo.py` tiene 57 pruebas del núcleo y `tests/test_estable.py` 19 pruebas de la capa
 estable y de la API del paquete (15 en el momento de la revisión de estabilidad, más las pruebas de la API del paquete,
 de la línea de comandos y de los alias en inglés y la prueba de la escritura), 76 en total, y `tests/verificar_gpu.py` 7
 verificaciones de GPU. Las pruebas que llegaron con la escritura $O(1)$ son `test_escritura_o1_igual_que_o_t` (en las
@@ -1539,7 +1539,7 @@ Solo se listan decisiones respaldadas por una medición; cada una se tomó frent
   medición de desarrollo [A100-dev]). El análisis de desarrollo atribuyó la diferencia restante con entradas cortas al
   trabajo por pieza, no a la planificación.
 - **Generación.** La más lenta de los cuatro modelos en la A100 (43 ms/pieza, medida con la escritura $O(t)$; muy
-  probablemente limitada por los lanzamientos, no se perfiló). La versión 1.0.0 escribe en un tiempo $O(1)$ por pieza
+  probablemente limitada por los lanzamientos, no se perfiló). La versión 1.0 escribe en un tiempo $O(1)$ por pieza
   (sección 2.11), y en CPU su tiempo por pieza es constante respecto del contexto (sección 6.6); su cifra en la A100
   está pendiente, y los lanzamientos de kernels por pieza siguen ahí.
 - **Memoria.** Cerca de 2× la de la atención por capa.
@@ -1577,7 +1577,7 @@ Las propuestas para el kernel que atacan estos límites, estimadas a partir del 
 - **Velocidad.** Más lenta que la atención y que Mamba-2 en capas solas por debajo de ~18–20k piezas; la memoria por
   capa es cerca del doble de la de la atención. En la A100, la generación fue la más lenta de los cuatro modelos
   (43 ms/pieza, medida con la escritura $O(t)$; muy probablemente limitada por los lanzamientos, no se perfiló). Con la
-  escritura $O(1)$ de la versión 1.0.0 el costo por pieza es constante respecto del contexto en CPU (sección 6.6), pero
+  escritura $O(1)$ de la versión 1.0 el costo por pieza es constante respecto del contexto en CPU (sección 6.6), pero
   la cifra de la A100 está pendiente; la memoria por secuencia sigue creciendo con el texto, más los anillos fijos
   (sección 2.11).
 - **Mecanismos de regulación.** En copia y MQAR, donde todas las posiciones evaluadas piden copiar, la puerta, sus
@@ -1686,11 +1686,11 @@ octubre desde un ZIP sin huella) se guarda en `history/results/banco_a100_pt211/
 
 **Procedencia de los resultados de la A100.** `results/banco_a100/` y `results/citas_a100/` salen del código con huella
 `5164e1f32513`: los primeros 12 dígitos hexadecimales del sha256 de `asrn/*.py`, los `*.py` de la raíz y
-`benchmarks/*.py`, ordenados por nombre y concatenados (el cuaderno la muestra). El código de 1.0.0 difiere de ese
-código solo en la escritura $O(1)$ (`asrn/nucleo.py`, `asrn/estable.py`), en que el banco de generación pasa las piezas
-nuevas desde la CPU (`benchmarks/banco_gpu.py`), en docstrings y en el nuevo `benchmarks/medir_escritura.py`. La ida y
-los gradientes son iguales bit a bit (comprobado), así que cada cifra de la A100 salvo el tiempo de generación, que
-midió la escritura $O(t)$ anterior (sección 6.6), vale sin cambios para 1.0.0.
+`benchmarks/*.py`, ordenados por nombre y concatenados (el cuaderno la muestra). El código de 1.0 difiere de ese código
+solo en la escritura $O(1)$ (`asrn/nucleo.py`, `asrn/estable.py`), en que el banco de generación pasa las piezas nuevas
+desde la CPU (`benchmarks/banco_gpu.py`), en docstrings, en el número de versión y en el nuevo
+`benchmarks/medir_escritura.py`. La ida y los gradientes son iguales bit a bit (comprobado), así que cada cifra de la
+A100 salvo el tiempo de generación, que midió la escritura $O(t)$ anterior (sección 6.6), vale sin cambios para 1.0.
 
 ```bash
 pip install .
