@@ -3,7 +3,8 @@
 [![tests](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Version 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES.md)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23607506.svg)](https://doi.org/10.5281/zenodo.23607506)
+[![Code DOI](https://img.shields.io/badge/code%20DOI-10.5281%2Fzenodo.23608503-blue.svg)](https://doi.org/10.5281/zenodo.23608503)
+[![Preprint DOI](https://img.shields.io/badge/preprint%20DOI-10.5281%2Fzenodo.23607506-blue.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Exact long-range copying for language models, with bounded work per token: learned hash tables find where the
 current context appeared before, and a gated layer copies what came next.**
@@ -671,15 +672,18 @@ FineWeb. The next versions build on this:
 
 ## Citation
 
-If you use ASRN, please cite the software ([`CITATION.cff`](CITATION.cff) has the same data for GitHub and Zenodo):
+If you use ASRN, please cite the software (DOI [10.5281/zenodo.23608503](https://doi.org/10.5281/zenodo.23608503);
+[`CITATION.cff`](CITATION.cff) has the same data for GitHub and Zenodo):
 
 ```bibtex
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version = {1.0},
-  year    = {2026},
-  url     = {https://github.com/KIROKOWA/ASRN}
+  version   = {1.0},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23608503},
+  url       = {https://doi.org/10.5281/zenodo.23608503}
 }
 ```
 

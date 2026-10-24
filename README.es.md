@@ -3,7 +3,8 @@
 [![pruebas](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![Licencia: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Versión 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES_es.md)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23607506.svg)](https://doi.org/10.5281/zenodo.23607506)
+[![DOI del código](https://img.shields.io/badge/DOI%20del%20c%C3%B3digo-10.5281%2Fzenodo.23608503-blue.svg)](https://doi.org/10.5281/zenodo.23608503)
+[![DOI del preprint](https://img.shields.io/badge/DOI%20del%20preprint-10.5281%2Fzenodo.23607506-blue.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Copia exacta de largo alcance para modelos de lenguaje, con trabajo acotado por pieza: tablas de hash aprendidas
 encuentran dónde apareció antes el contexto actual, y una capa con puerta copia lo que vino después.**
@@ -694,15 +695,18 @@ correr para un modelo de 103.5 M de parámetros con FineWeb. Las próximas versi
 
 ## Cómo citar
 
-Si usas ASRN, cita el software ([`CITATION.cff`](CITATION.cff) tiene los mismos datos para GitHub y Zenodo):
+Si usas ASRN, cita el software (DOI [10.5281/zenodo.23608503](https://doi.org/10.5281/zenodo.23608503);
+[`CITATION.cff`](CITATION.cff) tiene los mismos datos para GitHub y Zenodo):
 
 ```bibtex
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version = {1.0},
-  year    = {2026},
-  url     = {https://github.com/KIROKOWA/ASRN}
+  version   = {1.0},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23608503},
+  url       = {https://doi.org/10.5281/zenodo.23608503}
 }
 ```
 
