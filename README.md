@@ -10,7 +10,7 @@ current context appeared before, and a gated layer copies what came next.**
 
 [Versión en español](README.es.md) · [Architecture](docs/ARCHITECTURE.md) ·
 [Technical report](docs/TECHNICAL_REPORT.md) · [Release notes](docs/RELEASE_NOTES.md) · [Results](results/README.md) ·
-Version 1.0.0 · Apache License 2.0
+Version 1.0 · Apache License 2.0
 
 ### Install and use
 
