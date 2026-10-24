@@ -11,7 +11,7 @@ authors:
     given-names: Alexis
     affiliation: Independent researcher
     orcid: "https://orcid.org/0009-0004-0854-6398"
-version: 1.0.0
+version: 1.0
 date-released: "2026-10-24"
 license: Apache-2.0
 repository-code: "https://github.com/KIROKOWA/ASRN"
