@@ -2180,24 +2180,67 @@ def _lote(datos, largo, lote, g, disp):
     return w[:, :-1], w[:, 1:]
 
 
-def _nombres_en_optimizador(modelo):
-    """Nombres de los parametros en el orden en que crear_optimizador() los numera (matrices, luego el resto)."""
-    con, sin = [], []
-    for n, p in _base(modelo).named_parameters():
+# v1.1: el peso del sufijo y las senales de la puerta de cada capa ASRN aprenden MULT_SUFIJO_Y_PUERTA veces mas rapido.
+# Son unos pocos numeros que deciden que copiar y cuanto, y con AdamW cada peso se mueve a lo sumo ~lr por paso: con la
+# tasa de siempre no crecen a tiempo. En la copia del banco (3 semillas) x3 llevo la exactitud de 66.7% +- 57.6 (2 de 3
+# semillas) a 100% +- 0.0 (3 de 3), y con textos 16 veces mas largos de 45.4% a 82.9%; MQAR y WikiText quedaron igual o
+# un poco mejor. Dosis mayores (x5, x10) aprenden siempre pero pierden con textos largos. 1 = la receta de 1.0.
+PESOS_SUFIJO_Y_PUERTA = ('w_sufijo', 'g.bias', 'g_conf.weight', 'g_conf.bias')
+MULT_SUFIJO_Y_PUERTA = 3.0
+
+
+def _ids_sufijo_y_puerta(base):
+    """id() de los pesos de PESOS_SUFIJO_Y_PUERTA de cada capa ASRN del modelo (vacio si el modelo no tiene capas ASRN,
+    como los rivales del banco)."""
+    ids = set()
+    for capa in getattr(base, 'largos', ()):
+        for n, p in capa.named_parameters():
+            if n in PESOS_SUFIJO_Y_PUERTA:
+                ids.add(id(p))
+    return ids
+
+
+def _grupos_optimizador(base, mult):
+    """[(parametros, con decaimiento, multiplicador de la tasa)] en el orden de crear_optimizador(): matrices, el resto,
+    y si mult != 1, aparte las matrices y el resto del sufijo y la puerta. Con mult = 1, los dos grupos de 1.0."""
+    rapidos = _ids_sufijo_y_puerta(base) if float(mult) != 1.0 else set()
+    con, sin, con_r, sin_r = [], [], [], []
+    for n, p in base.named_parameters():
         if p.requires_grad:
-            (con if p.dim() >= 2 else sin).append(n)
-    return con + sin
+            if p.dim() >= 2:
+                (con_r if id(p) in rapidos else con).append((n, p))
+            else:
+                (sin_r if id(p) in rapidos else sin).append((n, p))
+    grupos = [(con, True, 1.0), (sin, False, 1.0)]
+    if con_r:
+        grupos.append((con_r, True, float(mult)))
+    if sin_r:
+        grupos.append((sin_r, False, float(mult)))
+    return grupos
 
 
-def crear_optimizador(modelo, lr=1e-3, decaimiento=0.1, betas=(0.9, 0.95), capturable=False):
+def _nombres_en_optimizador(modelo, mult_sufijo_y_puerta=MULT_SUFIJO_Y_PUERTA):
+    """Nombres de los parametros en el orden en que crear_optimizador() los numera (matrices, luego el resto, y con
+    mult != 1 despues el sufijo y la puerta)."""
+    return [n for ps, _, _ in _grupos_optimizador(_base(modelo), mult_sufijo_y_puerta) for n, _ in ps]
+
+
+def _nombres_de_opt(base, opt):
+    """Nombres de los parametros en el orden en que `opt` los numera (sirve para cualquier forma de grupos)."""
+    nombre = {id(p): n for n, p in base.named_parameters()}
+    return [nombre[id(p)] for g in opt.param_groups for p in g['params']]
+
+
+def crear_optimizador(modelo, lr=1e-3, decaimiento=0.1, betas=(0.9, 0.95), capturable=False,
+                      mult_sufijo_y_puerta=MULT_SUFIJO_Y_PUERTA):
     """AdamW; decaimiento solo en matrices (no en sesgos, normas ni vectores de la puerta). capturable=True: se puede
-    grabar en un CUDA Graph (PasoGrafado)."""
+    grabar en un CUDA Graph (PasoGrafado). mult_sufijo_y_puerta (v1.1, por omision 3): la tasa del peso del sufijo y de
+    las senales de la puerta de cada capa ASRN se multiplica por este numero (grupos aparte, con el mismo decaimiento
+    que tenian); 1 = exactamente los grupos de 1.0. Cada grupo lleva su 'mult': quien cambie la tasa paso a paso pone
+    grupo['lr'] = tasa * grupo.get('mult', 1.0)."""
     modelo = _base(modelo)
-    con, sin = [], []
-    for p in modelo.parameters():
-        if p.requires_grad:
-            (con if p.dim() >= 2 else sin).append(p)
-    grupos = [{'params': con, 'weight_decay': decaimiento}, {'params': sin, 'weight_decay': 0.0}]
+    grupos = [{'params': [p for _, p in ps], 'weight_decay': decaimiento if decae else 0.0, 'mult': m, 'lr': lr * m}
+              for ps, decae, m in _grupos_optimizador(modelo, mult_sufijo_y_puerta)]
     extra = {'capturable': True} if capturable else {}
     if next(modelo.parameters()).device.type == 'cuda' and not esta_repartido(modelo):
         extra['fused'] = True
@@ -2216,6 +2259,7 @@ class PasoGrafado:
         paso = PasoGrafado(modelo, opt, lote, largo)
         for x, y in lotes:                                  # x, y: (lote, largo), siempre la misma forma
             perdida, norma, salto = paso(x, y, lr=...)      # tensores en la GPU: leerlos solo al registrar
+                                                            # (lr: la tasa base; cada grupo la multiplica por su 'mult')
 
     Los primeros `calentar` pasos van sin grabar (son pasos de verdad: compilan los kernels y crean el estado de
     AdamW); el siguiente graba y desde ahi se repite. Si la perdida o la norma no son finitas, AdamW no cambia nada
@@ -2242,9 +2286,14 @@ class PasoGrafado:
         self.x = torch.zeros((lote, largo), dtype=torch.long, device=disp)
         self.y = torch.zeros((lote, largo), dtype=torch.long, device=disp)
         if self.grabar:                 # la tasa vive en la GPU: cambiarla no obliga a grabar de nuevo
-            self.lr = torch.tensor(float(optimizador.param_groups[0]['lr']), device=disp)
+            g0 = optimizador.param_groups[0]
+            base_lr = float(g0['lr']) / g0.get('mult', 1.0)
+            self.lrs = []               # (tensor, mult) por grupo: el sufijo y la puerta llevan su propia tasa (v1.1)
             for g in optimizador.param_groups:
-                g['lr'] = self.lr
+                t = torch.tensor(base_lr * g.get('mult', 1.0), device=disp)
+                g['lr'] = t
+                self.lrs.append((t, g.get('mult', 1.0)))
+            self.lr = self.lrs[0][0]
 
     def _paso(self):
         with _autocast(self.precision, self.disp, cache=not self.grabar):
@@ -2268,10 +2317,11 @@ class PasoGrafado:
         self.y.copy_(y, non_blocking=True)
         if lr is not None:
             if self.grabar:
-                self.lr.fill_(lr)
+                for t, m in self.lrs:
+                    t.fill_(lr * m)
             else:
                 for g in self.opt.param_groups:
-                    g['lr'] = lr
+                    g['lr'] = lr * g.get('mult', 1.0)
         if not self.grabar:
             self.opt.zero_grad(set_to_none=True)
             return self._paso()
@@ -2382,7 +2432,7 @@ def _estado(base, opt, escalador, paso, mejor_val, g, historial, ajustes=None):
 def _reanudar_estado(base, opt, r, migrados):
     """Carga pesos y AdamW de un archivo de entrenar(), guardado en un proceso o repartido, en un modelo en un
     proceso o repartido (las cuatro combinaciones)."""
-    nombres = _nombres_en_optimizador(base)
+    nombres = _nombres_de_opt(base, opt)        # entrenar() crea opt con el mult del archivo: el mismo orden
     if 'optimizador_nombres' in r:
         por_nombre = r['optimizador_nombres']
     else:
@@ -2403,7 +2453,7 @@ def _reanudar_estado(base, opt, r, migrados):
 def entrenar(modelo, datos, validacion=None, largo=512, lote=16, pasos=10000, lr=1e-3, lr_min=None,
              calentamiento=None, decaimiento=0.1, betas=(0.9, 0.95), recorte=1.0, acumular=1, precision='auto',
              compilar=False, evaluar_cada=500, lotes_eval=50, guardar_en=None, guardar_cada=1000, reanudar=None,
-             semilla=0, registrar_cada=50, registro=print, max_saltos=20):
+             semilla=0, registrar_cada=50, registro=print, max_saltos=20, mult_sufijo_y_puerta=None):
     """Entrena `modelo` (en su dispositivo) con ventanas al azar de `datos` (tensor 1D de numeros de pieza).
 
     Por paso: `acumular` lotes de `lote` ventanas de `largo` piezas. lr: calentamiento lineal (por defecto 2% de los
@@ -2420,7 +2470,10 @@ def entrenar(modelo, datos, validacion=None, largo=512, lote=16, pasos=10000, lr
     Repartido (repartir_fsdp, varios procesos): todos los procesos llaman a entrenar() con los mismos argumentos.
     Cada uno toma lotes distintos (azar semilla + 1000003*rango; el proceso 0 usa los mismos lotes que sin repartir),
     asi que cada paso ve n_procesos * lote * acumular ventanas. La perdida y la decision de saltar un paso son
-    comunes, solo el proceso 0 escribe registros y archivos. fp16 no esta soportado repartido (usar bf16)."""
+    comunes, solo el proceso 0 escribe registros y archivos. fp16 no esta soportado repartido (usar bf16).
+
+    mult_sufijo_y_puerta (v1.1): ver crear_optimizador(). None = MULT_SUFIJO_Y_PUERTA (3) en un entrenamiento nuevo, y
+    al reanudar, el del archivo (los archivos de 1.0 no lo traen: siguen con 1, como empezaron)."""
     base = _base(modelo)
     disp = next(base.parameters()).device
     rango, n_proc = _distribuido()
@@ -2445,12 +2498,8 @@ def entrenar(modelo, datos, validacion=None, largo=512, lote=16, pasos=10000, lr
         torch.backends.cudnn.allow_tf32 = True
     lr_min = lr / 10 if lr_min is None else lr_min
     calentamiento = min(2000, max(1, pasos // 50)) if calentamiento is None else max(1, calentamiento)
-    opt = crear_optimizador(base, lr, decaimiento, betas)
-    escalador = torch.amp.GradScaler(disp.type, enabled=(precision == 'fp16'))
-    g = torch.Generator(device='cpu').manual_seed(semilla + 1_000_003 * rango)
-    paso0, mejor_val, historial = 0, float('inf'), []
-    ajustes = dict(pasos=pasos, lr=lr, lr_min=lr_min, calentamiento=calentamiento, largo=largo, lote=lote,
-                   acumular=acumular, decaimiento=decaimiento)
+    mult = MULT_SUFIJO_Y_PUERTA if mult_sufijo_y_puerta is None else float(mult_sufijo_y_puerta)
+    r = None
     if reanudar:
         r = _leer(reanudar, mmap=n_proc > 1)            # repartido: una sola copia del archivo en la memoria
         if 'optimizador' not in r and 'optimizador_nombres' not in r:
@@ -2458,6 +2507,20 @@ def entrenar(modelo, datos, validacion=None, largo=512, lote=16, pasos=10000, lr
                              "reanudar hace falta el archivo de guardar_en, que trae tambien AdamW y el paso. Para "
                              "empezar un entrenamiento nuevo desde esos pesos: entrenar(cargar(archivo), ...) sin "
                              "reanudar")
+        guardado = float(r.get('ajustes', {}).get('mult_sufijo_y_puerta', 1.0))     # archivos de 1.0: sin acelerar
+        if mult_sufijo_y_puerta is None:
+            mult = guardado
+        elif mult != guardado:
+            raise ValueError(f"{reanudar} se entreno con mult_sufijo_y_puerta={guardado:g} y se pidio {mult:g}: los "
+                             "grupos de AdamW no coinciden. Reanuda sin mult_sufijo_y_puerta (usa el del archivo) o "
+                             "empieza un entrenamiento nuevo")
+    opt = crear_optimizador(base, lr, decaimiento, betas, mult_sufijo_y_puerta=mult)
+    escalador = torch.amp.GradScaler(disp.type, enabled=(precision == 'fp16'))
+    g = torch.Generator(device='cpu').manual_seed(semilla + 1_000_003 * rango)
+    paso0, mejor_val, historial = 0, float('inf'), []
+    ajustes = dict(pasos=pasos, lr=lr, lr_min=lr_min, calentamiento=calentamiento, largo=largo, lote=lote,
+                   acumular=acumular, decaimiento=decaimiento, mult_sufijo_y_puerta=mult)
+    if r is not None:
         r['pesos'], migrados = _migrar_racha(r['pesos'])
         _reanudar_estado(base, opt, r, migrados)
         if r.get('escalador'):                  # vacio si se guardo sin fp16: el escalado de fp16 arranca de cero
@@ -2515,7 +2578,7 @@ def entrenar(modelo, datos, validacion=None, largo=512, lote=16, pasos=10000, lr
         while paso < pasos:
             lr_t = tasa_aprendizaje(paso, lr, pasos, calentamiento, lr_min)
             for grupo in opt.param_groups:
-                grupo['lr'] = lr_t
+                grupo['lr'] = lr_t * grupo.get('mult', 1.0)
             perdida = torch.zeros((), device=disp)
             for _ in range(acumular):
                 x, y = _lote(datos, largo, lote, g, disp)
@@ -2629,6 +2692,9 @@ def _principal(args=None, preparar=None):
     a.add_argument('--lr', type=float, default=1e-3)
     a.add_argument('--calentamiento', type=int)
     a.add_argument('--decaimiento', type=float, default=0.1)
+    a.add_argument('--mult_sufijo_y_puerta', type=float, default=None,
+                   help='tasa del sufijo y la puerta de ASRN = lr x este numero (por omision 3; 1 = como en 1.0; al '
+                        'reanudar, el del archivo)')
     a.add_argument('--precision', default='auto', choices=['auto', 'fp32', 'bf16', 'fp16'])
     a.add_argument('--compilar', nargs='?', const='partes', default=None, choices=['partes', 'todo'],
                    help="torch.compile: 'partes' (sin valor; lo mas rapido en GPU) o 'todo' (el modelo entero)")
@@ -2719,7 +2785,8 @@ def _principal(args=None, preparar=None):
                         calentamiento=o.calentamiento, decaimiento=o.decaimiento, acumular=o.acumular,
                         precision=o.precision, compilar={'partes': 'partes', 'todo': True}.get(o.compilar, False),
                         evaluar_cada=o.evaluar_cada,
-                        guardar_en=o.guardar, guardar_cada=o.guardar_cada, reanudar=o.reanudar, semilla=o.semilla)
+                        guardar_en=o.guardar, guardar_cada=o.guardar_cada, reanudar=o.reanudar, semilla=o.semilla,
+                        mult_sufijo_y_puerta=o.mult_sufijo_y_puerta)
     finally:
         if o.fsdp and dist.is_initialized():
             dist.destroy_process_group()

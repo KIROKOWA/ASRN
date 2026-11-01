@@ -38,18 +38,20 @@ Linea de comandos:
 """
 from . import estable, nucleo
 from .estable import CapaASRNEstable, Protecciones, RecorteDinamico, convertir
-from .nucleo import (TALLAS, BloqueLocal, CapaASRN, ConfigASRN, ModeloASRN, PasoGrafado, compilar_partes,
+from .nucleo import (MULT_SUFIJO_Y_PUERTA, PESOS_SUFIJO_Y_PUERTA, TALLAS, BloqueLocal, CapaASRN, ConfigASRN,
+                     ModeloASRN, PasoGrafado, compilar_partes,
                      crear_optimizador, entrenar, escaneo, escribir, esta_repartido, evaluar, firmas_de_piezas,
                      guardar, inicializar, leer_cantidad, leer_piezas, materializar, pesos_completos, repartir_fsdp,
                      tasa_aprendizaje)
 
-__version__ = '1.0'
+__version__ = '1.1'
 
 __all__ = ['CapaASRN', 'CapaASRNEstable', 'BloqueLocal', 'ModeloASRN', 'ConfigASRN', 'TALLAS', 'Protecciones',
            'RecorteDinamico', 'PasoGrafado', 'crear_modelo', 'crear_desde_config', 'cargar', 'guardar', 'convertir',
            'inicializar', 'materializar', 'repartir_fsdp', 'esta_repartido', 'pesos_completos', 'compilar_partes',
            'crear_optimizador', 'tasa_aprendizaje', 'entrenar', 'evaluar', 'escribir', 'leer_piezas',
            'leer_cantidad', 'firmas_de_piezas', 'escaneo', 'nucleo', 'estable', '__version__',
+           'MULT_SUFIJO_Y_PUERTA', 'PESOS_SUFIJO_Y_PUERTA',
            # English aliases (same objects; see the end of this file)
            'ASRNLayer', 'ASRNCoreLayer', 'ASRNModel', 'ASRNConfig', 'LocalBlock', 'Protections', 'DynamicClip',
            'create_model', 'create_from_config', 'convert', 'train', 'evaluate', 'generate', 'save', 'load']
