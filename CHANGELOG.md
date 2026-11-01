@@ -3,6 +3,43 @@
 All notable changes to ASRN are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/).
 The measurements and caveats behind each entry are in the release notes.
 
+## [1.1] — 2026-11-01
+
+A training change: the suffix weight and the gate signals of every ASRN layer learn faster. No architecture change, no
+extra cost, and checkpoints load unchanged.
+
+### Changed
+
+- `crear_optimizador()` puts the suffix weight and the gate signals of each ASRN layer (`w_sufijo`, `g.bias`,
+  `g_conf.weight`, `g_conf.bias`; listed in `asrn.PESOS_SUFIJO_Y_PUERTA`) in their own AdamW
+  groups, with the learning rate multiplied by `mult_sufijo_y_puerta` (default `asrn.MULT_SUFIJO_Y_PUERTA = 3`) and the
+  same weight decay they had. With AdamW each weight moves at most about `lr` per step, and these few numbers, which
+  decide what to copy, did not grow in time with the 1.0 rate.
+- `entrenar()` multiplies each group's scheduled rate by its `mult`, saves `mult_sufijo_y_puerta` in the checkpoint
+  settings, and on resume uses the file's value. Checkpoints from 1.0 (which lack it) resume with 1, exactly as they
+  started; asking for a different value on resume is a clear error.
+- `PasoGrafado` keeps one learning-rate tensor per group, so the faster groups also work inside a CUDA Graph.
+- New option `--mult_sufijo_y_puerta` in `python -m asrn`, `examples/train_100m/entrenar.py` and
+  `benchmarks/banco_asrn.py` (1 reproduces the 1.0 recipe and the published 1.0 tables).
+
+### Why (measured with `benchmarks/banco_asrn.py`, `a100` profile, Colab L4)
+
+| Task | 1.0 (×1) | 1.1 (×3 suffix and gate) |
+| --- | --- | --- |
+| Copy, accuracy at L = 1,024 (3 seeds) | 66.7% ± 57.6 (2 of 3 seeds) | 100% ± 0.0 (3 of 3) |
+| Copy, accuracy at L = 16,384 | 45.4% ± 39.7 | 82.9% ± 14.5 |
+| MQAR, accuracy at L = 2,048 (3 seeds) | 99.58% ± 0.34 | 99.93% ± 0.09 |
+| WikiText-103 (45 M), perplexity at L = 4,096 (2 seeds) | 63.34 ± 0.68 | 63.00 ± 0.26 |
+
+Higher doses (×5, ×10) learned in every seed but lost long-context accuracy (copy at 16,384: 51.9% and 29.6%); ×2
+still left one seed stuck. The good zone corresponds to a learned suffix advantage of about 2 to 4.
+
+### Tests
+
+- New: the optimizer groups and rates (×3 and ×1 = the 1.0 groups), saving and resuming with ×3, resuming a
+  1.0-style checkpoint with ×1, and the per-group rate in `PasoGrafado`. The `PasoGrafado` test's reference step now
+  applies each group's `mult`.
+
 ## [1.0] — 2026-10-24
 
 The first packaged release, relative to the v89 development code. Details:
