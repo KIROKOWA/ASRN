@@ -452,18 +452,23 @@ def evaluar(modelo, tarea, L, n=16, lote=4):
     return {'exactitud': aciertos / max(total, 1)}
 
 
+# Tasa del sufijo y la puerta de ASRN = lr x este numero (ASRN 1.1: 3). 1 = la receta de 1.0, con la que se midieron las
+# tablas de results/banco_a100 y results/banco_cpu. Se cambia con --mult_sufijo_y_puerta.
+MULT_SUFIJO_Y_PUERTA = asrn.MULT_SUFIJO_Y_PUERTA
+
+
 def entrenar(modelo, tarea, semilla, lr, pasos, lote=None):
     """El mismo bucle para todos: AdamW (decaimiento 0.1 en matrices, betas 0.9/0.95), calentamiento 2% y coseno hasta
     lr/10, recorte del gradiente en 1, fp32 (bf16 con autocast en GPU). Los mismos lotes para todos los modelos."""
     L = TAREAS[tarea]['largo']
     lote = lote or TAREAS[tarea].get('lote', 16)
-    opt = asrn.crear_optimizador(modelo, lr, 0.1, (0.9, 0.95))
+    opt = asrn.crear_optimizador(modelo, lr, 0.1, (0.9, 0.95), mult_sufijo_y_puerta=MULT_SUFIJO_Y_PUERTA)
     cal = max(1, pasos // 50)
     modelo.train()
     t0, curva = time.perf_counter(), []
     for paso in range(pasos):
         for g in opt.param_groups:
-            g['lr'] = asrn.tasa_aprendizaje(paso, lr, pasos, cal, lr / 10)
+            g['lr'] = asrn.tasa_aprendizaje(paso, lr, pasos, cal, lr / 10) * g.get('mult', 1.0)
         x, y = lote_de(tarea, lote, L, semilla=10_000 + 1_000_003 * semilla + paso)
         x, y = x.to(DISP), y.to(DISP)
         with torch.autocast(DISP.type, dtype=torch.bfloat16, enabled=GPU):
@@ -683,7 +688,13 @@ def main():
     ap.add_argument('--semillas', type=int, default=None, help='por omision, las del perfil')
     ap.add_argument('--tareas', default=None, help='por omision: copia,mqar,texto (cpu) o copia,mqar,wikitext (a100)')
     ap.add_argument('--perfil', default='cpu', choices=sorted(PERFILES))
+    ap.add_argument('--mult_sufijo_y_puerta', type=float, default=None,
+                    help='tasa del sufijo y la puerta de ASRN = lr x este numero (por omision el del paquete, 3; '
+                         '1 = como las tablas de 1.0)')
     a = ap.parse_args()
+    if a.mult_sufijo_y_puerta is not None:
+        global MULT_SUFIJO_Y_PUERTA
+        MULT_SUFIJO_Y_PUERTA = a.mult_sufijo_y_puerta
     usar_perfil(a.perfil)
     a.tareas = a.tareas or ','.join(TAREAS)
     os.makedirs(a.salida, exist_ok=True)
