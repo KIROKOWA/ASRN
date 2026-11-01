@@ -204,7 +204,7 @@ def test_api_del_paquete_usa_la_capa_estable():
         assert isinstance(c.largos[0], est.CapaASRNEstable)
         asrn.guardar(c, f)                                  # y al reves
         assert not isinstance(v89.cargar(f, dispositivo='cpu').largos[0], est.CapaASRNEstable)
-    assert asrn.__version__ == '1.0' and set(asrn.__all__) <= set(dir(asrn))
+    assert asrn.__version__ == '1.1' and set(asrn.__all__) <= set(dir(asrn))
 
 
 def test_alias_en_ingles_son_los_mismos_objetos():
@@ -556,6 +556,82 @@ def test_recorte_dinamico_con_nan_y_en_entrenar():
     h = v89.entrenar(m, datos, largo=32, lote=4, pasos=6, registrar_cada=2, registro=lambda *_: None,
                      recorte=est.RecorteDinamico(m, calentar=2))
     assert len(h) == 3 and all(torch.isfinite(torch.tensor(f['perdida'])) for f in h)
+
+
+# --- v1.1: el sufijo y la puerta aprenden mas rapido --------------------------------------------------------------
+
+def _pesos_sufijo_y_puerta(m):
+    return {id(p) for c in m.largos for n, p in c.named_parameters() if n in v89.PESOS_SUFIJO_Y_PUERTA}
+
+
+def test_optimizador_sufijo_y_puerta_x3_y_x1_como_1_0():
+    import asrn
+    m = asrn.crear_modelo(60, d=32, n_capas=4, semilla=0)                 # 2 capas ASRN: 8 pesos rapidos
+    rapidos = _pesos_sufijo_y_puerta(m)
+    assert len(rapidos) == 4 * len(m.largos) and asrn.MULT_SUFIJO_Y_PUERTA == 3.0
+    opt = asrn.crear_optimizador(m, lr=1e-3)                              # por omision, x3
+    en_grupos = [{id(p) for p in g['params']} for g in opt.param_groups]
+    assert sum(len(x) for x in en_grupos) == len([p for p in m.parameters() if p.requires_grad])
+    for g, ids in zip(opt.param_groups, en_grupos):
+        if g['mult'] == 3.0:
+            assert ids <= rapidos and abs(g['lr'] - 3e-3) < 1e-12
+        else:
+            assert not (ids & rapidos) and g['mult'] == 1.0 and abs(g['lr'] - 1e-3) < 1e-12
+    assert set().union(*[ids for g, ids in zip(opt.param_groups, en_grupos) if g['mult'] == 3.0]) == rapidos
+    for g in opt.param_groups:                                            # mismo decaimiento que en 1.0
+        assert g['weight_decay'] == (0.1 if g['params'][0].dim() >= 2 else 0.0)
+    uno = asrn.crear_optimizador(m, lr=1e-3, mult_sufijo_y_puerta=1)      # x1: los dos grupos de 1.0
+    assert len(uno.param_groups) == 2
+    assert [p.dim() >= 2 for p in uno.param_groups[0]['params']] == [True] * len(uno.param_groups[0]['params'])
+    assert all(p.dim() < 2 for p in uno.param_groups[1]['params'])
+    assert v89._nombres_en_optimizador(m) == v89._nombres_de_opt(m, opt)
+    assert v89._nombres_en_optimizador(m, 1) == v89._nombres_de_opt(m, uno)
+
+
+def test_entrenar_x3_guarda_reanuda_y_respeta_archivos_1_0():
+    import asrn
+    datos = torch.randint(0, 60, (4000,))
+    with tempfile.TemporaryDirectory() as d:
+        f = os.path.join(d, 'm.pt')
+        m = asrn.crear_modelo(60, d=32, n_capas=4, semilla=0)
+        antes = {n: p.detach().clone() for n, p in m.named_parameters()}
+        asrn.entrenar(m, datos, largo=32, lote=4, pasos=4, guardar_en=f, guardar_cada=2, registro=lambda *_: None)
+        r = v89._leer(f)
+        assert r['ajustes']['mult_sufijo_y_puerta'] == 3.0
+        assert any(not torch.equal(antes[n], p) for n, p in m.named_parameters() if n.endswith('w_sufijo'))
+        m2 = asrn.crear_modelo(60, d=32, n_capas=4, semilla=0)
+        asrn.entrenar(m2, datos, largo=32, lote=4, pasos=6, guardar_en=f, guardar_cada=2, reanudar=f,
+                      registro=lambda *_: None)                           # usa el x3 del archivo
+        try:
+            asrn.entrenar(asrn.crear_modelo(60, d=32, n_capas=4, semilla=0), datos, largo=32, lote=4, pasos=8,
+                          reanudar=f, mult_sufijo_y_puerta=1, registro=lambda *_: None)
+            raise AssertionError('reanudar con otro mult tendria que fallar')
+        except ValueError as e:
+            assert 'mult_sufijo_y_puerta' in str(e)
+        # un archivo como los de 1.0 (sin la clave): reanuda con x1, los dos grupos de siempre
+        f1 = os.path.join(d, 'm10.pt')
+        m3 = asrn.crear_modelo(60, d=32, n_capas=4, semilla=0)
+        asrn.entrenar(m3, datos, largo=32, lote=4, pasos=2, guardar_en=f1, guardar_cada=2,
+                      mult_sufijo_y_puerta=1, registro=lambda *_: None)
+        r1 = v89._leer(f1)
+        del r1['ajustes']['mult_sufijo_y_puerta']
+        for g in r1['optimizador']['param_groups']:
+            g.pop('mult', None)
+        torch.save(r1, f1)
+        m4 = asrn.crear_modelo(60, d=32, n_capas=4, semilla=0)
+        asrn.entrenar(m4, datos, largo=32, lote=4, pasos=4, guardar_en=f1, guardar_cada=2, reanudar=f1,
+                      registro=lambda *_: None)
+        assert v89._leer(f1)['ajustes']['mult_sufijo_y_puerta'] == 1.0
+
+
+def test_paso_grafado_lleva_la_tasa_de_cada_grupo():
+    import asrn
+    m = asrn.crear_modelo(50, d=32, n_capas=3, semilla=0)
+    opt = asrn.crear_optimizador(m, 1e-2)
+    paso = v89.PasoGrafado(m, opt, 2, 24, precision='fp32', grabar=False)
+    x = torch.randint(0, 50, (2, 24))
+    paso(x, x, lr=0.02)
+    assert sorted({round(g['lr'], 9) for g in opt.param_groups}) == [0.02, 0.06]
 
 
 if __name__ == '__main__':

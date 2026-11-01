@@ -506,7 +506,7 @@ def test_paso_grafado_mismas_cuentas_y_limites():
         x, y = torch.randint(0, V, (lote, largo), generator=g), torch.randint(0, V, (lote, largo), generator=g)
         lr = 1e-2 * (i + 1) / 3
         for grupo in oa.param_groups:
-            grupo['lr'] = lr
+            grupo['lr'] = lr * grupo.get('mult', 1.0)      # v1.1: el sufijo y la puerta llevan su propia tasa
         oa.zero_grad(set_to_none=True)
         torch.nn.functional.cross_entropy(a(x).reshape(-1, V), y.reshape(-1)).backward()
         torch.nn.utils.clip_grad_norm_(a.parameters(), 0.5)
