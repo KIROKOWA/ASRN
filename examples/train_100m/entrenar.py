@@ -67,6 +67,9 @@ def main(argv=None):
     a.add_argument('--lotes_eval', type=int, default=50)
     a.add_argument('--guardar_cada', type=int, default=100)
     a.add_argument('--semilla', type=int, default=0)
+    a.add_argument('--mult_sufijo_y_puerta', type=float, default=None,
+                   help='tasa del sufijo y la puerta de ASRN = lr x este numero (ASRN 1.1: 3; 1 = como en 1.0; al '
+                        'reanudar, el del archivo)')
     o = a.parse_args(argv)
 
     # Ctrl+C (o detener la celda en Colab) y SIGTERM guardan y terminan: entrenar() atrapa KeyboardInterrupt. Se
@@ -133,7 +136,7 @@ def main(argv=None):
                   recorte=1.0, precision='auto', compilar='partes' if o.compilar else False,
                   evaluar_cada=o.evaluar_cada, lotes_eval=o.lotes_eval, guardar_en=punto,
                   guardar_cada=o.guardar_cada, reanudar=reanudar, semilla=o.semilla, registrar_cada=10,
-                  registro=registro_con_tiempo)
+                  registro=registro_con_tiempo, mult_sufijo_y_puerta=o.mult_sufijo_y_puerta)
     final = os.path.join(o.salida, 'asrn_100m.pt')
     estado = asrn.nucleo._leer(punto, mmap=True)
     if estado['paso'] >= pasos:
