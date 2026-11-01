@@ -2,8 +2,8 @@
 
 [![pruebas](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![Licencia: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Versión 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES_es.md)
-[![DOI del código](https://img.shields.io/badge/DOI%20del%20c%C3%B3digo-10.5281%2Fzenodo.23608503-blue.svg)](https://doi.org/10.5281/zenodo.23608503)
+[![Versión 1.1](https://img.shields.io/badge/version-1.1-informational.svg)](CHANGELOG.md)
+[![DOI del código](https://img.shields.io/badge/DOI%20del%20c%C3%B3digo-10.5281%2Fzenodo.23868243-blue.svg)](https://doi.org/10.5281/zenodo.23868243)
 [![DOI del preprint](https://img.shields.io/badge/DOI%20del%20preprint-10.5281%2Fzenodo.23607506-blue.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Copia exacta de largo alcance para modelos de lenguaje, con trabajo acotado por pieza: tablas de hash aprendidas
@@ -11,7 +11,7 @@ encuentran dónde apareció antes el contexto actual, y una capa con puerta copi
 
 [English version](README.md) · [Arquitectura](docs/ARCHITECTURE_es.md) ·
 [Reporte técnico](docs/TECHNICAL_REPORT_es.md) · [Notas de la versión](docs/RELEASE_NOTES_es.md) ·
-[Resultados](results/README.md) · Versión 1.0 · Licencia Apache 2.0
+[Resultados](results/README.md) · Versión 1.1 · Licencia Apache 2.0
 
 ### Instalar y usar
 
@@ -84,6 +84,15 @@ protecciones numéricas de la capa estable."></p>
    [reporte técnico](docs/TECHNICAL_REPORT_es.md) (cada fórmula, cada cifra con sus salvedades) y las
    [notas de la versión](docs/RELEASE_NOTES_es.md).
 6. **Orientarse**: la [estructura del repositorio](#estructura-del-repositorio) dice qué hay en cada carpeta.
+
+### Qué cambia en la versión 1.1
+
+- **El peso del sufijo y las señales de la puerta de cada capa ASRN aprenden 3 veces más rápido** (`w_sufijo`,
+  `g.bias`, `g_conf.weight`, `g_conf.bias`; opción `mult_sufijo_y_puerta`, por omisión 3, con 1 reproduce 1.0). Es un
+  cambio solo de entrenamiento: la arquitectura, el costo y los archivos guardados no cambian, y al reanudar un archivo
+  de 1.0 se sigue usando ×1. La copia con 1 024 piezas pasa de 66.7% ± 57.6 (2 de 3 semillas) a 100% ± 0.0, la copia
+  con 16 384 de 45.4% a 82.9%, MQAR con 2 048 de 99.58% a 99.93% y la perplejidad de WikiText-103 con 4 096 de 63.34 a
+  63.00. Detalles en el [CHANGELOG](CHANGELOG.md). Las tablas del banco de abajo se midieron con 1.0.
 
 ### Qué trae la versión 1.0
 
@@ -695,18 +704,18 @@ correr para un modelo de 103.5 M de parámetros con FineWeb. Las próximas versi
 
 ## Cómo citar
 
-Si usas ASRN, cita el software (DOI [10.5281/zenodo.23608503](https://doi.org/10.5281/zenodo.23608503);
+Si usas ASRN, cita el software (DOI [10.5281/zenodo.23868243](https://doi.org/10.5281/zenodo.23868243);
 [`CITATION.cff`](CITATION.cff) tiene los mismos datos para GitHub y Zenodo):
 
 ```bibtex
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version   = {1.0},
+  version   = {1.1},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.23608503},
-  url       = {https://doi.org/10.5281/zenodo.23608503}
+  doi       = {10.5281/zenodo.23868243},
+  url       = {https://doi.org/10.5281/zenodo.23868243}
 }
 ```
 

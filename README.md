@@ -2,8 +2,8 @@
 
 [![tests](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml/badge.svg)](https://github.com/KIROKOWA/ASRN/actions/workflows/tests.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version 1.0](https://img.shields.io/badge/version-1.0-informational.svg)](docs/RELEASE_NOTES.md)
-[![Code DOI](https://img.shields.io/badge/code%20DOI-10.5281%2Fzenodo.23608503-blue.svg)](https://doi.org/10.5281/zenodo.23608503)
+[![Version 1.1](https://img.shields.io/badge/version-1.1-informational.svg)](CHANGELOG.md)
+[![Code DOI](https://img.shields.io/badge/code%20DOI-10.5281%2Fzenodo.23868243-blue.svg)](https://doi.org/10.5281/zenodo.23868243)
 [![Preprint DOI](https://img.shields.io/badge/preprint%20DOI-10.5281%2Fzenodo.23607506-blue.svg)](https://doi.org/10.5281/zenodo.23607506)
 
 **Exact long-range copying for language models, with bounded work per token: learned hash tables find where the
@@ -11,7 +11,7 @@ current context appeared before, and a gated layer copies what came next.**
 
 [Versión en español](README.es.md) · [Architecture](docs/ARCHITECTURE.md) ·
 [Technical report](docs/TECHNICAL_REPORT.md) · [Release notes](docs/RELEASE_NOTES.md) · [Results](results/README.md) ·
-Version 1.0 · Apache License 2.0
+Version 1.1 · Apache License 2.0
 
 ### Install and use
 
@@ -82,6 +82,15 @@ token and the numerical protections of the stable layer."></p>
    [technical report](docs/TECHNICAL_REPORT.md) (every formula, every figure with its caveats) and the
    [release notes](docs/RELEASE_NOTES.md).
 6. **Find your way around**: the [repository layout](#repository-layout) says what each folder holds.
+
+### New in 1.1
+
+- **The suffix weight and the gate signals of each ASRN layer learn 3× faster** (`w_sufijo`, `g.bias`,
+  `g_conf.weight`, `g_conf.bias`; option `mult_sufijo_y_puerta`, default 3, set 1 to reproduce 1.0). It is a
+  training-only change: the architecture, the cost and the checkpoints are unchanged, and resuming a 1.0 checkpoint
+  keeps ×1. Copy at 1,024 tokens goes from 66.7% ± 57.6 (2 of 3 seeds) to 100% ± 0.0, copy at 16,384 tokens from
+  45.4% to 82.9%, MQAR at 2,048 from 99.58% to 99.93%, and WikiText-103 perplexity at 4,096 from 63.34 to 63.00.
+  Details in the [CHANGELOG](CHANGELOG.md). The benchmark tables below were measured with 1.0.
 
 ### What 1.0 contains
 
@@ -672,18 +681,18 @@ FineWeb. The next versions build on this:
 
 ## Citation
 
-If you use ASRN, please cite the software (DOI [10.5281/zenodo.23608503](https://doi.org/10.5281/zenodo.23608503);
+If you use ASRN, please cite the software (DOI [10.5281/zenodo.23868243](https://doi.org/10.5281/zenodo.23868243);
 [`CITATION.cff`](CITATION.cff) has the same data for GitHub and Zenodo):
 
 ```bibtex
 @software{calvario2026asrn,
   author  = {Calvario, Alexis},
   title   = {{ASRN}: Adaptive Sparse Recurrence Network},
-  version   = {1.0},
+  version   = {1.1},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.23608503},
-  url       = {https://doi.org/10.5281/zenodo.23608503}
+  doi       = {10.5281/zenodo.23868243},
+  url       = {https://doi.org/10.5281/zenodo.23868243}
 }
 ```
 
